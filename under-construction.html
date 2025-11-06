@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Construction | Raihan Travelindo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
+            font-family: 'Poppins', Arial, sans-serif;
+            background: url('images/underconst.jpg') center center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(26, 107, 74, 0.7);
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            padding: 40px 30px;
+            border-radius: 20px;
+            background: rgba(0,0,0,0.25);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        }
+        .content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        .content p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            color: #d4a518;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        }
+        .btn-home {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 32px;
+            background: #1a6b4a;
+            color: #fff;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .btn-home:hover {
+            background: #1f7f57;
+        }
+        @media (max-width: 600px) {
+            .content h1 { font-size: 2rem; }
+            .content { padding: 30px 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="content">
+        <div class="logo"><img src="images/logo.png" alt="Raihan Travelindo" style="max-height: 80px; margin-bottom: 10px;"></div>
+        <h1>Website Sedang Dalam Pengembangan</h1>
+        <p>Halaman ini sedang dalam proses pembangunan.<br>Silakan kembali lagi nanti atau hubungi admin untuk info lebih lanjut.</p>
+        <a href="index.html" class="btn-home">Kembali ke Beranda</a>
+    </div>
+</body>
+</html>

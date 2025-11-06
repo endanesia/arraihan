@@ -1,0 +1,112 @@
+{
+  "name": "Raihan Travelindo",
+  "version": "1.0.0",
+  "description": "Website Travel Umroh & Haji Terpercaya",
+  "author": "Developer Name",
+  "license": "Proprietary",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/baitul-mabrur-travel"
+  },
+  "keywords": [
+    "umroh",
+    "haji",
+    "travel",
+    "islamic",
+    "indonesia"
+  ],
+  "config": {
+    "company": {
+      "name": "Raihan Travelindo",
+      "established": 2005,
+      "accreditation": "A",
+      "ppiu_license": "Sesuaikan dengan nomor izin Anda",
+      "pihk_license": "Sesuaikan dengan nomor izin Anda"
+    },
+    "contact": {
+      "phone": "+62 812-3456-7890",
+      "phone_alt": "+62 21-1234-5678",
+      "whatsapp": "6281234567890",
+      "email": "info@baitulmabrur.com",
+      "email_alt": "customer@baitulmabrur.com",
+      "address": {
+        "street": "Jl. Raya Tanah Kusir No. 123",
+        "city": "Jakarta Selatan",
+        "province": "DKI Jakarta",
+        "postal_code": "12345",
+        "country": "Indonesia"
+      }
+    },
+    "social_media": {
+      "facebook": "https://facebook.com/baitulmabrur",
+      "instagram": "https://instagram.com/baitulmabrur",
+      "youtube": "https://youtube.com/@baitulmabrur",
+      "twitter": "https://twitter.com/baitulmabrur"
+    },
+    "packages": {
+      "umroh": {
+        "name": "Paket Umroh",
+        "start_price": 24000000,
+        "currency": "IDR"
+      },
+      "haji_khusus": {
+        "name": "Haji Khusus",
+        "start_price": 11500,
+        "currency": "USD"
+      },
+      "badal_haji": {
+        "name": "Badal Haji",
+        "start_price": 17000000,
+        "currency": "IDR"
+      },
+      "badal_umroh": {
+        "name": "Badal Umroh",
+        "start_price": 2000000,
+        "currency": "IDR"
+      }
+    },
+    "statistics": {
+      "total_jamaah": 15000,
+      "rating": 4.9,
+      "years_experience": 18
+    },
+    "features": [
+      "Legalitas Terjamin",
+      "Akreditasi A",
+      "Mutu Pelayanan ISO 9001:2015",
+      "Jadwal Pasti",
+      "Direct Flight",
+      "Hotel Strategis",
+      "Muthawif Profesional",
+      "Wireless Headset"
+    ]
+  },
+  "seo": {
+    "title": "Raihan Travelindo - Travel Haji & Umroh Terpercaya",
+    "description": "Travel Umroh & Haji Terpercaya dengan Akreditasi A. Melayani lebih dari 15.000 jamaah sejak 2005. Direct Flight, Hotel Strategis, dan Pelayanan Terbaik.",
+    "keywords": "travel umroh, travel haji, umroh murah, haji khusus, badal haji, badal umroh, travel umroh jakarta, travel haji terpercaya",
+    "og_image": "images/og-image.jpg"
+  },
+  "technical": {
+    "html_version": "HTML5",
+    "css_version": "CSS3",
+    "javascript": "Vanilla JS (ES6+)",
+    "libraries": [
+      "Font Awesome 6.4.0",
+      "Google Fonts (Poppins)"
+    ],
+    "responsive": true,
+    "browser_support": [
+      "Chrome (latest)",
+      "Firefox (latest)",
+      "Safari (latest)",
+      "Edge (latest)",
+      "Opera (latest)"
+    ]
+  },
+  "deployment": {
+    "environment": "development",
+    "base_url": "http://localhost/umroh/",
+    "production_url": "https://www.baitulmabrur.com"
+  }
+}

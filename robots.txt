@@ -1,0 +1,27 @@
+# Robots.txt for Raihan Travelindo
+# https://www.raihantravelindo.com/robots.txt
+
+User-agent: *
+Allow: /
+Allow: /css/
+Allow: /js/
+Allow: /images/
+
+# Disallow admin areas (if any)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /cgi-bin/
+
+# Disallow search result pages
+Disallow: /*?s=
+Disallow: /search/
+
+# Disallow duplicate content
+Disallow: /*?*
+Disallow: /*&*
+
+# Crawl-delay (optional)
+Crawl-delay: 5
+
+# Sitemap location
+Sitemap: http://localhost/umroh/sitemap.xml
