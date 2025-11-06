@@ -14,10 +14,55 @@ DirectoryIndex index.php index.html index.htm
     RewriteCond %{REQUEST_URI} ^(.*)/([^/]+)\.php$ [NC]
     RewriteRule ^ %1/%2? [R=301,L]
 
-    # Admin pretty URLs
+    # Admin pretty URLs - Auth & Dashboard
     RewriteRule ^admin/login/?$ admin/login.php [L,QSA]
     RewriteRule ^admin/logout/?$ admin/logout.php [L,QSA]
     RewriteRule ^admin/dashboard/?$ admin/dashboard.php [L,QSA]
+    
+    # Homepage Management
+    RewriteRule ^admin/hero/?$ admin/hero.php [L,QSA]
+    RewriteRule ^admin/about/?$ admin/about.php [L,QSA]
+    
+    # Posts/Articles
+    RewriteRule ^admin/posts/?$ admin/posts.php [L,QSA]
+    RewriteRule ^admin/posts/new/?$ admin/post-edit.php [L,QSA]
+    RewriteRule ^admin/posts/([0-9]+)/edit/?$ admin/post-edit.php?id=$1 [L,QSA]
+    RewriteRule ^admin/posts/([0-9]+)/delete/?$ admin/post-delete.php?id=$1 [L,QSA]
+
+    # Gallery Images
+    RewriteRule ^admin/gallery-images/?$ admin/gallery-images.php [L,QSA]
+    RewriteRule ^admin/gallery-images/([0-9]+)/delete/?$ admin/gallery-image-delete.php?id=$1 [L,QSA]
+
+    # Gallery Videos
+    RewriteRule ^admin/gallery-videos/?$ admin/gallery-videos.php [L,QSA]
+    RewriteRule ^admin/gallery-videos/([0-9]+)/delete/?$ admin/video-delete.php?id=$1 [L,QSA]
+
+    # Partners
+    RewriteRule ^admin/partners/?$ admin/partners.php [L,QSA]
+    RewriteRule ^admin/partner-edit/?$ admin/partner-edit.php [L,QSA]
+    RewriteRule ^admin/partners/([0-9]+)/delete/?$ admin/partner-delete.php?id=$1 [L,QSA]
+    RewriteRule ^admin/partners/([0-9]+)/edit/?$ admin/partner-edit.php?id=$1 [L,QSA]
+
+    # Packages
+    RewriteRule ^admin/packages/?$ admin/packages.php [L,QSA]
+    RewriteRule ^admin/package-edit/?$ admin/package-edit.php [L,QSA]
+    RewriteRule ^admin/packages/([0-9]+)/delete/?$ admin/package-delete.php?id=$1 [L,QSA]
+    RewriteRule ^admin/packages/([0-9]+)/edit/?$ admin/package-edit.php?id=$1 [L,QSA]
+
+    # Schedules
+    RewriteRule ^admin/schedules/?$ admin/schedules.php [L,QSA]
+    RewriteRule ^admin/schedule-edit/?$ admin/schedule-edit.php [L,QSA]
+    RewriteRule ^admin/schedules/([0-9]+)/delete/?$ admin/schedule-delete.php?id=$1 [L,QSA]
+    RewriteRule ^admin/schedules/([0-9]+)/edit/?$ admin/schedule-edit.php?id=$1 [L,QSA]
+
+    # Settings
+    RewriteRule ^admin/social-links/?$ admin/social-links.php [L,QSA]
+    RewriteRule ^admin/upgrade/?$ admin/upgrade.php [L,QSA]
+
+    # Fallback: /admin/page -> /admin/page.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^admin/([A-Za-z0-9_-]+)$ admin/$1.php [L,QSA]
     
     # Internal rewrite from /file to /file.php
     RewriteCond %{REQUEST_FILENAME} !-d
