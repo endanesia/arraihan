@@ -1,5 +1,5 @@
 # Apache Configuration File
-# Raihan Travelindo Website
+# Raihan Travelindo Website - Production Subdirectory Version
 
 # Enable Rewrite Engine
 <IfModule mod_rewrite.c>
@@ -8,7 +8,6 @@
     Options -MultiViews
 
     # Remove .php extension - External redirects (301)
-    # Universal pattern that works on both localhost and production
     RewriteCond %{THE_REQUEST} \s/+[^?\s]*?([^/.\s]+)\.php[\s?] [NC]
     RewriteCond %{REQUEST_URI} ^(.*)/([^/]+)\.php$ [NC]
     RewriteRule ^ %1/%2? [R=301,L]
@@ -142,10 +141,6 @@ Options -Indexes
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-# Error Pages (optional - uncomment to use)
-# ErrorDocument 404 /umroh/404.html
-# ErrorDocument 500 /umroh/500.html
 
 # Force UTF-8 Encoding
 AddDefaultCharset UTF-8
