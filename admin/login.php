@@ -69,9 +69,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <button type="submit" class="btn btn-success">Masuk</button>
             </div>
           </form>
-          <div class="mt-3 small text-muted">
-            Jika belum menjalankan installer, buka: <code><?= e(($config['app']['base_url'] ?? '')); ?>/install/install.php</code>
-          </div>
         </div>
       </div>
     </div>
