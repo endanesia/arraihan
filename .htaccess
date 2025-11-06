@@ -1,6 +1,9 @@
 # Minimal .htaccess for testing
 # Remove all complex rules first
 
+# Set index files
+DirectoryIndex index.php index.html index.htm
+
 # Basic security only
 Options -Indexes
 
