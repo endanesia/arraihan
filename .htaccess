@@ -1,10 +1,24 @@
-# Minimal .htaccess for testing
-# Remove all complex rules first
+# .htaccess with permission fixes for 403 Forbidden
 
 # Set index files
 DirectoryIndex index.php index.html index.htm
 
-# Basic security only
+# Allow access to files and directories
+<Files "*">
+    Order allow,deny
+    Allow from all
+    Require all granted
+</Files>
+
+# Specific file access permissions
+<FilesMatch "\.(php|html|htm|txt|css|js|png|jpg|jpeg|gif)$">
+    Order allow,deny
+    Allow from all
+    Require all granted
+</FilesMatch>
+
+# Directory permissions
+Options +FollowSymLinks
 Options -Indexes
 
 # UTF-8 Encoding

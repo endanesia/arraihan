@@ -1,0 +1,4 @@
+# Completely empty .htaccess for testing
+# If this works, we'll add rules back gradually
+
+DirectoryIndex index.php index.html
