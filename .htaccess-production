@@ -1,5 +1,5 @@
 # Apache Configuration File
-# Raihan Travelindo Website
+# Raihan Travelindo Website - Production Version
 
 # Enable Rewrite Engine
 <IfModule mod_rewrite.c>
@@ -142,10 +142,6 @@ Options -Indexes
     Order allow,deny
     Deny from all
 </FilesMatch>
-
-# Error Pages (optional - uncomment to use)
-# ErrorDocument 404 /umroh/404.html
-# ErrorDocument 500 /umroh/500.html
 
 # Force UTF-8 Encoding
 AddDefaultCharset UTF-8

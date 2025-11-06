@@ -9,8 +9,8 @@ return [
         'charset' => 'utf8mb4'
     ],
     'app' => [
-        'base_url' => '/dev', // sesuai dengan URL produksi
+        'base_url' => '', // root untuk production
         'uploads_dir' => __DIR__ . '/../images/gallery',
-        'uploads_url' => '/dev/images/gallery'
+        'uploads_url' => '/images/gallery'
     ]
 ];
