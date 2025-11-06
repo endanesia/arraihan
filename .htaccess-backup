@@ -1,0 +1,166 @@
+# Apache Configuration File
+# Raihan Travelindo Website
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /dev/
+    Options -MultiViews
+
+    # Remove .php extension - External redirects (301)
+    # Universal pattern that works on both localhost and production
+    RewriteCond %{THE_REQUEST} \s/+[^?\s]*?([^/.\s]+)\.php[\s?] [NC]
+    RewriteCond %{REQUEST_URI} ^(.*)/([^/]+)\.php$ [NC]
+    RewriteRule ^ %1/%2? [R=301,L]
+
+    # Admin pretty URLs (specific rules after redirects)
+    # Auth & dashboard
+    RewriteRule ^admin/login/?$ admin/login.php [L,QSA]
+    RewriteRule ^admin/logout/?$ admin/logout.php [L,QSA]
+    RewriteRule ^admin/dashboard/?$ admin/dashboard.php [L,QSA]
+
+    # Posts
+    RewriteRule ^admin/posts/?$ admin/posts.php [L,QSA]
+    RewriteRule ^admin/posts/new/?$ admin/post-edit.php [L,QSA]
+    RewriteRule ^admin/posts/([0-9]+)/edit/?$ admin/post-edit.php?id=$1 [L,QSA]
+    RewriteRule ^admin/posts/([0-9]+)/delete/?$ admin/post-delete.php?id=$1 [L,QSA]
+
+    # Gallery images
+    RewriteRule ^admin/gallery-images/?$ admin/gallery-images.php [L,QSA]
+    RewriteRule ^admin/gallery-images/([0-9]+)/delete/?$ admin/gallery-image-delete.php?id=$1 [L,QSA]
+
+    # Gallery videos
+    RewriteRule ^admin/gallery-videos/?$ admin/gallery-videos.php [L,QSA]
+    RewriteRule ^admin/gallery-videos/([0-9]+)/delete/?$ admin/video-delete.php?id=$1 [L,QSA]
+
+    # Partners
+    RewriteRule ^admin/partners/?$ admin/partners.php [L,QSA]
+    RewriteRule ^admin/partner-edit/?$ admin/partner-edit.php [L,QSA]
+    RewriteRule ^admin/partners/([0-9]+)/delete/?$ admin/partner-delete.php?id=$1 [L,QSA]
+    RewriteRule ^admin/partners/([0-9]+)/edit/?$ admin/partner-edit.php?id=$1 [L,QSA]
+
+    # Packages
+    RewriteRule ^admin/packages/?$ admin/packages.php [L,QSA]
+    RewriteRule ^admin/package-edit/?$ admin/package-edit.php [L,QSA]
+    RewriteRule ^admin/packages/([0-9]+)/delete/?$ admin/package-delete.php?id=$1 [L,QSA]
+    RewriteRule ^admin/packages/([0-9]+)/edit/?$ admin/package-edit.php?id=$1 [L,QSA]
+
+    # Schedules
+    RewriteRule ^admin/schedules/?$ admin/schedules.php [L,QSA]
+    RewriteRule ^admin/schedule-edit/?$ admin/schedule-edit.php [L,QSA]
+    RewriteRule ^admin/schedules/([0-9]+)/delete/?$ admin/schedule-delete.php?id=$1 [L,QSA]
+    RewriteRule ^admin/schedules/([0-9]+)/edit/?$ admin/schedule-edit.php?id=$1 [L,QSA]
+
+    # Fallback: /admin/page -> /admin/page.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^admin/([A-Za-z0-9_-]+)$ admin/$1.php [L,QSA]
+
+    # Internal rewrite from /file to /file.php (for all files)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^./]+)/?$ $1.php [L,QSA]
+</IfModule>
+
+# Compression - Save Bandwidth
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/atom_xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# Browser Caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Images
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # CSS & JavaScript
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType application/x-javascript "access plus 1 month"
+    
+    # Fonts
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    
+    # HTML
+    ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    # XSS Protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Prevent Clickjacking
+    Header always append X-Frame-Options SAMEORIGIN
+    
+    # Prevent MIME Sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Remove Server Signature
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# Disable Directory Browsing
+Options -Indexes
+
+# Protect .htaccess
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect sensitive files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Error Pages (optional - uncomment to use)
+# ErrorDocument 404 /umroh/404.html
+# ErrorDocument 500 /umroh/500.html
+
+# Force UTF-8 Encoding
+AddDefaultCharset UTF-8
+
+# Custom MIME Types
+<IfModule mod_mime.c>
+    AddType application/javascript js
+    AddType text/css css
+    AddType image/svg+xml svg
+    AddType font/woff woff
+    AddType font/woff2 woff2
+</IfModule>
+
+# Prevent access to backup files
+<FilesMatch "\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
