@@ -162,57 +162,8 @@ animatedElements.forEach(element => {
     observer.observe(element);
 });
 
-// ===== COUNTER ANIMATION FOR STATS =====
-// Disabled - stats are now static text, not animated counters
-/*
-const stats = document.querySelectorAll('.stat-item h3');
-let hasAnimated = false;
-
-const animateCounter = (element, target, suffix = '') => {
-    const duration = 2000;
-    const step = target / (duration / 16);
-    let current = 0;
-    
-    const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-            element.textContent = `${Math.floor(target)}${suffix}`;
-            clearInterval(timer);
-        } else {
-            element.textContent = `${Math.floor(current)}${suffix}`;
-        }
-    }, 16);
-};
-
-window.addEventListener('scroll', () => {
-    if (!hasAnimated && window.scrollY > 100) {
-        hasAnimated = true;
-        
-        // Animate the stats (customize these values based on your actual stats)
-        const statValues = [
-            { element: stats[0], value: 15000, suffix: '+' },
-            { element: stats[1], value: 4.9, suffix: '/5' },
-            { element: stats[2], value: 18, suffix: ' Tahun' }
-        ];
-        
-        statValues.forEach(stat => {
-            if (stat.element) {
-                const icon = stat.element.querySelector('i');
-                const iconHTML = icon ? icon.outerHTML : '';
-                
-                // Extract number from current text
-                animateCounter(stat.element, stat.value, stat.suffix);
-                
-                // Re-add icon after animation
-                setTimeout(() => {
-                    const currentText = stat.element.textContent;
-                    stat.element.innerHTML = `${iconHTML} ${currentText}`;
-                }, 2100);
-            }
-        });
-    }
-});
-*/
+// ===== COUNTER ANIMATION REMOVED =====
+// Counter animation has been completely removed for static display
 
 // ===== LAZY LOADING IMAGES =====
 const lazyImages = document.querySelectorAll('img[data-src]');
