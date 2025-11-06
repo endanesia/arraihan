@@ -3,9 +3,9 @@
 return [
     'db' => [
         'host' => 'localhost',
-        'user' => 'root',
-        'pass' => '', // ganti dengan password DB produksi
-        'name' => 'umroh_cms',
+        'user' => 'arraihan_users',
+        'pass' => 'Hallo123123!@#', // ganti dengan password DB produksi
+        'name' => 'arraihan_db',
         'charset' => 'utf8mb4'
     ],
     'app' => [
