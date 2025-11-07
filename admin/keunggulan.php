@@ -1,14 +1,64 @@
 <?php
 require_once __DIR__ . '/header.php';
 
+// Auto-setup keunggulan table if not exists
+function ensure_keunggulan_table() {
+    $db = db();
+    if (!$db) return false;
+    
+    // Check if table exists
+    $result = $db->query("SHOW TABLES LIKE 'keunggulan'");
+    if ($result && $result->num_rows === 0) {
+        // Create table
+        $sql = "CREATE TABLE keunggulan (
+            id INT PRIMARY KEY AUTO_INCREMENT,
+            title VARCHAR(255) NOT NULL,
+            description TEXT NOT NULL,
+            icon VARCHAR(100) NOT NULL,
+            order_num INT DEFAULT 0,
+            is_active TINYINT(1) DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        
+        $db->query($sql);
+        
+        // Insert default data
+        $defaults = [
+            ['Pelayanan Terbaik', 'Kami memberikan pelayanan terbaik untuk setiap perjalanan Anda dengan guide yang berpengalaman dan ramah.', 'fas fa-award', 1, 1],
+            ['Harga Terjangkau', 'Paket perjalanan dengan harga yang kompetitif dan terjangkau tanpa mengurangi kualitas pelayanan.', 'fas fa-money-bill-wave', 2, 1],
+            ['Keamanan Terjamin', 'Keamanan dan kenyamanan perjalanan Anda adalah prioritas utama kami dengan asuransi perjalanan.', 'fas fa-shield-alt', 3, 1]
+        ];
+        
+        $stmt = $db->prepare("INSERT INTO keunggulan (title, description, icon, order_num, is_active) VALUES (?, ?, ?, ?, ?)");
+        foreach ($defaults as $data) {
+            $stmt->bind_param('sssii', $data[0], $data[1], $data[2], $data[3], $data[4]);
+            $stmt->execute();
+        }
+    }
+    return true;
+}
+
+// Ensure table exists
+ensure_keunggulan_table();
+
 // Handle delete action
 if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
     try {
         $db = db();
+        if (!$db || $db->connect_error) {
+            throw new Exception('Database connection failed');
+        }
+        
         $id = (int)$_GET['delete'];
         $stmt = $db->prepare("DELETE FROM keunggulan WHERE id = ?");
+        if (!$stmt) {
+            throw new Exception('Prepare statement failed: ' . $db->error);
+        }
         $stmt->bind_param('i', $id);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception('Execute failed: ' . $stmt->error);
+        }
         header('Location: keunggulan.php?success=deleted');
         exit;
     } catch (Exception $e) {
@@ -28,19 +78,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($title && $description && $icon) {
         try {
             $db = db();
+            if (!$db || $db->connect_error) {
+                throw new Exception('Database connection failed');
+            }
             
             if (isset($_POST['id']) && is_numeric($_POST['id'])) {
                 // Update existing
                 $id = (int)$_POST['id'];
                 $stmt = $db->prepare("UPDATE keunggulan SET title = ?, description = ?, icon = ?, order_num = ?, is_active = ? WHERE id = ?");
+                if (!$stmt) {
+                    throw new Exception('Prepare statement failed: ' . $db->error);
+                }
                 $stmt->bind_param('sssiii', $title, $description, $icon, $order_num, $is_active, $id);
-                $stmt->execute();
+                if (!$stmt->execute()) {
+                    throw new Exception('Execute failed: ' . $stmt->error);
+                }
                 $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Keunggulan berhasil diupdate!</div>';
             } else {
                 // Insert new
                 $stmt = $db->prepare("INSERT INTO keunggulan (title, description, icon, order_num, is_active) VALUES (?, ?, ?, ?, ?)");
+                if (!$stmt) {
+                    throw new Exception('Prepare statement failed: ' . $db->error);
+                }
                 $stmt->bind_param('sssii', $title, $description, $icon, $order_num, $is_active);
-                $stmt->execute();
+                if (!$stmt->execute()) {
+                    throw new Exception('Execute failed: ' . $stmt->error);
+                }
                 $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Keunggulan berhasil ditambahkan!</div>';
             }
         } catch (Exception $e) {
@@ -56,12 +119,16 @@ $edit_keunggulan = null;
 if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
     try {
         $db = db();
-        $id = (int)$_GET['edit'];
-        $stmt = $db->prepare("SELECT * FROM keunggulan WHERE id = ?");
-        $stmt->bind_param('i', $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $edit_keunggulan = $result->fetch_assoc();
+        if ($db && !$db->connect_error) {
+            $id = (int)$_GET['edit'];
+            $stmt = $db->prepare("SELECT * FROM keunggulan WHERE id = ?");
+            if ($stmt) {
+                $stmt->bind_param('i', $id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $edit_keunggulan = $result->fetch_assoc();
+            }
+        }
     } catch (Exception $e) {
         $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Error loading keunggulan: ' . e($e->getMessage()) . '</div>';
     }
@@ -71,9 +138,15 @@ if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
 $keunggulan_list = [];
 try {
     $db = db();
-    $result = $db->query("SELECT * FROM keunggulan ORDER BY order_num ASC, id ASC");
-    while ($row = $result->fetch_assoc()) {
-        $keunggulan_list[] = $row;
+    if ($db && !$db->connect_error) {
+        $result = $db->query("SELECT * FROM keunggulan ORDER BY order_num ASC, id ASC");
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $keunggulan_list[] = $row;
+            }
+        }
+    } else {
+        $message = '<div class="alert alert-warning"><i class="fas fa-database"></i> Database connection error. Please check database configuration.</div>';
     }
 } catch (Exception $e) {
     $message = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> Error loading data: ' . e($e->getMessage()) . '</div>';

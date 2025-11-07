@@ -1,9 +1,15 @@
 <?php
 // App configuration
-// Check for local config first (for development)
-$localConfigPath = __DIR__ . '/config-local.php';
-if (file_exists($localConfigPath)) {
-    return require $localConfigPath;
+// Environment detection - only use local config in development
+$isLocal = ($_SERVER['SERVER_NAME'] ?? '') === 'localhost' || 
+           ($_SERVER['HTTP_HOST'] ?? '') === 'localhost:8080' || 
+           strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1') !== false;
+
+if ($isLocal) {
+    $localConfigPath = __DIR__ . '/config-local.php';
+    if (file_exists($localConfigPath)) {
+        return require $localConfigPath;
+    }
 }
 
 // Production configuration
