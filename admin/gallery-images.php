@@ -3,6 +3,79 @@ require_once __DIR__ . '/../inc/db.php';
 require_login();
 $base = rtrim($config['app']['base_url'] ?? '', '/');
 $msg=''; $err='';
+
+// Image resize function
+function resizeImage($source, $destination, $maxWidth = 1920, $maxHeight = 1080, $quality = 85) {
+    // Get image info
+    $imageInfo = getimagesize($source);
+    if (!$imageInfo) return false;
+    
+    $originalWidth = $imageInfo[0];
+    $originalHeight = $imageInfo[1];
+    $imageType = $imageInfo[2];
+    
+    // Check if resize is needed
+    if ($originalWidth <= $maxWidth && $originalHeight <= $maxHeight) {
+        // No resize needed, just copy
+        return copy($source, $destination);
+    }
+    
+    // Calculate new dimensions
+    $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight);
+    $newWidth = (int)($originalWidth * $ratio);
+    $newHeight = (int)($originalHeight * $ratio);
+    
+    // Create image resource from source
+    switch ($imageType) {
+        case IMAGETYPE_JPEG:
+            $sourceImage = imagecreatefromjpeg($source);
+            break;
+        case IMAGETYPE_PNG:
+            $sourceImage = imagecreatefrompng($source);
+            break;
+        case IMAGETYPE_WEBP:
+            $sourceImage = imagecreatefromwebp($source);
+            break;
+        default:
+            return false;
+    }
+    
+    if (!$sourceImage) return false;
+    
+    // Create new image
+    $newImage = imagecreatetruecolor($newWidth, $newHeight);
+    
+    // Preserve transparency for PNG and WebP
+    if ($imageType == IMAGETYPE_PNG || $imageType == IMAGETYPE_WEBP) {
+        imagealphablending($newImage, false);
+        imagesavealpha($newImage, true);
+        $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
+        imagefilledrectangle($newImage, 0, 0, $newWidth, $newHeight, $transparent);
+    }
+    
+    // Resize image
+    imagecopyresampled($newImage, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+    
+    // Save resized image
+    $result = false;
+    switch ($imageType) {
+        case IMAGETYPE_JPEG:
+            $result = imagejpeg($newImage, $destination, $quality);
+            break;
+        case IMAGETYPE_PNG:
+            $result = imagepng($newImage, $destination, (int)(9 - ($quality / 10)));
+            break;
+        case IMAGETYPE_WEBP:
+            $result = imagewebp($newImage, $destination, $quality);
+            break;
+    }
+    
+    // Clean up
+    imagedestroy($sourceImage);
+    imagedestroy($newImage);
+    
+    return $result;
+}
 if ($_SERVER['REQUEST_METHOD']==='POST'){
   $action = $_POST['action'] ?? 'upload';
   if ($action === 'update') {
@@ -56,18 +129,69 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
           $filename = 'img_'.date('Ymd_His').'_'.bin2hex(random_bytes(4)).$ext;
           $dest = rtrim($upload_dir,'/\\').DIRECTORY_SEPARATOR.$filename;
           
-          if (move_uploaded_file($f['tmp_name'], $dest)){
+          // Get image dimensions for info
+          $imageInfo = getimagesize($f['tmp_name']);
+          $originalWidth = $imageInfo[0] ?? 0;
+          $originalHeight = $imageInfo[1] ?? 0;
+          $originalSize = $f['size'];
+          
+          // Configuration for resize
+          $maxWidth = 1920;   // Maximum width in pixels
+          $maxHeight = 1080;  // Maximum height in pixels  
+          $maxFileSize = 2 * 1024 * 1024; // 2MB in bytes
+          $quality = 85; // JPEG quality (1-100)
+          
+          $resized = false;
+          $resizeReason = '';
+          
+          // Check if resize is needed
+          $needsResize = ($originalWidth > $maxWidth) || 
+                        ($originalHeight > $maxHeight) || 
+                        ($originalSize > $maxFileSize);
+          
+          if ($needsResize) {
+            // Try to resize image
+            if (resizeImage($f['tmp_name'], $dest, $maxWidth, $maxHeight, $quality)) {
+              $resized = true;
+              
+              // Get new file size and dimensions
+              $newSize = filesize($dest);
+              $newImageInfo = getimagesize($dest);
+              $newWidth = $newImageInfo[0] ?? 0;
+              $newHeight = $newImageInfo[1] ?? 0;
+              
+              if ($originalWidth > $maxWidth || $originalHeight > $maxHeight) {
+                $resizeReason .= "diperkecil dari {$originalWidth}x{$originalHeight} ke {$newWidth}x{$newHeight}px";
+              }
+              if ($originalSize > $maxFileSize) {
+                $resizeReason .= ($resizeReason ? ', ' : '') . "dikompres dari " . number_format($originalSize/1024, 1) . "KB ke " . number_format($newSize/1024, 1) . "KB";
+              }
+              
+            } else {
+              $err = 'Gagal mengubah ukuran gambar. Pastikan PHP GD extension aktif.';
+            }
+          } else {
+            // No resize needed, just move file
+            if (!move_uploaded_file($f['tmp_name'], $dest)) {
+              $err = 'Gagal memindahkan file ke direktori upload.';
+            }
+          }
+          
+          // Save to database if upload successful
+          if (!$err) {
             $url = rtrim($config['app']['uploads_url'],'/').'/'.$filename;
             $stmt = db()->prepare('INSERT INTO gallery_images(title,file_path) VALUES(?,?)');
             $stmt->bind_param('ss', $title, $url);
             if ($stmt->execute()) {
-              $msg = 'Gambar berhasil diupload: ' . $filename;
+              if ($resized) {
+                $msg = "Gambar berhasil diupload dan otomatis $resizeReason: $filename";
+              } else {
+                $msg = 'Gambar berhasil diupload: ' . $filename;
+              }
             } else {
               $err = 'Gambar terupload tapi gagal disimpan ke database.';
               @unlink($dest); // cleanup file
             }
-          } else {
-            $err = 'Gagal memindahkan file ke direktori upload. Periksa permission direktori.';
           }
         }
       }
@@ -96,6 +220,9 @@ include __DIR__ . '/header.php';
       <div class="col-md-6">
         <label class="form-label">Pilih Gambar</label>
         <input type="file" name="image" accept="image/*" class="form-control" required>
+        <div class="form-text">
+          Format: JPEG, PNG, WebP. Gambar akan otomatis diperkecil jika lebih dari 1920x1080px atau 2MB.
+        </div>
       </div>
       <div class="col-md-2 d-grid align-items-end">
         <button class="btn btn-success" type="submit">Upload</button>
