@@ -30,6 +30,17 @@ include __DIR__ . '/header.php';
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.description-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    max-height: 2.8em;
+}
 </style>
 
 <div class="container-fluid">
@@ -59,6 +70,11 @@ include __DIR__ . '/header.php';
             <td>#<?= (int)$r['id'] ?></td>
             <td>
               <div class="fw-bold"><?= e($r['title']) ?></div>
+              <?php if ($r['description']): ?>
+                <div class="text-muted small mt-1 description-preview" style="max-width: 200px;" title="<?= e(strip_tags($r['description'])) ?>">
+                  <?= strip_tags($r['description']) ?>
+                </div>
+              <?php endif; ?>
               <?php if ($r['icon_class']): ?>
                 <small class="text-muted">
                   <i class="<?= e($r['icon_class']) ?> me-1"></i><?= e($r['icon_class']) ?>
