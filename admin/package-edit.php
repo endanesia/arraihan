@@ -83,8 +83,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if ($editing) {
                 // UPDATE with description: 16 placeholders (15 fields + id)
                 // title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double, id
-                $stmt = db()->prepare("UPDATE packages SET title=?, description=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
-                $stmt->bind_param($title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
+                $stmt = db()->prepare("UPDATE packages SET title='$title', description='$description', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 $stmt->execute();
                 $ok = 'Paket diperbarui';
             } else {
