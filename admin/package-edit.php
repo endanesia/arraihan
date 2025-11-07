@@ -22,12 +22,32 @@ $price_double = '';
 $err = null; $ok = null;
 
 if ($editing) {
-    $stmt = db()->prepare("SELECT title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
-    $stmt->bind_param('i', $id);
-    $stmt->execute();
-    $stmt->bind_result($title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
-    if (!$stmt->fetch()) { $editing = false; }
-    $stmt->close();
+    // Check if description column exists
+    $has_description = false;
+    try {
+        $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'description'");
+        $has_description = $check_result && $check_result->num_rows > 0;
+    } catch (Exception $e) {
+        $has_description = false;
+    }
+    
+    if ($has_description) {
+        $stmt = db()->prepare("SELECT title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $stmt->bind_result($title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+        if (!$stmt->fetch()) { $editing = false; }
+        $stmt->close();
+    } else {
+        // Fallback for when description column doesn't exist yet
+        $stmt = db()->prepare("SELECT title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $stmt->bind_result($title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+        if (!$stmt->fetch()) { $editing = false; }
+        $stmt->close();
+        $description = ''; // Default empty description
+    }
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
@@ -50,16 +70,40 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if ($title === '' || $price_value === '') { $err = 'Judul dan nilai harga wajib diisi'; }
 
     if (!$err) {
-        if ($editing) {
-            $stmt = db()->prepare("UPDATE packages SET title=?, description=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
-            $stmt->bind_param('sssssssissssssi', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
-            $stmt->execute();
-            $ok = 'Paket diperbarui';
+        // Check if description column exists before trying to save
+        $has_description = false;
+        try {
+            $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'description'");
+            $has_description = $check_result && $check_result->num_rows > 0;
+        } catch (Exception $e) {
+            $has_description = false;
+        }
+        
+        if ($has_description) {
+            if ($editing) {
+                $stmt = db()->prepare("UPDATE packages SET title=?, description=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
+                $stmt->bind_param('sssssssissssssi', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
+                $stmt->execute();
+                $ok = 'Paket diperbarui';
+            } else {
+                $stmt = db()->prepare("INSERT INTO packages(title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $stmt->bind_param('ssssssissssssss', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+                $stmt->execute();
+                header('Location: ' . $base . '/admin/packages'); exit;
+            }
         } else {
-            $stmt = db()->prepare("INSERT INTO packages(title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-            $stmt->bind_param('ssssssissssssss', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
-            $stmt->execute();
-            header('Location: ' . $base . '/admin/packages'); exit;
+            // Fallback for when description column doesn't exist yet
+            if ($editing) {
+                $stmt = db()->prepare("UPDATE packages SET title=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
+                $stmt->bind_param('ssssssisssssssi', $title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
+                $stmt->execute();
+                $ok = 'Paket diperbarui (description field not available - please run database migration)';
+            } else {
+                $stmt = db()->prepare("INSERT INTO packages(title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $stmt->bind_param('ssssssisssssss', $title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+                $stmt->execute();
+                header('Location: ' . $base . '/admin/packages'); exit;
+            }
         }
     }
 }
@@ -160,11 +204,34 @@ include __DIR__ . '/header.php';
         </div>
       </div>
 
+      <?php
+      // Check if description column exists
+      $has_description = false;
+      try {
+          $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'description'");
+          $has_description = $check_result && $check_result->num_rows > 0;
+      } catch (Exception $e) {
+          $has_description = false;
+      }
+      
+      if ($has_description): ?>
       <div class="col-12">
         <label class="form-label">Deskripsi Paket</label>
         <textarea name="description" id="description" class="form-control ckeditor" rows="6"><?= e($description) ?></textarea>
         <div class="form-text">Deskripsi lengkap tentang paket perjalanan ini</div>
       </div>
+      <?php else: ?>
+      <div class="col-12">
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          <strong>Database Migration Required:</strong> 
+          Description field is not available. Please run the database migration to enable rich text descriptions.
+          <a href="/migrate-packages-description.php" target="_blank" class="btn btn-sm btn-outline-warning ms-2">
+            <i class="fas fa-database me-1"></i>Run Migration
+          </a>
+        </div>
+      </div>
+      <?php endif; ?>
 
       <!-- Pricing Section -->
       <div class="col-12 mt-4">
@@ -255,85 +322,91 @@ include __DIR__ . '/header.php';
 <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize CKEditor for Description
-    ClassicEditor
-        .create(document.querySelector('#description'), {
-            toolbar: [
-                'heading', '|',
-                'bold', 'italic', 'underline', '|',
-                'bulletedList', 'numberedList', '|',
-                'outdent', 'indent', '|',
-                'blockQuote', 'insertTable', '|',
-                'link', '|',
-                'undo', 'redo'
-            ],
-            heading: {
-                options: [
-                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                ]
-            },
-            table: {
-                contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
-                ]
-            }
-        })
-        .then(editor => {
-            window.descriptionEditor = editor;
-        })
-        .catch(error => {
-            console.error('CKEditor initialization failed:', error);
-        });
+    // Initialize CKEditor for Description (only if field exists)
+    const descriptionField = document.querySelector('#description');
+    if (descriptionField) {
+        ClassicEditor
+            .create(descriptionField, {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'blockQuote', 'insertTable', '|',
+                    'link', '|',
+                    'undo', 'redo'
+                ],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                },
+                table: {
+                    contentToolbar: [
+                        'tableColumn',
+                        'tableRow',
+                        'mergeTableCells'
+                    ]
+                }
+            })
+            .then(editor => {
+                window.descriptionEditor = editor;
+            })
+            .catch(error => {
+                console.error('CKEditor Description initialization failed:', error);
+            });
+    }
 
     // Initialize CKEditor for Features
-    ClassicEditor
-        .create(document.querySelector('#features'), {
-            toolbar: [
-                'heading', '|',
-                'bold', 'italic', 'underline', '|',
-                'bulletedList', 'numberedList', '|',
-                'outdent', 'indent', '|',
-                'blockQuote', 'insertTable', '|',
-                'link', '|',
-                'undo', 'redo'
-            ],
-            heading: {
-                options: [
-                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                ]
-            },
-            table: {
-                contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
-                ]
-            }
-        })
-        .then(editor => {
-            window.featuresEditor = editor;
-        })
-        .catch(error => {
-            console.error('CKEditor initialization failed:', error);
-        });
+    const featuresField = document.querySelector('#features');
+    if (featuresField) {
+        ClassicEditor
+            .create(featuresField, {
+                toolbar: [
+                    'heading', '|',
+                    'bold', 'italic', 'underline', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'blockQuote', 'insertTable', '|',
+                    'link', '|',
+                    'undo', 'redo'
+                ],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                },
+                table: {
+                    contentToolbar: [
+                        'tableColumn',
+                        'tableRow',
+                        'mergeTableCells'
+                    ]
+                }
+            })
+            .then(editor => {
+                window.featuresEditor = editor;
+            })
+            .catch(error => {
+                console.error('CKEditor Features initialization failed:', error);
+            });
+    }
 
     // Handle form submission to ensure CKEditor content is saved
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(e) {
             // Update textareas with CKEditor content before submission
-            if (window.descriptionEditor) {
+            if (window.descriptionEditor && document.querySelector('#description')) {
                 document.querySelector('#description').value = window.descriptionEditor.getData();
             }
-            if (window.featuresEditor) {
+            if (window.featuresEditor && document.querySelector('#features')) {
                 document.querySelector('#features').value = window.featuresEditor.getData();
             }
         });
