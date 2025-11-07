@@ -49,36 +49,119 @@ function youtube_id_from_url($url) {
 }
 
 // --- Simple settings storage (key/value) ---
+function get_settings_table_structure() {
+    static $structure = null;
+    if ($structure !== null) return $structure;
+    
+    $db = db(); if (!$db) return null;
+    
+    // Check if settings table exists and get its structure
+    $result = $db->query("SHOW TABLES LIKE 'settings'");
+    if ($result->num_rows === 0) {
+        $structure = 'none';
+        return $structure;
+    }
+    
+    // Get column names
+    $result = $db->query("SHOW COLUMNS FROM settings");
+    $columns = [];
+    while ($row = $result->fetch_assoc()) {
+        $columns[] = $row['Field'];
+    }
+    
+    // Determine structure type
+    if (in_array('skey', $columns) && in_array('svalue', $columns)) {
+        $structure = 'skey_svalue';
+    } elseif (in_array('setting_key', $columns) && in_array('setting_value', $columns)) {
+        $structure = 'setting_key_value';
+    } else {
+        $structure = 'unknown';
+    }
+    
+    return $structure;
+}
+
 function ensure_settings_table() {
     $db = db(); if (!$db) return false;
-    $sql = "CREATE TABLE IF NOT EXISTS settings (\n        skey VARCHAR(100) PRIMARY KEY,\n        svalue TEXT NULL,\n        updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
-    $db->query($sql);
-    return $db->errno === 0;
+    
+    $structure = get_settings_table_structure();
+    
+    if ($structure === 'none') {
+        // Create new table with skey/svalue structure
+        $sql = "CREATE TABLE IF NOT EXISTS settings (
+            skey VARCHAR(100) PRIMARY KEY,
+            svalue TEXT NULL,
+            updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        $db->query($sql);
+        return $db->errno === 0;
+    }
+    
+    return true; // Table already exists
 }
 
 function get_setting($key, $default = '') {
     $db = db(); if (!$db) return $default;
-    ensure_settings_table();
-    $stmt = $db->prepare("SELECT svalue FROM settings WHERE skey=? LIMIT 1");
-    if (!$stmt) return $default;
-    $stmt->bind_param('s', $key);
-    $stmt->execute();
-    $stmt->bind_result($val);
-    if ($stmt->fetch()) {
-        $stmt->close();
-        return (string)$val;
+    
+    $structure = get_settings_table_structure();
+    
+    if ($structure === 'none') {
+        ensure_settings_table();
+        $structure = 'skey_svalue';
     }
-    $stmt->close();
+    
+    if ($structure === 'skey_svalue') {
+        $stmt = $db->prepare("SELECT svalue FROM settings WHERE skey=? LIMIT 1");
+        if (!$stmt) return $default;
+        $stmt->bind_param('s', $key);
+        $stmt->execute();
+        $stmt->bind_result($val);
+        if ($stmt->fetch()) {
+            $stmt->close();
+            return (string)$val;
+        }
+        $stmt->close();
+    } elseif ($structure === 'setting_key_value') {
+        $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key=? LIMIT 1");
+        if (!$stmt) return $default;
+        $stmt->bind_param('s', $key);
+        $stmt->execute();
+        $stmt->bind_result($val);
+        if ($stmt->fetch()) {
+            $stmt->close();
+            return (string)$val;
+        }
+        $stmt->close();
+    }
+    
     return $default;
 }
 
 function set_setting($key, $value) {
     $db = db(); if (!$db) return false;
-    ensure_settings_table();
-    $stmt = $db->prepare("INSERT INTO settings(skey, svalue) VALUES(?, ?) ON DUPLICATE KEY UPDATE svalue=VALUES(svalue)");
-    if (!$stmt) return false;
-    $stmt->bind_param('ss', $key, $value);
-    $ok = $stmt->execute();
-    $stmt->close();
-    return $ok;
+    
+    $structure = get_settings_table_structure();
+    
+    if ($structure === 'none') {
+        ensure_settings_table();
+        $structure = 'skey_svalue';
+    }
+    
+    if ($structure === 'skey_svalue') {
+        $stmt = $db->prepare("INSERT INTO settings(skey, svalue) VALUES(?, ?) ON DUPLICATE KEY UPDATE svalue=VALUES(svalue)");
+        if (!$stmt) return false;
+        $stmt->bind_param('ss', $key, $value);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
+    } elseif ($structure === 'setting_key_value') {
+        $stmt = $db->prepare("INSERT INTO settings(setting_key, setting_value) VALUES(?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)");
+        if (!$stmt) return false;
+        $stmt->bind_param('ss', $key, $value);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
+    }
+    
+    return false;
 }
