@@ -8,7 +8,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setup_hero'])) {
     try {
         $db = db();
         
-        // Create settings table
+        // Check if settings table exists and get its structure
+        $result = $db->query("SHOW TABLES LIKE 'settings'");
+        $tableExists = $result->num_rows > 0;
+        
+        if ($tableExists) {
+            // Check existing structure
+            $result = $db->query("SHOW COLUMNS FROM settings");
+            $columns = [];
+            while ($row = $result->fetch_assoc()) {
+                $columns[] = $row['Field'];
+            }
+            
+            // If table exists but doesn't have correct structure, rename it
+            if (!in_array('setting_key', $columns) || !in_array('setting_value', $columns)) {
+                $backupName = 'settings_backup_' . date('Ymd_His');
+                $db->query("RENAME TABLE settings TO $backupName");
+                $message .= '<div class="alert alert-info">Tabel settings lama di-backup ke: ' . $backupName . '</div>';
+            }
+        }
+        
+        // Create new settings table with correct structure
         $createTable = "
             CREATE TABLE IF NOT EXISTS `settings` (
               `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -36,12 +56,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setup_hero'])) {
         ];
         
         foreach ($defaultSettings as $key => $value) {
-            $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
-            $stmt->bind_param('ss', $key, $value);
+            $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+            $stmt->bind_param('sss', $key, $value, $value);
             $stmt->execute();
         }
         
-        $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Hero settings berhasil di-setup!</div>';
+        $message .= '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Hero settings berhasil di-setup!</div>';
         $status = 'success';
         
     } catch (Exception $e) {
@@ -50,20 +70,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['setup_hero'])) {
     }
 }
 
-// Check if settings table exists
+// Check if settings table exists and has correct structure
 $tableExists = false;
 $settingsCount = 0;
+$hasCorrectStructure = false;
+$tableInfo = '';
 try {
     $db = db();
     $result = $db->query("SHOW TABLES LIKE 'settings'");
     $tableExists = $result->num_rows > 0;
     
     if ($tableExists) {
-        $result = $db->query("SELECT COUNT(*) as count FROM settings WHERE setting_key LIKE 'hero_%'");
-        $settingsCount = $result->fetch_assoc()['count'];
+        // Check if table has correct structure
+        $result = $db->query("SHOW COLUMNS FROM settings");
+        $columns = [];
+        while ($row = $result->fetch_assoc()) {
+            $columns[] = $row['Field'];
+        }
+        $hasCorrectStructure = in_array('setting_key', $columns) && in_array('setting_value', $columns);
+        $tableInfo = 'Columns: ' . implode(', ', $columns);
+        
+        if ($hasCorrectStructure) {
+            $result = $db->query("SELECT COUNT(*) as count FROM settings WHERE setting_key LIKE 'hero_%'");
+            $settingsCount = $result->fetch_assoc()['count'];
+        }
     }
 } catch (Exception $e) {
-    // Database not available
+    $tableInfo = 'Error: ' . $e->getMessage();
 }
 ?>
 
@@ -96,15 +129,32 @@ try {
                                     Tabel Settings: <?= $tableExists ? 'Sudah ada' : 'Belum ada' ?>
                                 </li>
                                 <li class="mb-2">
+                                    <i class="fas fa-<?= $hasCorrectStructure ? 'check-circle text-success' : 'times-circle text-warning' ?>"></i>
+                                    Struktur Tabel: <?= $hasCorrectStructure ? 'Benar' : 'Perlu diperbaiki' ?>
+                                </li>
+                                <li class="mb-2">
                                     <i class="fas fa-<?= $settingsCount > 0 ? 'check-circle text-success' : 'times-circle text-warning' ?>"></i>
                                     Hero Settings: <?= $settingsCount ?> items
                                 </li>
+                                <?php if ($tableInfo): ?>
+                                <li class="mb-2">
+                                    <small class="text-muted"><?= e($tableInfo) ?></small>
+                                </li>
+                                <?php endif; ?>
                             </ul>
 
-                            <?php if (!$tableExists || $settingsCount == 0): ?>
+                            <?php if (!$tableExists || !$hasCorrectStructure || $settingsCount == 0): ?>
                             <div class="alert alert-info">
                                 <i class="fas fa-info-circle"></i>
-                                <strong>Setup Diperlukan:</strong> Klik tombol di bawah untuk membuat tabel dan data default.
+                                <strong>Setup Diperlukan:</strong> 
+                                <?php if (!$tableExists): ?>
+                                    Tabel settings belum ada.
+                                <?php elseif (!$hasCorrectStructure): ?>
+                                    Struktur tabel settings perlu diperbaiki.
+                                <?php elseif ($settingsCount == 0): ?>
+                                    Data hero settings belum ada.
+                                <?php endif; ?>
+                                Klik tombol di bawah untuk setup.
                             </div>
                             <?php endif; ?>
 
@@ -131,7 +181,7 @@ try {
                 </div>
             </div>
 
-            <?php if ($settingsCount > 0): ?>
+            <?php if ($hasCorrectStructure && $settingsCount > 0): ?>
             <div class="card shadow-sm mt-4">
                 <div class="card-header">
                     <h6 class="card-title mb-0">
