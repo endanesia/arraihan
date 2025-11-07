@@ -11,24 +11,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stat1_desc = trim($_POST['stat1_desc'] ?? '');
     $stat2_text = trim($_POST['stat2_text'] ?? '');
     $stat2_desc = trim($_POST['stat2_desc'] ?? '');
+    $background_image = '';
+
+    // Handle image upload
+    if (isset($_FILES['background_image']) && $_FILES['background_image']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = __DIR__ . '/../images/';
+        $file_extension = strtolower(pathinfo($_FILES['background_image']['name'], PATHINFO_EXTENSION));
+        $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp'];
+        
+        if (in_array($file_extension, $allowed_extensions)) {
+            $new_filename = 'hero-bg.' . $file_extension;
+            $upload_path = $upload_dir . $new_filename;
+            
+            if (move_uploaded_file($_FILES['background_image']['tmp_name'], $upload_path)) {
+                $background_image = '/images/' . $new_filename;
+            }
+        }
+    }
 
     if ($title && $subtitle) {
-        // Save to database or file (implement based on your needs)
-        $message = '<div class="alert alert-success">Hero section berhasil disimpan!</div>';
+        try {
+            // Create/update hero settings in database
+            $db = db();
+            
+            // Check if hero settings exist
+            $check = $db->query("SELECT COUNT(*) as count FROM settings WHERE setting_key LIKE 'hero_%'");
+            $exists = $check->fetch_assoc()['count'] > 0;
+            
+            // Save all hero settings
+            $hero_settings = [
+                'hero_title' => $title,
+                'hero_subtitle' => $subtitle,
+                'hero_button_text' => $button_text,
+                'hero_stat1_text' => $stat1_text,
+                'hero_stat1_desc' => $stat1_desc,
+                'hero_stat2_text' => $stat2_text,
+                'hero_stat2_desc' => $stat2_desc
+            ];
+            
+            if ($background_image) {
+                $hero_settings['hero_background'] = $background_image;
+            }
+            
+            foreach ($hero_settings as $key => $value) {
+                $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+                $stmt->bind_param('sss', $key, $value, $value);
+                $stmt->execute();
+            }
+            
+            $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Hero section berhasil disimpan!</div>';
+        } catch (Exception $e) {
+            $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Error: ' . e($e->getMessage()) . '</div>';
+        }
     } else {
-        $message = '<div class="alert alert-danger">Title dan subtitle wajib diisi!</div>';
+        $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Title dan subtitle wajib diisi!</div>';
     }
 }
 
-// Get current hero data (implement this based on your storage method)
+// Get current hero data from database
+function get_hero_setting($key, $default = '') {
+    try {
+        $db = db();
+        $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+        $stmt->bind_param('s', $key);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['setting_value'] : $default;
+    } catch (Exception $e) {
+        return $default;
+    }
+}
+
 $hero_data = [
-    'title' => 'Perjalanan Suci Berkualitas, Biaya Bersahabat',
-    'subtitle' => 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.',
-    'button_text' => 'Lihat Paket Umroh',
-    'stat1_text' => '24 Januri 2026',
-    'stat1_desc' => 'Jadwal Berangkat',
-    'stat2_text' => 'Program Pembiayaan',
-    'stat2_desc' => 'Pembiayaan dana talangan Umrah'
+    'title' => get_hero_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat'),
+    'subtitle' => get_hero_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.'),
+    'button_text' => get_hero_setting('hero_button_text', 'Lihat Paket Umroh'),
+    'stat1_text' => get_hero_setting('hero_stat1_text', '24 Januri 2026'),
+    'stat1_desc' => get_hero_setting('hero_stat1_desc', 'Jadwal Berangkat'),
+    'stat2_text' => get_hero_setting('hero_stat2_text', 'Program Pembiayaan'),
+    'stat2_desc' => get_hero_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah'),
+    'background' => get_hero_setting('hero_background', '/images/hero-bg.jpg')
 ];
 ?>
 
@@ -52,7 +115,19 @@ $hero_data = [
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="background_image" class="form-label">Background Image</label>
+                            <input type="file" class="form-control" id="background_image" name="background_image" accept="image/*">
+                            <div class="form-text">Upload gambar background hero (JPG, PNG, WEBP). Ukuran yang disarankan: 1920x1080px</div>
+                            <?php if ($hero_data['background']): ?>
+                            <div class="mt-2">
+                                <small class="text-muted">Background saat ini:</small><br>
+                                <img src="<?= e($hero_data['background']) ?>" alt="Current background" class="img-thumbnail" style="max-width: 200px; max-height: 100px;">
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="mb-3">
                             <label for="title" class="form-label">Judul Utama *</label>
                             <input type="text" class="form-control" id="title" name="title" 
@@ -115,37 +190,7 @@ $hero_data = [
                 </div>
             </div>
 
-            <div class="card shadow-sm mt-4">
-                <div class="card-header">
-                    <h6 class="card-title mb-0">
-                        <i class="fas fa-info-circle text-info me-2"></i>
-                        Preview
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="bg-light p-4 rounded">
-                        <h2 class="text-primary"><?= e($hero_data['title']) ?></h2>
-                        <p class="text-muted mb-3"><?= nl2br(e($hero_data['subtitle'])) ?></p>
-                        <button class="btn btn-primary btn-sm mb-3" disabled>
-                            <i class="fas fa-calendar-check"></i> <?= e($hero_data['button_text']) ?>
-                        </button>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="text-center">
-                                    <h5 class="text-success"><?= e($hero_data['stat1_text']) ?></h5>
-                                    <small class="text-muted"><?= e($hero_data['stat1_desc']) ?></small>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-center">
-                                    <h5 class="text-success"><?= e($hero_data['stat2_text']) ?></h5>
-                                    <small class="text-muted"><?= e($hero_data['stat2_desc']) ?></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

@@ -50,6 +50,30 @@ $company_address = function_exists('get_setting') ? get_setting('address', '') :
 $company_email = function_exists('get_setting') ? get_setting('email', '') : '';
 $company_hours = function_exists('get_setting') ? get_setting('hours', '') : '';
 
+// Hero section settings
+function get_hero_setting($key, $default = '') {
+    try {
+        if (!function_exists('db') || !db()) return $default;
+        $stmt = db()->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
+        $stmt->bind_param('s', $key);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        return $row ? $row['setting_value'] : $default;
+    } catch (Exception $e) {
+        return $default;
+    }
+}
+
+$hero_title = get_hero_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat');
+$hero_subtitle = get_hero_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.');
+$hero_button_text = get_hero_setting('hero_button_text', 'Lihat Paket Umroh');
+$hero_stat1_text = get_hero_setting('hero_stat1_text', '24 Januri 2026');
+$hero_stat1_desc = get_hero_setting('hero_stat1_desc', 'Jadwal Berangkat');
+$hero_stat2_text = get_hero_setting('hero_stat2_text', 'Program Pembiayaan');
+$hero_stat2_desc = get_hero_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah');
+$hero_background = get_hero_setting('hero_background', '');
+
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
@@ -103,7 +127,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     </header>
 
     <!-- Hero Section -->
-    <section class="hero" id="home">
+    <section class="hero" id="home"<?php if ($hero_background): ?> style="background-image: url('<?= e($hero_background) ?>');"<?php endif; ?>>
         <div class="hero-overlay"></div>
         <div class="container">
             <div class="hero-content">
@@ -111,11 +135,11 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                     <i class="fas fa-certificate"></i>
                     <span>PT. ArRaihan Islami Travelindo</span>
                 </div>
-                <h1 class="hero-title">Perjalanan Suci Berkualitas, Biaya Bersahabat</h1>
-                <p class="hero-subtitle">Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.</p>
+                <h1 class="hero-title"><?= e($hero_title) ?></h1>
+                <p class="hero-subtitle"><?= e($hero_subtitle) ?></p>
                 <div class="hero-buttons">
                     <a href="#paket" class="btn btn-primary">
-                        <i class="fas fa-calendar-check"></i> Lihat Paket Umroh
+                        <i class="fas fa-calendar-check"></i> <?= e($hero_button_text) ?>
                     </a>
                     <?php if (!empty($link_whatsapp)): ?>
                     <a href="<?= e($link_whatsapp) ?>" class="btn btn-secondary" target="_blank"><i class="fab fa-whatsapp"></i> Konsultasi Gratis</a>
@@ -123,13 +147,13 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                 </div>
                 <div class="hero-stats">
                     <div class="stat-item">
-                        <h3><i class="fas fa-users"></i> 24 Januri 2026</h3>
-                        <p>Jadwal Berangkat</p>
+                        <h3><i class="fas fa-users"></i> <?= e($hero_stat1_text) ?></h3>
+                        <p><?= e($hero_stat1_desc) ?></p>
                     </div>
 
                     <div class="stat-item">
-                        <h3><i class="fas fa-award"></i> Program Pembiayaan</h3>
-                        <p>Pembiayaan dana talangan Umrah</p>
+                        <h3><i class="fas fa-award"></i> <?= e($hero_stat2_text) ?></h3>
+                        <p><?= e($hero_stat2_desc) ?></p>
                     </div>
                 </div>
             </div>
