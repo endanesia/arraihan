@@ -44,12 +44,12 @@ function nav_active($needle){
       
       <!-- Homepage Menu with Submenu -->
       <li class="nav-item">
-        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/about') ? 'active' : '' ?>" 
+        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') ? 'active' : '' ?>" 
            href="#" onclick="toggleSubmenu('homepage-menu')">
           <span><i class="fas fa-home me-2"></i>Homepage</span>
           <i class="fas fa-chevron-down submenu-toggle" id="homepage-arrow"></i>
         </a>
-        <ul class="nav flex-column ps-3 mt-1 submenu" id="homepage-menu" style="display: <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/about') ? 'block' : 'none' ?>;">
+        <ul class="nav flex-column ps-3 mt-1 submenu" id="homepage-menu" style="display: <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') ? 'block' : 'none' ?>;">
           <li class="nav-item">
             <a class="nav-link <?= nav_active('/admin/hero') ?>" href="<?= e($base) ?>/admin/hero">
               <i class="fas fa-image me-2"></i>Hero
@@ -58,6 +58,11 @@ function nav_active($needle){
           <li class="nav-item">
             <a class="nav-link <?= nav_active('/admin/greeting') ?>" href="<?= e($base) ?>/admin/greeting">
               <i class="fas fa-handshake me-2"></i>Greeting
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <?= nav_active('/admin/keunggulan') ?>" href="<?= e($base) ?>/admin/keunggulan">
+              <i class="fas fa-star me-2"></i>Keunggulan
             </a>
           </li>
           <li class="nav-item">

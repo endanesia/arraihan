@@ -71,6 +71,14 @@ $greeting_button_text = get_setting('greeting_button_text', 'Pelajari Lebih Lanj
 $greeting_button_link = get_setting('greeting_button_link', '#paket');
 $greeting_background = get_setting('greeting_background', '');
 
+// Keunggulan (Benefits) data from database
+$keunggulan = [];
+if (function_exists('db') && db()) {
+    if ($res = db()->query("SELECT * FROM keunggulan WHERE is_active = 1 ORDER BY order_num ASC, id ASC")) {
+        while ($row = $res->fetch_assoc()) { $keunggulan[] = $row; }
+    }
+}
+
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
@@ -193,62 +201,61 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                 <p class="section-desc">Mengapa memilih Raihan Travelindo untuk perjalanan ibadah Anda</p>
             </div>
             <div class="keunggulan-grid">
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-certificate"></i>
+                <?php if (!empty($keunggulan)): ?>
+                    <?php foreach ($keunggulan as $item): ?>
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="<?= e($item['icon']) ?>"></i>
+                        </div>
+                        <h3><?= e($item['title']) ?></h3>
+                        <p><?= e($item['description']) ?></p>
                     </div>
-                    <h3>Legalitas Terjamin</h3>
-                    <p>Terdaftar di Kementerian Agama RI dengan Izin PPIU dan PIHK resmi dari pemerintah</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-medal"></i>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <!-- Fallback content if no keunggulan data -->
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3>Mutu Pelayanan</h3>
+                        <p>Telah lulus uji dan bersertifikasi memenuhi kualifikasi SNI ISO 9001:2015 QMS</p>
                     </div>
-                    <h3>Akreditasi A</h3>
-                    <p>Biro perjalanan haji umroh terbaik dengan predikat "A" dari Komite Akreditasi Nasional</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-shield-alt"></i>
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Jadwal Pasti</h3>
+                        <p>Semua paket sudah tertera tanggal berangkat, nomor pesawat & itinerary perjalanan yang jelas</p>
                     </div>
-                    <h3>Mutu Pelayanan</h3>
-                    <p>Telah lulus uji dan bersertifikasi memenuhi kualifikasi SNI ISO 9001:2015 QMS</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-calendar-check"></i>
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                        <h3>Direct Flight</h3>
+                        <p>Penerbangan langsung tanpa transit sehingga jamaah tidak perlu menunggu dan lebih nyaman</p>
                     </div>
-                    <h3>Jadwal Pasti</h3>
-                    <p>Semua paket sudah tertera tanggal berangkat, nomor pesawat & itinerary perjalanan yang jelas</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-plane"></i>
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="fas fa-hotel"></i>
+                        </div>
+                        <h3>Hotel Strategis</h3>
+                        <p>Hotel kami di ring 1 dekat masjid, baik di Masjidil Haram maupun di Masjid Nabawi</p>
                     </div>
-                    <h3>Direct Flight</h3>
-                    <p>Penerbangan langsung tanpa transit sehingga jamaah tidak perlu menunggu dan lebih nyaman</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-hotel"></i>
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3>Muthawif Profesional</h3>
+                        <p>Pembimbing ibadah yang berpengalaman dan bermukim di Mekkah untuk melayani jamaah</p>
                     </div>
-                    <h3>Hotel Strategis</h3>
-                    <p>Hotel kami di ring 1 dekat masjid, baik di Masjidil Haram maupun di Masjid Nabawi</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-user-tie"></i>
+                    <div class="keunggulan-card">
+                        <div class="keunggulan-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3>Wireless Headset</h3>
+                        <p>Asistensi menggunakan alat bantu wireless headset untuk memudahkan thawaf dan sa'i</p>
                     </div>
-                    <h3>Muthawif Profesional</h3>
-                    <p>Pembimbing ibadah yang berpengalaman dan bermukim di Mekkah untuk melayani jamaah</p>
-                </div>
-                <div class="keunggulan-card">
-                    <div class="keunggulan-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h3>Wireless Headset</h3>
-                    <p>Asistensi menggunakan alat bantu wireless headset untuk memudahkan thawaf dan sa'i</p>
-                </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
