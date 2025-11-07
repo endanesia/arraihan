@@ -1,6 +1,7 @@
-<?php require_once __DIR__ . '/header.php'; ?>
-<?php $base = rtrim($config['app']['base_url'] ?? '', '/'); ?>
 <?php
+require_once __DIR__ . '/../inc/db.php';
+require_login();
+$base = rtrim($config['app']['base_url'] ?? '', '/');
 $msg=''; $err='';
 if ($_SERVER['REQUEST_METHOD']==='POST'){
   $action = $_POST['action'] ?? 'upload';
@@ -15,33 +16,67 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
     }
   } else {
     $title = trim($_POST['title'] ?? '');
-    if (isset($_FILES['image']) && $_FILES['image']['error']===UPLOAD_ERR_OK){
+    
+    // Debug upload
+    if (!isset($_FILES['image'])) {
+      $err = 'Tidak ada file yang dikirim. Pastikan form menggunakan enctype="multipart/form-data".';
+    } elseif ($_FILES['image']['error'] !== UPLOAD_ERR_OK) {
+      $upload_errors = [
+        UPLOAD_ERR_INI_SIZE => 'File terlalu besar (melebihi upload_max_filesize)',
+        UPLOAD_ERR_FORM_SIZE => 'File terlalu besar (melebihi MAX_FILE_SIZE)',
+        UPLOAD_ERR_PARTIAL => 'File hanya terupload sebagian',
+        UPLOAD_ERR_NO_FILE => 'Tidak ada file yang dipilih',
+        UPLOAD_ERR_NO_TMP_DIR => 'Folder temporary tidak ditemukan',
+        UPLOAD_ERR_CANT_WRITE => 'Gagal menulis file ke disk',
+        UPLOAD_ERR_EXTENSION => 'Upload dibatalkan oleh extension PHP'
+      ];
+      $err = $upload_errors[$_FILES['image']['error']] ?? 'Error upload tidak diketahui: ' . $_FILES['image']['error'];
+    } else {
       $f = $_FILES['image'];
-      $allowed = ['image/jpeg'=>'.jpg','image/png'=>'.png','image/webp'=>'.webp'];
-      if (!isset($allowed[$f['type']])) {
-        $err = 'Format gambar tidak didukung.';
+      
+      // Validate file type
+      $allowed = ['image/jpeg'=>'.jpg','image/png'=>'.png','image/webp'=>'.webp','image/jpg'=>'.jpg'];
+      $finfo = finfo_open(FILEINFO_MIME_TYPE);
+      $detected_type = finfo_file($finfo, $f['tmp_name']);
+      finfo_close($finfo);
+      
+      if (!isset($allowed[$detected_type])) {
+        $err = 'Format gambar tidak didukung. Terdeteksi: ' . $detected_type . '. Yang didukung: JPEG, PNG, WebP.';
       } else {
-        if (!is_dir($config['app']['uploads_dir'])) @mkdir($config['app']['uploads_dir'], 0777, true);
-        $ext = $allowed[$f['type']];
-        $filename = 'img_'.date('Ymd_His').'_'.bin2hex(random_bytes(4)).$ext;
-        $dest = rtrim($config['app']['uploads_dir'],'/\\').DIRECTORY_SEPARATOR.$filename;
-        if (move_uploaded_file($f['tmp_name'], $dest)){
-          $url = rtrim($config['app']['uploads_url'],'/').'/'.$filename;
-          $stmt = db()->prepare('INSERT INTO gallery_images(title,file_path) VALUES(?,?)');
-          $stmt->bind_param('ss', $title, $url);
-          $stmt->execute();
-          $msg = 'Gambar berhasil diupload.';
-        } else {
-          $err = 'Gagal upload file.';
+        // Create directory if not exists
+        $upload_dir = $config['app']['uploads_dir'];
+        if (!is_dir($upload_dir)) {
+          if (!@mkdir($upload_dir, 0755, true)) {
+            $err = 'Gagal membuat direktori upload: ' . $upload_dir;
+          }
+        }
+        
+        if (!$err) {
+          $ext = $allowed[$detected_type];
+          $filename = 'img_'.date('Ymd_His').'_'.bin2hex(random_bytes(4)).$ext;
+          $dest = rtrim($upload_dir,'/\\').DIRECTORY_SEPARATOR.$filename;
+          
+          if (move_uploaded_file($f['tmp_name'], $dest)){
+            $url = rtrim($config['app']['uploads_url'],'/').'/'.$filename;
+            $stmt = db()->prepare('INSERT INTO gallery_images(title,file_path) VALUES(?,?)');
+            $stmt->bind_param('ss', $title, $url);
+            if ($stmt->execute()) {
+              $msg = 'Gambar berhasil diupload: ' . $filename;
+            } else {
+              $err = 'Gambar terupload tapi gagal disimpan ke database.';
+              @unlink($dest); // cleanup file
+            }
+          } else {
+            $err = 'Gagal memindahkan file ke direktori upload. Periksa permission direktori.';
+          }
         }
       }
-    } else {
-      $err = 'Pilih file gambar terlebih dahulu.';
     }
   }
 }
 
 $res = db()->query('SELECT * FROM gallery_images ORDER BY id DESC');
+include __DIR__ . '/header.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
