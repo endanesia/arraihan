@@ -747,19 +747,19 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     
     <?php if (!empty($link_youtube)): ?>
     <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank" 
-       style="position: fixed; bottom: 305px; right: 30px; width: 50px; height: 50px; background: #FF0000 !important; z-index: 1000 !important; display: flex !important;">
+       style="position: fixed; bottom: 175px; right: 30px; width: 50px; height: 50px; background: #FF0000 !important; z-index: 1000 !important; display: flex !important;">
         <i class="fab fa-youtube"></i>
+    </a>
+    <?php endif; ?>
+    <?php if (!empty($link_instagram)): ?>
+    <a href="<?= e($link_instagram) ?>" class="social-float instagram-float" target="_blank">
+        <i class="fab fa-instagram"></i>
     </a>
     <?php endif; ?>
     <?php if (!empty($link_threads)): ?>
     <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank"
-       style="position: fixed; bottom: 370px; right: 30px; width: 50px; height: 50px; background: #000000 !important; z-index: 1000 !important; display: flex !important;">
+       style="position: fixed; bottom: 240px; right: 30px; width: 50px; height: 50px; background: #000000 !important; z-index: 1000 !important; display: flex !important;">
         <i class="fas fa-at"></i>
-    </a>
-    <?php endif; ?>
-<?php if (!empty($link_instagram)): ?>
-    <a href="<?= e($link_instagram) ?>" class="social-float instagram-float" target="_blank">
-        <i class="fab fa-instagram"></i>
     </a>
     <?php endif; ?>
     <?php if (!empty($link_tiktok)): ?>

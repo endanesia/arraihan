@@ -1191,7 +1191,7 @@ ul {
 }
 
 .youtube-float {
-    bottom: 305px;
+    bottom: 175px;
     background: #FF0000 !important;
     z-index: 1000 !important;
     display: flex !important;
@@ -1202,7 +1202,7 @@ ul {
 }
 
 .threads-float {
-    bottom: 370px;
+    bottom: 240px;
     background: #000000 !important;
     z-index: 1000 !important;
     display: flex !important;
@@ -1214,7 +1214,7 @@ ul {
 
 .scroll-top {
     position: fixed;
-    bottom: 445px;
+    bottom: 305px;
     right: 30px;
     width: 50px;
     height: 50px;
@@ -1412,19 +1412,19 @@ ul {
     }
     
     .youtube-float {
-        bottom: 265px !important;
+        bottom: 145px !important;
         display: flex !important;
         z-index: 1000 !important;
     }
     
     .threads-float {
-        bottom: 325px !important;
+        bottom: 205px !important;
         display: flex !important;
         z-index: 1000 !important;
     }
     
     .scroll-top {
-        bottom: 390px;
+        bottom: 265px;
         right: 20px;
         width: 45px;
         height: 45px;
