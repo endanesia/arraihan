@@ -81,24 +81,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         
         if ($has_description) {
             if ($editing) {
+                // UPDATE with description: 16 placeholders (15 fields + id)
                 $stmt = db()->prepare("UPDATE packages SET title=?, description=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
                 $stmt->bind_param('sssssssissssssi', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
                 $stmt->execute();
                 $ok = 'Paket diperbarui';
             } else {
+                // INSERT with description: 15 placeholders (15 fields)
                 $stmt = db()->prepare("INSERT INTO packages(title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                $stmt->bind_param('ssssssissssssss', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+                $stmt->bind_param('sssssssisssssss', $title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
             }
         } else {
             // Fallback for when description column doesn't exist yet
             if ($editing) {
+                // UPDATE without description: 15 placeholders (14 fields + id)
                 $stmt = db()->prepare("UPDATE packages SET title=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
-                $stmt->bind_param('ssssssisssssssi', $title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
+                $stmt->bind_param('ssssssissssssi', $title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
                 $stmt->execute();
                 $ok = 'Paket diperbarui (description field not available - please run database migration)';
             } else {
+                // INSERT without description: 14 placeholders (14 fields)
                 $stmt = db()->prepare("INSERT INTO packages(title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 $stmt->bind_param('ssssssisssssss', $title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
                 $stmt->execute();
