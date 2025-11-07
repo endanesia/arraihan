@@ -50,29 +50,16 @@ $company_address = function_exists('get_setting') ? get_setting('address', '') :
 $company_email = function_exists('get_setting') ? get_setting('email', '') : '';
 $company_hours = function_exists('get_setting') ? get_setting('hours', '') : '';
 
-// Hero section settings
-function get_hero_setting($key, $default = '') {
-    try {
-        if (!function_exists('db') || !db()) return $default;
-        $stmt = db()->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-        $stmt->bind_param('s', $key);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['setting_value'] : $default;
-    } catch (Exception $e) {
-        return $default;
-    }
-}
+// Hero section settings - using existing get_setting function from db.php
 
-$hero_title = get_hero_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat');
-$hero_subtitle = get_hero_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.');
-$hero_button_text = get_hero_setting('hero_button_text', 'Lihat Paket Umroh');
-$hero_stat1_text = get_hero_setting('hero_stat1_text', '24 Januri 2026');
-$hero_stat1_desc = get_hero_setting('hero_stat1_desc', 'Jadwal Berangkat');
-$hero_stat2_text = get_hero_setting('hero_stat2_text', 'Program Pembiayaan');
-$hero_stat2_desc = get_hero_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah');
-$hero_background = get_hero_setting('hero_background', '');
+$hero_title = get_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat');
+$hero_subtitle = get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.');
+$hero_button_text = get_setting('hero_button_text', 'Lihat Paket Umroh');
+$hero_stat1_text = get_setting('hero_stat1_text', '24 Januri 2026');
+$hero_stat1_desc = get_setting('hero_stat1_desc', 'Jadwal Berangkat');
+$hero_stat2_text = get_setting('hero_stat2_text', 'Program Pembiayaan');
+$hero_stat2_desc = get_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah');
+$hero_background = get_setting('hero_background', '');
 
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));

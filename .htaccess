@@ -21,7 +21,6 @@ DirectoryIndex index.php index.html index.htm
     
     # Homepage Management
     RewriteRule ^admin/hero/?$ admin/hero.php [L,QSA]
-    RewriteRule ^admin/hero-setup/?$ admin/hero-setup.php [L,QSA]
     RewriteRule ^admin/about/?$ admin/about.php [L,QSA]
     
     # Posts/Articles

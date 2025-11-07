@@ -34,29 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Create/update hero settings in database
             $db = db();
             
-            // Check if hero settings exist
-            $check = $db->query("SELECT COUNT(*) as count FROM settings WHERE setting_key LIKE 'hero_%'");
-            $exists = $check->fetch_assoc()['count'] > 0;
-            
-            // Save all hero settings
-            $hero_settings = [
-                'hero_title' => $title,
-                'hero_subtitle' => $subtitle,
-                'hero_button_text' => $button_text,
-                'hero_stat1_text' => $stat1_text,
-                'hero_stat1_desc' => $stat1_desc,
-                'hero_stat2_text' => $stat2_text,
-                'hero_stat2_desc' => $stat2_desc
-            ];
+            // Save all hero settings using existing db functions
+            set_setting('hero_title', $title);
+            set_setting('hero_subtitle', $subtitle);
+            set_setting('hero_button_text', $button_text);
+            set_setting('hero_stat1_text', $stat1_text);
+            set_setting('hero_stat1_desc', $stat1_desc);
+            set_setting('hero_stat2_text', $stat2_text);
+            set_setting('hero_stat2_desc', $stat2_desc);
             
             if ($background_image) {
-                $hero_settings['hero_background'] = $background_image;
-            }
-            
-            foreach ($hero_settings as $key => $value) {
-                $stmt = $db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
-                $stmt->bind_param('sss', $key, $value, $value);
-                $stmt->execute();
+                set_setting('hero_background', $background_image);
             }
             
             $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Hero section berhasil disimpan!</div>';
@@ -68,30 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get current hero data from database
-function get_hero_setting($key, $default = '') {
-    try {
-        $db = db();
-        $stmt = $db->prepare("SELECT setting_value FROM settings WHERE setting_key = ?");
-        $stmt->bind_param('s', $key);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        return $row ? $row['setting_value'] : $default;
-    } catch (Exception $e) {
-        return $default;
-    }
-}
-
+// Get current hero data from database using existing functions
 $hero_data = [
-    'title' => get_hero_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat'),
-    'subtitle' => get_hero_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.'),
-    'button_text' => get_hero_setting('hero_button_text', 'Lihat Paket Umroh'),
-    'stat1_text' => get_hero_setting('hero_stat1_text', '24 Januri 2026'),
-    'stat1_desc' => get_hero_setting('hero_stat1_desc', 'Jadwal Berangkat'),
-    'stat2_text' => get_hero_setting('hero_stat2_text', 'Program Pembiayaan'),
-    'stat2_desc' => get_hero_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah'),
-    'background' => get_hero_setting('hero_background', '/images/hero-bg.jpg')
+    'title' => get_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat'),
+    'subtitle' => get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.'),
+    'button_text' => get_setting('hero_button_text', 'Lihat Paket Umroh'),
+    'stat1_text' => get_setting('hero_stat1_text', '24 Januri 2026'),
+    'stat1_desc' => get_setting('hero_stat1_desc', 'Jadwal Berangkat'),
+    'stat2_text' => get_setting('hero_stat2_text', 'Program Pembiayaan'),
+    'stat2_desc' => get_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah'),
+    'background' => get_setting('hero_background', '/images/hero-bg.jpg')
 ];
 ?>
 
