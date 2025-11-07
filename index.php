@@ -62,6 +62,15 @@ $hero_stat2_text = get_setting('hero_stat2_text', 'Program Pembiayaan');
 $hero_stat2_desc = get_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah');
 $hero_background = get_setting('hero_background', '');
 
+// Greeting section settings - using existing get_setting function from db.php
+$greeting_title = get_setting('greeting_title', 'Assalamu\'alaikum Warahmatullahi Wabarakatuh');
+$greeting_subtitle = get_setting('greeting_subtitle', 'Calon Jamaah Yang Dirahmati Allah,');
+$greeting_text = get_setting('greeting_text', 'Kami sepenuh hati siap membantu dan mendampingi Anda dalam mewujudkan impian untuk beribadah ke Tanah Suci. Mulai dari persiapan keberangkatan, pelaksanaan ibadah di Tanah Suci, hingga kepulangan Anda ke tanah air, kami akan memastikan setiap langkah perjalanan Anda berjalan lancar, aman, dan penuh berkah.');
+$greeting_stats_title = get_setting('greeting_stats_title', 'Kepercayaan Jamaah');
+$greeting_button_text = get_setting('greeting_button_text', 'Pelajari Lebih Lanjut');
+$greeting_button_link = get_setting('greeting_button_link', '#paket');
+$greeting_background = get_setting('greeting_background', '');
+
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
@@ -154,20 +163,24 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     </section>
 
     <!-- Greeting Section -->
-    <section class="greeting">
+    <section class="greeting"<?php if ($greeting_background): ?> style="background-image: url('<?= e($greeting_background) ?>');"<?php endif; ?>>
         <div class="container">
             <div class="greeting-content">
-                <h2 class="section-title">Assalamu'alaikum Warahmatullahi Wabarakatuh</h2>
-                <h3 class="section-subtitle">Calon Jamaah Yang Dirahmati Allah,</h3>
-                <p class="greeting-text">
-                    Kami sepenuh hati siap membantu dan mendampingi Anda dalam mewujudkan impian untuk beribadah ke Tanah Suci. 
-                    Mulai dari persiapan keberangkatan, pelaksanaan ibadah di Tanah Suci, hingga kepulangan Anda ke tanah air, 
-                    kami akan memastikan setiap langkah perjalanan Anda berjalan lancar, aman, dan penuh berkah.
-                </p>
-                <p class="greeting-text">
-                    Kami berkomitmen memberikan layanan terbaik untuk kenyamanan dan kekhusyukan ibadah Anda. 
-                    Berikut ini adalah Nilai Plus yang kami tawarkan:
-                </p>
+                <h2 class="section-title"><?= e($greeting_title) ?></h2>
+                <h3 class="section-subtitle"><?= e($greeting_subtitle) ?></h3>
+                <div class="greeting-text">
+                    <?= nl2br(e($greeting_text)) ?>
+                </div>
+                <?php if (!empty($greeting_stats_title)): ?>
+                <div class="greeting-stats">
+                    <h4 class="stats-title"><?= e($greeting_stats_title) ?></h4>
+                </div>
+                <?php endif; ?>
+                <?php if (!empty($greeting_button_text) && !empty($greeting_button_link)): ?>
+                <div class="greeting-action">
+                    <a href="<?= e($greeting_button_link) ?>" class="btn btn-primary"><?= e($greeting_button_text) ?></a>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
@@ -311,17 +324,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                 <h2 class="section-title">Jadwal Keberangkatan</h2>
                 <p class="section-desc">Jadwal umroh tersedia setiap bulan dengan keberangkatan pasti</p>
             </div>
-            <?php if (!empty($schedules)): ?>
-            <div class="mb-4">
-                <ul>
-                    <?php foreach ($schedules as $sc): ?>
-                        <li>
-                            <strong><?= e($sc['departure_date'] ?: '-') ?></strong> — <?= e($sc['title']) ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-            <?php endif; ?>
+
             <div class="jadwal-cta">
                 <div class="jadwal-content">
                     <i class="fas fa-calendar-alt"></i>
