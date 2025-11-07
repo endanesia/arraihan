@@ -80,7 +80,7 @@ function nav_active($needle){
       <li class="nav-item"><a class="nav-link <?= nav_active('/admin/schedules') ?>" href="<?= e($base) ?>/admin/schedules">Jadwal Keberangkatan</a></li>
       <li class="nav-item"><a class="nav-link <?= nav_active('/admin/partners') ?>" href="<?= e($base) ?>/admin/partners">Partner</a></li>
       <li class="nav-item"><a class="nav-link <?= nav_active('/admin/social-links') ?>" href="<?= e($base) ?>/admin/social-links">Pengaturan Situs</a></li>
-      <li class="nav-item"><a class="nav-link <?= nav_active('/admin/upgrade') ?>" href="<?= e($base) ?>/admin/upgrade">Upgrade DB</a></li>
+      
     </ul>
   </aside>
   <div class="flex-grow-1">

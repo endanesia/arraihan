@@ -1,5 +1,12 @@
 <?php
 // App configuration
+// Check for local config first (for development)
+$localConfigPath = __DIR__ . '/config-local.php';
+if (file_exists($localConfigPath)) {
+    return require $localConfigPath;
+}
+
+// Production configuration
 return [
     'db' => [
         'host' => 'localhost',
