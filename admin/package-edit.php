@@ -89,8 +89,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             } else {
                 // INSERT with description: 15 placeholders (15 fields)
                 // title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double
-                $stmt = db()->prepare("INSERT INTO packages(title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                $stmt->bind_param($title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+                $stmt = db()->prepare("INSERT INTO packages(title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$description', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
+                
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
             }
@@ -99,15 +99,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if ($editing) {
                 // UPDATE without description: 15 placeholders (14 fields + id)
                 // title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double, id
-                $stmt = db()->prepare("UPDATE packages SET title=?, price_label=?, price_value=?, price_unit=?, icon_class=?, features=?, featured=?, button_text=?, button_link=?, hotel=?, pesawat=?, price_quad=?, price_triple=?, price_double=? WHERE id=?");
-                $stmt->bind_param( $title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double, $id);
+                $stmt = db()->prepare("UPDATE packages SET title='$title', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 $stmt->execute();
                 $ok = 'Paket diperbarui (description field not available - please run database migration)';
             } else {
                 // INSERT without description: 14 placeholders (14 fields)
                 // title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double
-                $stmt = db()->prepare("INSERT INTO packages(title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                $stmt->bind_param($title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+                $stmt = db()->prepare("INSERT INTO packages(title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
             }
