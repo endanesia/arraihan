@@ -75,7 +75,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI dengan Akreditasi A">
     <title>Raihan Travelindo - Travel Haji & Umroh Terpercaya</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Admin shortcut (optional): <link rel="nofollow" href="<?= e(($config['app']['base_url'] ?? '')); ?>/admin/login.php"> -->
@@ -755,12 +755,14 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     </a>
     <?php endif; ?>
     <?php if (!empty($link_youtube)): ?>
-    <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank">
+    <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank" 
+       style="position: fixed; bottom: 305px; right: 30px; width: 50px; height: 50px; background: #FF0000 !important; z-index: 1000 !important; display: flex !important;">
         <i class="fab fa-youtube"></i>
     </a>
     <?php endif; ?>
     <?php if (!empty($link_threads)): ?>
-    <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank">
+    <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank"
+       style="position: fixed; bottom: 370px; right: 30px; width: 50px; height: 50px; background: #000000 !important; z-index: 1000 !important; display: flex !important;">
         <i class="fas fa-at"></i>
     </a>
     <?php endif; ?>

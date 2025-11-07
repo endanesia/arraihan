@@ -1192,20 +1192,24 @@ ul {
 
 .youtube-float {
     bottom: 305px;
-    background: #FF0000;
+    background: #FF0000 !important;
+    z-index: 1000 !important;
+    display: flex !important;
 }
 
 .youtube-float:hover {
-    background: #CC0000;
+    background: #CC0000 !important;
 }
 
 .threads-float {
     bottom: 370px;
-    background: #000000;
+    background: #000000 !important;
+    z-index: 1000 !important;
+    display: flex !important;
 }
 
 .threads-float:hover {
-    background: #333333;
+    background: #333333 !important;
 }
 
 .scroll-top {
@@ -1408,11 +1412,15 @@ ul {
     }
     
     .youtube-float {
-        bottom: 265px;
+        bottom: 265px !important;
+        display: flex !important;
+        z-index: 1000 !important;
     }
     
     .threads-float {
-        bottom: 325px;
+        bottom: 325px !important;
+        display: flex !important;
+        z-index: 1000 !important;
     }
     
     .scroll-top {
