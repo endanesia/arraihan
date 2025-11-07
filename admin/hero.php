@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($title && $subtitle) {
         try {
-            // Create/update hero settings in database
-            $db = db();
+            // Ensure settings table exists
+            ensure_settings_table();
             
             // Save all hero settings using existing db functions
             set_setting('hero_title', $title);
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             $message = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Hero section berhasil disimpan!</div>';
         } catch (Exception $e) {
-            $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Error: ' . e($e->getMessage()) . '</div>';
+            $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Error saving: ' . e($e->getMessage()) . '</div>';
         }
     } else {
         $message = '<div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Title dan subtitle wajib diisi!</div>';
@@ -57,16 +57,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Get current hero data from database using existing functions
-$hero_data = [
-    'title' => get_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat'),
-    'subtitle' => get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.'),
-    'button_text' => get_setting('hero_button_text', 'Lihat Paket Umroh'),
-    'stat1_text' => get_setting('hero_stat1_text', '24 Januri 2026'),
-    'stat1_desc' => get_setting('hero_stat1_desc', 'Jadwal Berangkat'),
-    'stat2_text' => get_setting('hero_stat2_text', 'Program Pembiayaan'),
-    'stat2_desc' => get_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah'),
-    'background' => get_setting('hero_background', '/images/hero-bg.jpg')
-];
+try {
+    // Ensure settings table exists
+    ensure_settings_table();
+    
+    $hero_data = [
+        'title' => get_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat'),
+        'subtitle' => get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.'),
+        'button_text' => get_setting('hero_button_text', 'Lihat Paket Umroh'),
+        'stat1_text' => get_setting('hero_stat1_text', '24 Januri 2026'),
+        'stat1_desc' => get_setting('hero_stat1_desc', 'Jadwal Berangkat'),
+        'stat2_text' => get_setting('hero_stat2_text', 'Program Pembiayaan'),
+        'stat2_desc' => get_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah'),
+        'background' => get_setting('hero_background', '/images/hero-bg.jpg')
+    ];
+} catch (Exception $e) {
+    // Fallback to default values if database error
+    $hero_data = [
+        'title' => 'Perjalanan Suci Berkualitas, Biaya Bersahabat',
+        'subtitle' => 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.',
+        'button_text' => 'Lihat Paket Umroh',
+        'stat1_text' => '24 Januri 2026',
+        'stat1_desc' => 'Jadwal Berangkat',
+        'stat2_text' => 'Program Pembiayaan',
+        'stat2_desc' => 'Pembiayaan dana talangan Umrah',
+        'background' => '/images/hero-bg.jpg'
+    ];
+    $message = '<div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> Database error: ' . e($e->getMessage()) . '. Using default values.</div>';
+}
 ?>
 
 <div class="container-fluid">
