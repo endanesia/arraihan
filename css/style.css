@@ -1190,9 +1190,27 @@ ul {
     background: #333333;
 }
 
+.youtube-float {
+    bottom: 305px;
+    background: #FF0000;
+}
+
+.youtube-float:hover {
+    background: #CC0000;
+}
+
+.threads-float {
+    bottom: 370px;
+    background: #000000;
+}
+
+.threads-float:hover {
+    background: #333333;
+}
+
 .scroll-top {
     position: fixed;
-    bottom: 315px;
+    bottom: 445px;
     right: 30px;
     width: 50px;
     height: 50px;
@@ -1389,8 +1407,16 @@ ul {
         bottom: 205px;
     }
     
+    .youtube-float {
+        bottom: 265px;
+    }
+    
+    .threads-float {
+        bottom: 325px;
+    }
+    
     .scroll-top {
-        bottom: 270px;
+        bottom: 390px;
         right: 20px;
         width: 45px;
         height: 45px;

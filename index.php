@@ -44,6 +44,7 @@ $link_instagram = function_exists('get_setting') ? get_setting('instagram', '') 
 $link_youtube = function_exists('get_setting') ? get_setting('youtube', '') : '';
 $link_tiktok = function_exists('get_setting') ? get_setting('tiktok', '') : '';
 $link_twitter = function_exists('get_setting') ? get_setting('twitter', '') : '';
+$link_threads = function_exists('get_setting') ? get_setting('threads', '') : '';
 $phone_number = function_exists('get_setting') ? get_setting('phone', '+6281234567890') : '+6281234567890';
 // Company info settings
 $company_address = function_exists('get_setting') ? get_setting('address', '') : '';
@@ -688,6 +689,8 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                         <?php if (!empty($link_instagram)): ?><a href="<?= e($link_instagram) ?>" target="_blank"><i class="fab fa-instagram"></i></a><?php endif; ?>
                         <?php if (!empty($link_youtube)): ?><a href="<?= e($link_youtube) ?>" target="_blank"><i class="fab fa-youtube"></i></a><?php endif; ?>
                         <?php if (!empty($link_twitter)): ?><a href="<?= e($link_twitter) ?>" target="_blank"><i class="fab fa-twitter"></i></a><?php endif; ?>
+                        <?php if (!empty($link_tiktok)): ?><a href="<?= e($link_tiktok) ?>" target="_blank"><i class="fab fa-tiktok"></i></a><?php endif; ?>
+                        <?php if (!empty($link_threads)): ?><a href="<?= e($link_threads) ?>" target="_blank"><i class="fab fa-threads"></i></a><?php endif; ?>
                     </div>
                 </div>
                 <div class="footer-col">
@@ -749,6 +752,16 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     <?php if (!empty($link_tiktok)): ?>
     <a href="<?= e($link_tiktok) ?>" class="social-float tiktok-float" target="_blank">
         <i class="fab fa-tiktok"></i>
+    </a>
+    <?php endif; ?>
+    <?php if (!empty($link_youtube)): ?>
+    <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank">
+        <i class="fab fa-youtube"></i>
+    </a>
+    <?php endif; ?>
+    <?php if (!empty($link_threads)): ?>
+    <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank">
+        <i class="fab fa-threads"></i>
     </a>
     <?php endif; ?>
 

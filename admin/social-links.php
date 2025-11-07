@@ -13,6 +13,7 @@ $fields = [
   'youtube' => 'YouTube Channel/URL',
   'tiktok' => 'TikTok URL',
   'twitter' => 'Twitter/X URL',
+  'threads' => 'Threads URL',
   // Informasi Kantor
   'address' => 'Alamat Kantor (multiline)',
   'phone' => 'Telepon (boleh lebih dari satu, pisahkan koma)',
@@ -87,6 +88,10 @@ include __DIR__ . '/header.php';
         <div class="col-12 col-md-6">
           <label class="form-label">Twitter/X</label>
           <input type="url" name="twitter" class="form-control" placeholder="https://x.com/username" value="<?= e($values['twitter']) ?>">
+        </div>
+        <div class="col-12 col-md-6">
+          <label class="form-label">Threads</label>
+          <input type="url" name="threads" class="form-control" placeholder="https://threads.net/@username" value="<?= e($values['threads']) ?>">
         </div>
       <div class="col-12">
         <button class="btn btn-success" type="submit">Simpan</button>
