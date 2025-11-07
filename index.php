@@ -690,7 +690,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                         <?php if (!empty($link_youtube)): ?><a href="<?= e($link_youtube) ?>" target="_blank"><i class="fab fa-youtube"></i></a><?php endif; ?>
                         <?php if (!empty($link_twitter)): ?><a href="<?= e($link_twitter) ?>" target="_blank"><i class="fab fa-twitter"></i></a><?php endif; ?>
                         <?php if (!empty($link_tiktok)): ?><a href="<?= e($link_tiktok) ?>" target="_blank"><i class="fab fa-tiktok"></i></a><?php endif; ?>
-                        <?php if (!empty($link_threads)): ?><a href="<?= e($link_threads) ?>" target="_blank"><i class="fab fa-threads"></i></a><?php endif; ?>
+                        <?php if (!empty($link_threads)): ?><a href="<?= e($link_threads) ?>" target="_blank"><i class="fas fa-at"></i></a><?php endif; ?>
                     </div>
                 </div>
                 <div class="footer-col">
@@ -761,7 +761,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     <?php endif; ?>
     <?php if (!empty($link_threads)): ?>
     <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank">
-        <i class="fab fa-threads"></i>
+        <i class="fas fa-at"></i>
     </a>
     <?php endif; ?>
 
