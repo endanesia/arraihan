@@ -706,11 +706,12 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
             <div class="footer-content">
                 <div class="footer-col">
                     <div class="footer-logo">
-                        <i class="fas fa-kaaba"></i>
-                        <span>Raihan Travelindo</span>
+                        <img src="images/logo.png" alt="Raihan Travelindo" style="height: 40px;">
+                        <span>Ar Raihan</span>
                     </div>
-                    <p>Travel Haji & Umroh Terpercaya sejak 2005. Melayani dengan sepenuh hati untuk kenyamanan ibadah Anda.</p>
+                    <p>PT. Raihan Islami Travelindo yang didirikan pada 05 Juli 2023 dan resmi dibuka pada 02 Agustus 2023.</p>
                     <div class="footer-social">
+                        <?php if (!empty($link_whatsapp)): ?><a href="<?= e($link_whatsapp) ?>" target="_blank"><i class="fab fa-whatsapp"></i></a><?php endif; ?>
                         <?php if (!empty($link_facebook)): ?><a href="<?= e($link_facebook) ?>" target="_blank"><i class="fab fa-facebook"></i></a><?php endif; ?>
                         <?php if (!empty($link_instagram)): ?><a href="<?= e($link_instagram) ?>" target="_blank"><i class="fab fa-instagram"></i></a><?php endif; ?>
                         <?php if (!empty($link_youtube)): ?><a href="<?= e($link_youtube) ?>" target="_blank"><i class="fab fa-youtube"></i></a><?php endif; ?>
@@ -744,8 +745,8 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                     <ul>
                         <li><i class="fas fa-check-circle"></i> Izin PPIU Kemenag RI</li>
                         <li><i class="fas fa-check-circle"></i> Izin PIHK Resmi</li>
-                        <li><i class="fas fa-check-circle"></i> Akreditasi A</li>
-                        <li><i class="fas fa-check-circle"></i> Sertifikat ISO 9001:2015</li>
+                        <li><i class="fas fa-check-circle"></i> Tergabung AMPHURI</li>
+                        <li><i class="fas fa-check-circle"></i> Anggota IATA dan AITTA</li>
                     </ul>
                 </div>
             </div>
