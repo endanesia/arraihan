@@ -174,7 +174,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
             </div>
         </div>
         <div class="hero-scroll">
-            <a href="#keunggulan">
+            <a href="#paket">
                 <i class="fas fa-chevron-down"></i>
             </a>
         </div>
@@ -198,6 +198,70 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                 <div class="greeting-action">
                     <a href="<?= e($greeting_button_link) ?>" class="btn btn-primary"><?= e($greeting_button_text) ?></a>
                 </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paket Section -->
+    <section class="paket" id="paket">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Paket Perjalanan Kami</h2>
+                <p class="section-desc">Pilih paket yang sesuai dengan kebutuhan ibadah Anda</p>
+            </div>
+            <div class="paket-grid">
+                <?php if (!empty($packages)): ?>
+                    <?php foreach ($packages as $p): ?>
+                    <div class="paket-card <?= $p['featured'] ? 'featured' : '' ?>">
+                        <?php if ($p['featured']): ?><div class="paket-badge">Populer</div><?php endif; ?>
+                        <div class="paket-header">
+                            <div class="paket-icon"><i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?>"></i></div>
+                            <h3><?= e($p['title']) ?></h3>
+                        </div>
+                        <div class="paket-body">
+                            <div class="paket-price">
+                                <span class="price-label"><?= e($p['price_label']) ?></span>
+                                <span class="price-value"><?= e($p['price_value']) ?></span>
+                                <span class="price-person"><?= e($p['price_unit']) ?></span>
+                            </div>
+                            <ul class="paket-features">
+                                <?php 
+                                  $featLines = array_filter(array_map('trim', explode("\n", (string)$p['features'])));
+                                  foreach ($featLines as $line): 
+                                    $parts = explode('|', $line, 2); $fIcon = trim($parts[0] ?? 'fas fa-check'); $fText = trim($parts[1] ?? $line);
+                                ?>
+                                  <li><i class="<?= e($fIcon ?: 'fas fa-check') ?>"></i> <?= e($fText) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <a href="<?= e($p['button_link'] ?: '#kontak') ?>" class="btn btn-primary"><?= e($p['button_text'] ?: 'Lihat Detail') ?></a>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <!-- fallback to static cards if no data -->
+                    <div class="paket-card">
+                        <div class="paket-header">
+                            <div class="paket-icon"><i class="fas fa-moon"></i></div>
+                            <h3>Paket Umroh</h3>
+                        </div>
+                        <div class="paket-body">
+                            <div class="paket-price">
+                                <span class="price-label">Mulai dari</span>
+                                <span class="price-value">Rp 24 Juta</span>
+                                <span class="price-person">/orang</span>
+                            </div>
+                            <ul class="paket-features">
+                                <li><i class="fas fa-check"></i> Direct Flight</li>
+                                <li><i class="fas fa-check"></i> Hotel Bintang 4-5</li>
+                                <li><i class="fas fa-check"></i> Ring 1 Masjidil Haram</li>
+                                <li><i class="fas fa-check"></i> Muthawif Berpengalaman</li>
+                                <li><i class="fas fa-check"></i> City Tour</li>
+                                <li><i class="fas fa-check"></i> Ziarah Lengkap</li>
+                            </ul>
+                            <a href="#kontak" class="btn btn-primary">Lihat Detail</a>
+                        </div>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -264,70 +328,6 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                         </div>
                         <h3>Wireless Headset</h3>
                         <p>Asistensi menggunakan alat bantu wireless headset untuk memudahkan thawaf dan sa'i</p>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </section>
-
-    <!-- Paket Section -->
-    <section class="paket" id="paket">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Paket Perjalanan Kami</h2>
-                <p class="section-desc">Pilih paket yang sesuai dengan kebutuhan ibadah Anda</p>
-            </div>
-            <div class="paket-grid">
-                <?php if (!empty($packages)): ?>
-                    <?php foreach ($packages as $p): ?>
-                    <div class="paket-card <?= $p['featured'] ? 'featured' : '' ?>">
-                        <?php if ($p['featured']): ?><div class="paket-badge">Populer</div><?php endif; ?>
-                        <div class="paket-header">
-                            <div class="paket-icon"><i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?>"></i></div>
-                            <h3><?= e($p['title']) ?></h3>
-                        </div>
-                        <div class="paket-body">
-                            <div class="paket-price">
-                                <span class="price-label"><?= e($p['price_label']) ?></span>
-                                <span class="price-value"><?= e($p['price_value']) ?></span>
-                                <span class="price-person"><?= e($p['price_unit']) ?></span>
-                            </div>
-                            <ul class="paket-features">
-                                <?php 
-                                  $featLines = array_filter(array_map('trim', explode("\n", (string)$p['features'])));
-                                  foreach ($featLines as $line): 
-                                    $parts = explode('|', $line, 2); $fIcon = trim($parts[0] ?? 'fas fa-check'); $fText = trim($parts[1] ?? $line);
-                                ?>
-                                  <li><i class="<?= e($fIcon ?: 'fas fa-check') ?>"></i> <?= e($fText) ?></li>
-                                <?php endforeach; ?>
-                            </ul>
-                            <a href="<?= e($p['button_link'] ?: '#kontak') ?>" class="btn btn-primary"><?= e($p['button_text'] ?: 'Lihat Detail') ?></a>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <!-- fallback to static cards if no data -->
-                    <div class="paket-card">
-                        <div class="paket-header">
-                            <div class="paket-icon"><i class="fas fa-moon"></i></div>
-                            <h3>Paket Umroh</h3>
-                        </div>
-                        <div class="paket-body">
-                            <div class="paket-price">
-                                <span class="price-label">Mulai dari</span>
-                                <span class="price-value">Rp 24 Juta</span>
-                                <span class="price-person">/orang</span>
-                            </div>
-                            <ul class="paket-features">
-                                <li><i class="fas fa-check"></i> Direct Flight</li>
-                                <li><i class="fas fa-check"></i> Hotel Bintang 4-5</li>
-                                <li><i class="fas fa-check"></i> Ring 1 Masjidil Haram</li>
-                                <li><i class="fas fa-check"></i> Muthawif Berpengalaman</li>
-                                <li><i class="fas fa-check"></i> City Tour</li>
-                                <li><i class="fas fa-check"></i> Ziarah Lengkap</li>
-                            </ul>
-                            <a href="#kontak" class="btn btn-primary">Lihat Detail</a>
-                        </div>
                     </div>
                 <?php endif; ?>
             </div>
