@@ -267,6 +267,27 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
         </div>
     </section>
 
+    <!-- Jadwal Section -->
+    <section class="jadwal" id="jadwal">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Jadwal Keberangkatan</h2>
+                <p class="section-desc">Jadwal umroh tersedia setiap bulan dengan keberangkatan pasti</p>
+            </div>
+
+            <div class="jadwal-cta">
+                <div class="jadwal-content">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Lihat Jadwal Lengkap Keberangkatan</h3>
+                    <p>Tersedia berbagai pilihan tanggal keberangkatan yang bisa disesuaikan dengan jadwal Anda</p>
+                    <a href="#kontak" class="btn btn-primary">
+                        <i class="fas fa-calendar-check"></i> Cek Jadwal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Keunggulan Section -->
     <section class="keunggulan" id="keunggulan">
         <div class="container">
@@ -330,27 +351,6 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                         <p>Asistensi menggunakan alat bantu wireless headset untuk memudahkan thawaf dan sa'i</p>
                     </div>
                 <?php endif; ?>
-            </div>
-        </div>
-    </section>
-
-    <!-- Jadwal Section -->
-    <section class="jadwal" id="jadwal">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Jadwal Keberangkatan</h2>
-                <p class="section-desc">Jadwal umroh tersedia setiap bulan dengan keberangkatan pasti</p>
-            </div>
-
-            <div class="jadwal-cta">
-                <div class="jadwal-content">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>Lihat Jadwal Lengkap Keberangkatan</h3>
-                    <p>Tersedia berbagai pilihan tanggal keberangkatan yang bisa disesuaikan dengan jadwal Anda</p>
-                    <a href="#kontak" class="btn btn-primary">
-                        <i class="fas fa-calendar-check"></i> Cek Jadwal
-                    </a>
-                </div>
             </div>
         </div>
     </section>
