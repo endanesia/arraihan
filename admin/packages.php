@@ -55,6 +55,7 @@ include __DIR__ . '/header.php';
         <thead>
           <tr>
             <th>ID</th>
+            <th>Poster</th>
             <th>Judul</th>
             <th>Harga Utama</th>
             <th>Harga Detail</th>
@@ -69,8 +70,18 @@ include __DIR__ . '/header.php';
           <tr>
             <td>#<?= (int)$r['id'] ?></td>
             <td>
+              <?php if (!empty($r['poster'])): ?>
+                <img src="<?= e($base . '/images/packages/' . $r['poster']) ?>" alt="Poster" 
+                     style="width: 60px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+              <?php else: ?>
+                <div style="width: 60px; height: 45px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                  <i class="fas fa-image text-muted"></i>
+                </div>
+              <?php endif; ?>
+            </td>
+            <td>
               <div class="fw-bold"><?= e($r['title']) ?></div>
-              <?php if ($r['description']): ?>
+              <?php if (!empty($r['description'])): ?>
                 <div class="text-muted small mt-1 description-preview" style="max-width: 200px;" title="<?= e(strip_tags($r['description'])) ?>">
                   <?= strip_tags($r['description']) ?>
                 </div>
@@ -128,7 +139,7 @@ include __DIR__ . '/header.php';
           </tr>
         <?php endforeach; ?>
         <?php if (empty($rows)): ?>
-          <tr><td colspan="8" class="text-center text-muted py-4">
+          <tr><td colspan="9" class="text-center text-muted py-4">
             <i class="fas fa-suitcase fa-2x mb-2 d-block"></i>
             Belum ada paket perjalanan
           </td></tr>

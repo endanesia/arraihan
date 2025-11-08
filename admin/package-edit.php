@@ -2,10 +2,84 @@
 require_once __DIR__ . '/../inc/db.php';
 require_login();
 $base = rtrim($config['app']['base_url'] ?? '', '/');
+
+// Image resize function for poster
+function resizeImage($source, $destination, $maxWidth = 1920, $maxHeight = 1080, $quality = 85) {
+    // Get image info
+    $imageInfo = getimagesize($source);
+    if (!$imageInfo) return false;
+    
+    $originalWidth = $imageInfo[0];
+    $originalHeight = $imageInfo[1];
+    $imageType = $imageInfo[2];
+    
+    // Check if resize is needed
+    if ($originalWidth <= $maxWidth && $originalHeight <= $maxHeight) {
+        // No resize needed, just copy
+        return copy($source, $destination);
+    }
+    
+    // Calculate new dimensions
+    $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight);
+    $newWidth = (int)($originalWidth * $ratio);
+    $newHeight = (int)($originalHeight * $ratio);
+    
+    // Create image resource from source
+    switch ($imageType) {
+        case IMAGETYPE_JPEG:
+            $sourceImage = imagecreatefromjpeg($source);
+            break;
+        case IMAGETYPE_PNG:
+            $sourceImage = imagecreatefrompng($source);
+            break;
+        case IMAGETYPE_WEBP:
+            $sourceImage = imagecreatefromwebp($source);
+            break;
+        default:
+            return false;
+    }
+    
+    if (!$sourceImage) return false;
+    
+    // Create new image
+    $newImage = imagecreatetruecolor($newWidth, $newHeight);
+    
+    // Preserve transparency for PNG and WebP
+    if ($imageType == IMAGETYPE_PNG || $imageType == IMAGETYPE_WEBP) {
+        imagealphablending($newImage, false);
+        imagesavealpha($newImage, true);
+        $transparent = imagecolorallocatealpha($newImage, 255, 255, 255, 127);
+        imagefilledrectangle($newImage, 0, 0, $newWidth, $newHeight, $transparent);
+    }
+    
+    // Resize image
+    imagecopyresampled($newImage, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+    
+    // Save resized image
+    $result = false;
+    switch ($imageType) {
+        case IMAGETYPE_JPEG:
+            $result = imagejpeg($newImage, $destination, $quality);
+            break;
+        case IMAGETYPE_PNG:
+            $result = imagepng($newImage, $destination, (int)(9 - ($quality / 10)));
+            break;
+        case IMAGETYPE_WEBP:
+            $result = imagewebp($newImage, $destination, $quality);
+            break;
+    }
+    
+    // Clean up
+    imagedestroy($sourceImage);
+    imagedestroy($newImage);
+    
+    return $result;
+}
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $editing = $id > 0;
 $title = '';
 $description = '';
+$poster = '';
 $price_label = 'Mulai dari';
 $price_value = '';
 $price_unit = '/orang';
@@ -31,13 +105,30 @@ if ($editing) {
         $has_description = false;
     }
     
-    if ($has_description) {
+    // Check if poster column exists
+    $has_poster = false;
+    try {
+        $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'poster'");
+        $has_poster = $check_result && $check_result->num_rows > 0;
+    } catch (Exception $e) {
+        $has_poster = false;
+    }
+
+    if ($has_description && $has_poster) {
+        $stmt = db()->prepare("SELECT title, description, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $stmt->bind_result($title, $description, $poster, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+        if (!$stmt->fetch()) { $editing = false; }
+        $stmt->close();
+    } elseif ($has_description) {
         $stmt = db()->prepare("SELECT title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();
         $stmt->bind_result($title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
         if (!$stmt->fetch()) { $editing = false; }
         $stmt->close();
+        $poster = ''; // Default empty poster
     } else {
         // Fallback for when description column doesn't exist yet
         $stmt = db()->prepare("SELECT title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
@@ -47,6 +138,7 @@ if ($editing) {
         if (!$stmt->fetch()) { $editing = false; }
         $stmt->close();
         $description = ''; // Default empty description
+        $poster = ''; // Default empty poster
     }
 }
 
@@ -68,6 +160,70 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $price_double = trim($_POST['price_double'] ?? '');
 
     if ($title === '' || $price_value === '') { $err = 'Judul dan nilai harga wajib diisi'; }
+    
+    // Handle poster upload
+    $uploaded_poster = '';
+    if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
+        $f = $_FILES['poster'];
+        
+        // Validate file type
+        $allowed = ['image/jpeg'=>'.jpg','image/png'=>'.png','image/webp'=>'.webp','image/jpg'=>'.jpg'];
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $detected_type = finfo_file($finfo, $f['tmp_name']);
+        finfo_close($finfo);
+        
+        if (!isset($allowed[$detected_type])) {
+            $err = 'Format poster tidak didukung. Terdeteksi: ' . $detected_type . '. Yang didukung: JPEG, PNG, WebP.';
+        } else {
+            // Create upload directory for posters
+            $upload_dir = __DIR__ . '/../images/packages';
+            if (!is_dir($upload_dir)) {
+                if (!@mkdir($upload_dir, 0755, true)) {
+                    $err = 'Gagal membuat direktori upload: ' . $upload_dir;
+                }
+            }
+            
+            if (!$err) {
+                $ext = $allowed[$detected_type];
+                $filename = 'poster_'.date('Ymd_His').'_'.bin2hex(random_bytes(4)).$ext;
+                $dest = rtrim($upload_dir,'/\\').DIRECTORY_SEPARATOR.$filename;
+                
+                // Configuration for resize
+                $maxWidth = 1920;   // Maximum width in pixels
+                $maxHeight = 1080;  // Maximum height in pixels  
+                $quality = 85; // JPEG quality (1-100)
+                
+                // Get original image info for resize message
+                $imageInfo = getimagesize($f['tmp_name']);
+                $originalWidth = $imageInfo[0] ?? 0;
+                $originalHeight = $imageInfo[1] ?? 0; 
+                $originalSize = $f['size'];
+
+                // Resize and save poster
+                if (resizeImage($f['tmp_name'], $dest, $maxWidth, $maxHeight, $quality)) {
+                    $uploaded_poster = $filename;
+                    
+                    // Check if file was actually resized
+                    $newSize = filesize($dest);
+                    $newImageInfo = getimagesize($dest);
+                    $newWidth = $newImageInfo[0] ?? 0;
+                    $newHeight = $newImageInfo[1] ?? 0;
+                    
+                    $resize_info = '';
+                    if ($originalWidth > $maxWidth || $originalHeight > $maxHeight) {
+                        $resize_info .= " diperkecil dari {$originalWidth}x{$originalHeight} ke {$newWidth}x{$newHeight}px";
+                    }
+                    if ($originalSize > (2 * 1024 * 1024)) { // 2MB
+                        $resize_info .= ($resize_info ? ',' : '') . " dikompres dari " . number_format($originalSize/1024, 1) . "KB ke " . number_format($newSize/1024, 1) . "KB";
+                    }
+                    
+                    $upload_success_msg = $resize_info ? "Poster berhasil diupload dan" . $resize_info : "Poster berhasil diupload";
+                } else {
+                    $err = 'Gagal mengubah ukuran poster. Pastikan PHP GD extension aktif.';
+                }
+            }
+        }
+    }
 
     if (!$err) {
         // Check if description column exists before trying to save
@@ -79,7 +235,33 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $has_description = false;
         }
         
-        if ($has_description) {
+        // Check if poster column exists
+        $has_poster = false;
+        try {
+            $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'poster'");
+            $has_poster = $check_result && $check_result->num_rows > 0;
+        } catch (Exception $e) {
+            $has_poster = false;
+        }
+
+        if ($has_description && $has_poster) {
+            if ($editing) {
+                if ($uploaded_poster) {
+                    // Update with new poster
+                    $stmt = db()->prepare("UPDATE packages SET title='$title', description='$description', poster='$uploaded_poster', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                } else {
+                    // Update without changing poster
+                    $stmt = db()->prepare("UPDATE packages SET title='$title', description='$description', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                }
+                $stmt->execute();
+                $ok = 'Paket diperbarui' . (isset($upload_success_msg) ? '. ' . $upload_success_msg : '');
+            } else {
+                // INSERT with description and poster
+                $stmt = db()->prepare("INSERT INTO packages(title, description, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$description', '$uploaded_poster', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
+                $stmt->execute();
+                header('Location: ' . $base . '/admin/packages'); exit;
+            }
+        } elseif ($has_description) {
             if ($editing) {
                 // UPDATE with description: 16 placeholders (15 fields + id)
                 // title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double, id
@@ -177,6 +359,47 @@ include __DIR__ . '/header.php';
 .ck-content p {
     margin-bottom: 0.75rem;
 }
+
+/* Poster Preview Styling */
+.poster-preview {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.poster-preview:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.file-input-wrapper input[type=file] {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-input-label {
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.file-input-label:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
 </style>
 
 <div class="container-fluid">
@@ -188,7 +411,7 @@ include __DIR__ . '/header.php';
   <?php if ($ok): ?><div class="alert alert-success"><?= e($ok) ?></div><?php endif; ?>
 
   <div class="card"><div class="card-body">
-    <form method="post" class="row g-3">
+    <form method="post" enctype="multipart/form-data" class="row g-3">
       <!-- Basic Information -->
       <div class="col-12">
         <h5 class="text-primary mb-3"><i class="fas fa-info-circle me-2"></i>Informasi Dasar</h5>
@@ -233,6 +456,44 @@ include __DIR__ . '/header.php';
           Description field is not available. Please run the database migration to enable rich text descriptions.
           <a href="/migrate-packages-description.php" target="_blank" class="btn btn-sm btn-outline-warning ms-2">
             <i class="fas fa-database me-1"></i>Run Migration
+          </a>
+        </div>
+      </div>
+      <?php endif; ?>
+
+      <?php
+      // Check if poster column exists
+      $has_poster_field = false;
+      try {
+          $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'poster'");
+          $has_poster_field = $check_result && $check_result->num_rows > 0;
+      } catch (Exception $e) {
+          $has_poster_field = false;
+      }
+      
+      if ($has_poster_field): ?>
+      <div class="col-12">
+        <label class="form-label">Poster Paket</label>
+        <?php if ($editing && $poster): ?>
+        <div class="mb-2">
+          <img src="<?= e($base . '/images/packages/' . $poster) ?>" alt="Current Poster" class="poster-preview">
+          <div class="form-text">Poster saat ini</div>
+        </div>
+        <?php endif; ?>
+        <input type="file" name="poster" accept="image/*" class="form-control">
+        <div class="form-text">
+          Upload gambar poster untuk paket ini. Format yang didukung: JPEG, PNG, WebP. 
+          <?php if ($editing && $poster): ?>Kosongkan jika tidak ingin mengubah poster.<?php endif; ?>
+        </div>
+      </div>
+      <?php else: ?>
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          <strong>Database Migration Required:</strong> 
+          Poster field is not available. Please run the database migration to enable poster uploads.
+          <a href="<?= e($base) ?>/check-packages-table.php" target="_blank" class="btn btn-sm btn-outline-info ms-2">
+            <i class="fas fa-database me-1"></i>Check & Migrate
           </a>
         </div>
       </div>

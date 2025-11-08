@@ -39,6 +39,19 @@ try {
             echo "<p style='color: green;'>✅ Description field already exists!</p>\n";
         }
         
+        // Check if poster field exists
+        if (!in_array('poster', $fields)) {
+            echo "<h3>Adding poster field...</h3>\n";
+            $sql = "ALTER TABLE packages ADD COLUMN poster VARCHAR(255) NULL AFTER description";
+            if ($db->query($sql)) {
+                echo "<p style='color: green;'>✅ Poster field added successfully!</p>\n";
+            } else {
+                echo "<p style='color: red;'>❌ Failed to add poster field: " . $db->error . "</p>\n";
+            }
+        } else {
+            echo "<p style='color: green;'>✅ Poster field already exists!</p>\n";
+        }
+        
         // Show updated structure
         $result = $db->query("DESCRIBE packages");
         echo "<h3>Updated Table Structure:</h3>\n";
@@ -47,7 +60,7 @@ try {
         
         while ($row = $result->fetch_assoc()) {
             echo "<tr";
-            if ($row['Field'] === 'description') echo " style='background-color: #d4edda;'";
+            if ($row['Field'] === 'description' || $row['Field'] === 'poster') echo " style='background-color: #d4edda;'";
             echo ">";
             echo "<td>" . $row['Field'] . "</td>";
             echo "<td>" . $row['Type'] . "</td>";

@@ -410,6 +410,12 @@ ul {
     margin: 0 auto;
 }
 
+.section-more {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+}
+
 /* ===== KEUNGGULAN SECTION ===== */
 .keunggulan {
     padding: 80px 0;

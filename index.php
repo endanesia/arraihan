@@ -79,6 +79,15 @@ if (function_exists('db') && db()) {
     }
 }
 
+// About Us data from database
+$about_title = get_setting('about_title', 'Tentang Kami');
+$about_content_p1 = get_setting('about_content_p1', 'Raihan Travelindo resmi didirikan pada tahun 2005 oleh para pendiri yang memiliki visi mulia untuk membantu umat Islam menunaikan ibadah ke Tanah Suci. Pada awal berdirinya, perusahaan ini bergerak di bidang pariwisata, mulai dari tiket domestik dan penerbangan internasional.');
+$about_content_p2 = get_setting('about_content_p2', 'Setelah itu, kami mulai merambah ke bisnis layanan jasa travel umroh dan haji khusus. Nama Raihan Travelindo terinspirasi dari Ka\'bah yang merupakan rumah Allah SWT yang suci dan penuh berkah, dengan harapan dapat memberikan pelayanan terbaik yang penuh keberkahan kepada setiap jamaah.');
+$about_content_p3 = get_setting('about_content_p3', 'Kami telah mengantongi berbagai izin resmi dari Pemerintah RI. Hal ini merupakan bukti nyata keseriusan kami dalam memberikan layanan terbaik untuk para calon Tamu Allah SWT. Dengan pengalaman lebih dari 18 tahun dan telah melayani lebih dari 15.000 jamaah, kami berkomitmen untuk terus meningkatkan kualitas pelayanan.');
+$about_badge_number = get_setting('about_badge_number', '15.000+');
+$about_badge_text = get_setting('about_badge_text', 'Jamaah Terlayani');
+$about_image = get_setting('about_image', '');
+
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
@@ -113,6 +122,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                      <!--   <li><a href="#keunggulan" class="nav-link">Keunggulan</a></li> -->
                         <li><a href="#jadwal" class="nav-link">Jadwal</a></li>
                         <li><a href="#galeri" class="nav-link">Galeri</a></li>
+                        <li><a href="artikel.php" class="nav-link">Artikel</a></li>
                         <li><a href="#tentang" class="nav-link">Tentang Kami</a></li>
                         <li><a href="#kontak" class="nav-link">Kontak</a></li>
                     </ul>
@@ -415,6 +425,13 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                     </div>
                 <?php endif; ?>
             </div>
+            
+            <!-- Gallery More Button -->
+            <div class="section-more">
+                <a href="galeri.php" class="btn btn-outline">
+                    <i class="fas fa-images"></i> Lihat Semua Galeri
+                </a>
+            </div>
         </div>
     </section>
 
@@ -423,22 +440,19 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
         <div class="container">
             <div class="tentang-wrapper">
                 <div class="tentang-content">
-                    <h2 class="section-title">Tentang Kami</h2>
-                    <p>
-                        <strong>Raihan Travelindo</strong> resmi didirikan pada tahun 2005 oleh para pendiri yang memiliki visi mulia 
-                        untuk membantu umat Islam menunaikan ibadah ke Tanah Suci. Pada awal berdirinya, perusahaan ini bergerak 
-                        di bidang pariwisata, mulai dari tiket domestik dan penerbangan internasional.
-                    </p>
-                    <p>
-                        Setelah itu, kami mulai merambah ke bisnis layanan jasa travel umroh dan haji khusus. Nama 
-                        <strong>Raihan Travelindo</strong> terinspirasi dari Ka'bah yang merupakan rumah Allah SWT yang suci dan penuh berkah, 
-                        dengan harapan dapat memberikan pelayanan terbaik yang penuh keberkahan kepada setiap jamaah.
-                    </p>
-                    <p>
-                        Kami telah mengantongi berbagai izin resmi dari Pemerintah RI. Hal ini merupakan bukti nyata keseriusan 
-                        kami dalam memberikan layanan terbaik untuk para calon Tamu Allah SWT. Dengan pengalaman lebih dari 18 tahun 
-                        dan telah melayani lebih dari 15.000 jamaah, kami berkomitmen untuk terus meningkatkan kualitas pelayanan.
-                    </p>
+                    <h2 class="section-title"><?= e($about_title) ?></h2>
+                    <?php if ($about_content_p1): ?>
+                    <p><?= nl2br(e($about_content_p1)) ?></p>
+                    <?php endif; ?>
+                    
+                    <?php if ($about_content_p2): ?>
+                    <p><?= nl2br(e($about_content_p2)) ?></p>
+                    <?php endif; ?>
+                    
+                    <?php if ($about_content_p3): ?>
+                    <p><?= nl2br(e($about_content_p3)) ?></p>
+                    <?php endif; ?>
+                    
                     <div class="tentang-features">
                         <div class="feature-item">
                             <i class="fas fa-certificate"></i>
@@ -454,24 +468,19 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                                 <p>Penyelenggara Ibadah Haji Khusus</p>
                             </div>
                         </div>
-                        <div class="feature-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <div>
-                                <h4>Sertifikat ISO 9001:2015</h4>
-                                <p>Sistem Manajemen Mutu Terjamin</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div class="tentang-image">
-                    <img src="images/bg.jpeg" alt="Kantor Raihan Travelindo">
+                    <img src="<?= !empty($about_image) ? e($about_image) : 'images/bg.jpeg' ?>" alt="<?= e($about_title) ?>">
+                    <?php if ($about_badge_number || $about_badge_text): ?>
                     <div class="tentang-badge">
                         <i class="fas fa-users"></i>
                         <div>
-                            <h4>15.000+</h4>
-                            <p>Jamaah Terlayani</p>
+                            <h4><?= e($about_badge_number) ?></h4>
+                            <p><?= e($about_badge_text) ?></p>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -526,6 +535,13 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                         <h4>Fasilitas Hotel & Layanan</h4>
                     </div>
                 <?php endif; ?>
+            </div>
+            
+            <!-- Video More Button -->
+            <div class="section-more">
+                <a href="galeri.php?tab=videos" class="btn btn-outline">
+                    <i class="fas fa-video"></i> Lihat Semua Video
+                </a>
             </div>
         </div>
     </section>
