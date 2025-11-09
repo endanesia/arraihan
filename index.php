@@ -235,8 +235,8 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                     <?php if (!empty($packages)): ?>
                         <?php 
                         $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
-                        foreach ($chunks as $chunk): ?>
-                        <div class="package-slide">
+                        foreach ($chunks as $chunk_index => $chunk): ?>
+                        <div class="package-slide <?= $chunk_index === 0 ? 'active' : '' ?>">
                             <div class="package-slide-content">
                                 <?php foreach ($chunk as $p): ?>
                                 <div class="package-poster-card">
