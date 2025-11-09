@@ -505,7 +505,7 @@ include __DIR__ . '/header.php';
       
       <div class="col-md-6">
         <label class="form-label">Hotel</label>
-        <input name="hotel" class="form-control" value="<?= e($hotel) ?>" placeholder="Hotel Bintang 4-5, Dekat Haram">
+        <input name="hotel" class="form-control" value="<?= $hotel ?>" placeholder="Hotel Bintang 4-5, Dekat Haram">
         <div class="form-text">Informasi hotel yang disediakan</div>
       </div>
       <div class="col-md-6">

@@ -74,12 +74,23 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
     /* Package Detail Page Styles */
     body {
         font-family: 'Poppins', sans-serif;
+        background: #f8f9fa;
     }
     
     .package-detail {
         padding: 120px 0 80px;
         background: #f8f9fa;
         min-height: 100vh;
+    }
+    
+    /* Ensure header styles work on detail page */
+    .header {
+        background: rgba(26, 107, 74, 0.95);
+    }
+    
+    .header.scrolled {
+        background: white;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
     }
     
     .breadcrumb {
