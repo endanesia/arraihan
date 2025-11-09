@@ -1493,6 +1493,15 @@ ul {
     border-radius: 15px;
 }
 
+/* Show desktop slides by default, hide mobile */
+.desktop-slides {
+    display: block;
+}
+
+.mobile-slides {
+    display: none;
+}
+
 .package-slide {
     display: none;
     animation: slideIn 0.5s ease-in-out;
@@ -1724,6 +1733,15 @@ ul {
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    /* Hide desktop slides, show mobile slides */
+    .desktop-slides {
+        display: none;
+    }
+    
+    .mobile-slides {
+        display: block;
+    }
+    
     .package-slide-content {
         grid-template-columns: 1fr;
         gap: 20px;

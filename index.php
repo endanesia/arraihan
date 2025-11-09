@@ -21,7 +21,7 @@ if (function_exists('db') && db()) {
 $packages = [];
 if (function_exists('db') && db()) {
     try {
-        if ($res = db()->query("SELECT * FROM packages ORDER BY featured DESC, id DESC LIMIT 6")) {
+        if ($res = db()->query("SELECT * FROM packages ORDER BY featured DESC, id DESC")) {
             while ($row = $res->fetch_assoc()) { 
                 $packages[] = $row; 
             }
@@ -233,26 +233,69 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
             <div class="package-slider-container">
                 <div class="package-slider" id="packageSlider">
                     <?php if (!empty($packages)): ?>
-                        <?php 
-                        $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
-                        foreach ($chunks as $chunk_index => $chunk): ?>
-                        <div class="package-slide <?= $chunk_index === 0 ? 'active' : '' ?>">
-                            <div class="package-slide-content">
-                                <?php foreach ($chunk as $p): ?>
-                                <div class="package-poster-card">
-                                    <?php if ($p['featured']): ?>
-                                    <div class="package-popular-badge">
-                                        <i class="fas fa-star"></i> Populer
+                        <!-- Desktop slides: 3 per slide -->
+                        <div class="desktop-slides">
+                            <?php 
+                            $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
+                            foreach ($chunks as $chunk_index => $chunk): ?>
+                            <div class="package-slide <?= $chunk_index === 0 ? 'active' : '' ?>">
+                                <div class="package-slide-content">
+                                    <?php foreach ($chunk as $p): ?>
+                                    <div class="package-poster-card">
+                                        <?php if ($p['featured']): ?>
+                                        <div class="package-popular-badge">
+                                            <i class="fas fa-star"></i> Populer
+                                        </div>
+                                        <?php endif; ?>
+                                        
+                                        <div class="package-poster-image">
+                                            <?php if (!empty($p['poster'])): ?>
+                                                <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
+                                                     alt="<?= e($p['title']) ?>" 
+                                                     loading="lazy"
+                                                     onerror="console.log('Image failed to load:', this.src); this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
+                                            <?php else: ?>
+                                                <div class="package-no-image">
+                                                    <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="package-overlay">
+                                                <div class="package-price">
+                                                    <span class="price-label"><?= e($p['price_label']) ?></span>
+                                                    <span class="price-value"><?= e($p['price_value']) ?></span>
+                                                    <span class="price-unit"><?= e($p['price_unit']) ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="package-poster-info">
+                                            <h4><?= e($p['title']) ?></h4>
+                                            <a href="paket-detail.php?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
+                                                <i class="fas fa-info-circle"></i> Detail Paket
+                                            </a>
+                                        </div>
                                     </div>
-                                    <?php endif; ?>
-                                    
-                                    <div class="package-poster-image">
-                                        <?php if (!empty($p['poster'])): ?>
-                                            <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
-                                                 alt="<?= e($p['title']) ?>" 
-                                                 loading="lazy"
-                                                 onerror="console.log('Image failed to load:', this.src); this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
-                                        <?php else: ?>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                            <?php foreach ($packages as $index => $p): ?>
+                            <div class="package-slide <?= $index === 0 ? 'active' : '' ?>">
+                                <div class="package-slide-content">
+                                    <div class="package-poster-card">
+                                        <?php if ($p['featured']): ?>
+                                        <div class="package-popular-badge">
+                                            <i class="fas fa-star"></i> Populer
+                                        </div>
+                                        <?php endif; ?>
+                                        
+                                        <div class="package-poster-image">
+                                            <?php if (!empty($p['poster'])): ?>
+                                                <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
+                                                     alt="<?= e($p['title']) ?>" 
+                                                     loading="lazy"
+                                                     onerror="this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
+                                            <?php else: ?>
                                             <div class="package-no-image">
                                                 <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
                                             </div>
