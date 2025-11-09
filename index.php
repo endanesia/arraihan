@@ -250,9 +250,8 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                                         <?php if (!empty($p['poster'])): ?>
                                             <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
                                                  alt="<?= e($p['title']) ?>" 
-                                                 style="width: 100%; height: 100%; object-fit: cover; display: block;" 
-                                                 onload="console.log('Image loaded:', this.src)"
-                                                 onerror="console.log('Image failed to load:', this.src); this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'"
+                                                 loading="lazy"
+                                                 onerror="console.log('Image failed to load:', this.src); this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
                                         <?php else: ?>
                                             <div class="package-no-image">
                                                 <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>

@@ -1511,6 +1511,7 @@ ul {
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;
     padding: 20px;
+    width: 100%;
 }
 
 .package-poster-card {
@@ -1520,6 +1521,9 @@ ul {
     overflow: hidden;
     transition: all 0.3s ease;
     position: relative;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
 }
 
 .package-poster-card:hover {
@@ -1543,15 +1547,19 @@ ul {
 
 .package-poster-image {
     position: relative;
-    height: 250px;
+    height: 280px;
+    width: 100%;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .package-poster-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     transition: transform 0.3s ease;
+    display: block;
 }
 
 .package-poster-card:hover .package-poster-image img {
@@ -1605,6 +1613,11 @@ ul {
 .package-poster-info {
     padding: 20px;
     text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .package-poster-info h4 {
@@ -1612,6 +1625,7 @@ ul {
     font-weight: 600;
     margin-bottom: 15px;
     color: var(--dark-color);
+    line-height: 1.4;
 }
 
 .btn-detail {
@@ -1720,8 +1734,12 @@ ul {
         padding: 15px;
     }
     
+    .package-poster-card {
+        min-height: 350px;
+    }
+    
     .package-poster-image {
-        height: 200px;
+        height: 220px;
     }
     
     .slider-btn {
