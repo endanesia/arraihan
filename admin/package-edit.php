@@ -78,7 +78,6 @@ function resizeImage($source, $destination, $maxWidth = 1920, $maxHeight = 1080,
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $editing = $id > 0;
 $title = '';
-$description = '';
 $poster = '';
 $price_label = 'Mulai dari';
 $price_value = '';
@@ -96,14 +95,6 @@ $price_double = '';
 $err = null; $ok = null;
 
 if ($editing) {
-    // Check if description column exists
-    $has_description = false;
-    try {
-        $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'description'");
-        $has_description = $check_result && $check_result->num_rows > 0;
-    } catch (Exception $e) {
-        $has_description = false;
-    }
     
     // Check if poster column exists
     $has_poster = false;
@@ -114,37 +105,27 @@ if ($editing) {
         $has_poster = false;
     }
 
-    if ($has_description && $has_poster) {
-        $stmt = db()->prepare("SELECT title, description, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
+    if ($has_poster) {
+        $stmt = db()->prepare("SELECT title, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();
-        $stmt->bind_result($title, $description, $poster, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+        $stmt->bind_result($title, $poster, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
         if (!$stmt->fetch()) { $editing = false; }
         $stmt->close();
-    } elseif ($has_description) {
-        $stmt = db()->prepare("SELECT title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
-        $stmt->bind_param('i', $id);
-        $stmt->execute();
-        $stmt->bind_result($title, $description, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
-        if (!$stmt->fetch()) { $editing = false; }
-        $stmt->close();
-        $poster = ''; // Default empty poster
     } else {
-        // Fallback for when description column doesn't exist yet
+        // Fallback when poster column doesn't exist
         $stmt = db()->prepare("SELECT title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();
         $stmt->bind_result($title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
         if (!$stmt->fetch()) { $editing = false; }
         $stmt->close();
-        $description = ''; // Default empty description
         $poster = ''; // Default empty poster
     }
 }
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $title = trim($_POST['title'] ?? '');
-    $description = trim($_POST['description'] ?? '');
     $price_label = trim($_POST['price_label'] ?? 'Mulai dari');
     $price_value = trim($_POST['price_value'] ?? '');
     $price_unit = trim($_POST['price_unit'] ?? '/orang');
@@ -244,49 +225,32 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $has_poster = false;
         }
 
-        if ($has_description && $has_poster) {
+        if ($has_poster) {
             if ($editing) {
                 if ($uploaded_poster) {
                     // Update with new poster
-                    $stmt = db()->prepare("UPDATE packages SET title='$title', description='$description', poster='$uploaded_poster', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                    $stmt = db()->prepare("UPDATE packages SET title='$title', poster='$uploaded_poster', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 } else {
                     // Update without changing poster
-                    $stmt = db()->prepare("UPDATE packages SET title='$title', description='$description', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                    $stmt = db()->prepare("UPDATE packages SET title='$title', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 }
                 $stmt->execute();
                 $ok = 'Paket diperbarui' . (isset($upload_success_msg) ? '. ' . $upload_success_msg : '');
             } else {
-                // INSERT with description and poster
-                $stmt = db()->prepare("INSERT INTO packages(title, description, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$description', '$uploaded_poster', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
-                $stmt->execute();
-                header('Location: ' . $base . '/admin/packages'); exit;
-            }
-        } elseif ($has_description) {
-            if ($editing) {
-                // UPDATE with description: 16 placeholders (15 fields + id)
-                // title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double, id
-                $stmt = db()->prepare("UPDATE packages SET title='$title', description='$description', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
-                $stmt->execute();
-                $ok = 'Paket diperbarui';
-            } else {
-                // INSERT with description: 15 placeholders (15 fields)
-                // title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double
-                $stmt = db()->prepare("INSERT INTO packages(title, description, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$description', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
-                
+                // INSERT with poster
+                $stmt = db()->prepare("INSERT INTO packages(title, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$uploaded_poster', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
             }
         } else {
-            // Fallback for when description column doesn't exist yet
+            // Fallback when poster column doesn't exist
             if ($editing) {
-                // UPDATE without description: 15 placeholders (14 fields + id)
-                // title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double, id
+                // UPDATE without poster
                 $stmt = db()->prepare("UPDATE packages SET title='$title', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 $stmt->execute();
-                $ok = 'Paket diperbarui (description field not available - please run database migration)';
+                $ok = 'Paket diperbarui';
             } else {
-                // INSERT without description: 14 placeholders (14 fields)
-                // title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double
+                // INSERT without poster
                 $stmt = db()->prepare("INSERT INTO packages(title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
@@ -433,35 +397,6 @@ include __DIR__ . '/header.php';
       </div>
 
       <?php
-      // Check if description column exists
-      $has_description = false;
-      try {
-          $check_result = db()->query("SHOW COLUMNS FROM packages LIKE 'description'");
-          $has_description = $check_result && $check_result->num_rows > 0;
-      } catch (Exception $e) {
-          $has_description = false;
-      }
-      
-      if ($has_description): ?>
-      <div class="col-12">
-        <label class="form-label">Deskripsi Paket</label>
-        <textarea name="description" id="description" class="form-control ckeditor" rows="6"><?= e($description) ?></textarea>
-        <div class="form-text">Deskripsi lengkap tentang paket perjalanan ini</div>
-      </div>
-      <?php else: ?>
-      <div class="col-12">
-        <div class="alert alert-warning">
-          <i class="fas fa-exclamation-triangle me-2"></i>
-          <strong>Database Migration Required:</strong> 
-          Description field is not available. Please run the database migration to enable rich text descriptions.
-          <a href="/migrate-packages-description.php" target="_blank" class="btn btn-sm btn-outline-warning ms-2">
-            <i class="fas fa-database me-1"></i>Run Migration
-          </a>
-        </div>
-      </div>
-      <?php endif; ?>
-
-      <?php
       // Check if poster column exists
       $has_poster_field = false;
       try {
@@ -588,44 +523,6 @@ include __DIR__ . '/header.php';
 <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize CKEditor for Description (only if field exists)
-    const descriptionField = document.querySelector('#description');
-    if (descriptionField) {
-        ClassicEditor
-            .create(descriptionField, {
-                toolbar: [
-                    'heading', '|',
-                    'bold', 'italic', 'underline', '|',
-                    'bulletedList', 'numberedList', '|',
-                    'outdent', 'indent', '|',
-                    'blockQuote', 'insertTable', '|',
-                    'link', '|',
-                    'undo', 'redo'
-                ],
-                heading: {
-                    options: [
-                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                    ]
-                },
-                table: {
-                    contentToolbar: [
-                        'tableColumn',
-                        'tableRow',
-                        'mergeTableCells'
-                    ]
-                }
-            })
-            .then(editor => {
-                window.descriptionEditor = editor;
-            })
-            .catch(error => {
-                console.error('CKEditor Description initialization failed:', error);
-            });
-    }
-
     // Initialize CKEditor for Features
     const featuresField = document.querySelector('#features');
     if (featuresField) {
@@ -669,9 +566,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             // Update textareas with CKEditor content before submission
-            if (window.descriptionEditor && document.querySelector('#description')) {
-                document.querySelector('#description').value = window.descriptionEditor.getData();
-            }
             if (window.featuresEditor && document.querySelector('#features')) {
                 document.querySelector('#features').value = window.featuresEditor.getData();
             }

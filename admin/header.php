@@ -105,8 +105,9 @@ function nav_active($needle){
 <div class="d-flex">
   <aside class="sidebar">
     <div class="d-flex align-items-center mb-4">
-      <a class="brand text-decoration-none" href="<?= e($base) ?>/admin/dashboard">
-        <i class="fas fa-plane me-2"></i>Raihan Admin
+      <a class="brand text-decoration-none d-flex align-items-center" href="<?= e($base) ?>/admin/dashboard">
+        <img src="<?= e($base) ?>/images/logo.png" alt="Ar Raihan" style="height: 35px; margin-right: 10px;">
+        <span>Ar Raihan</span>
       </a>
     </div>
     <hr class="border-light opacity-25">

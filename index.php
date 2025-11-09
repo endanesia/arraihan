@@ -551,7 +551,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Partner & Corporate Client</h2>
-                <p class="section-desc">Dipercaya oleh berbagai perusahaan dan instansi</p>
+                <p class="section-desc">Dipercaya oleh berbagai lembaga dan instansi</p>
             </div>
             <div class="partners-grid">
                 <?php if (!empty($partners)): ?>
