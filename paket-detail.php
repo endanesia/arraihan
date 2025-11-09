@@ -1,6 +1,14 @@
 <?php 
 require_once __DIR__ . '/inc/db.php';
 
+// Base URL configuration
+$base = '';
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost:8080') {
+    $base = '';
+} else {
+    $base = '';
+}
+
 // Get package ID from URL
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($id <= 0) {
@@ -250,7 +258,7 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
                     <!-- Poster -->
                     <?php if (!empty($package['poster'])): ?>
                     <div class="text-center mb-4">
-                        <img src="images/packages/<?= e($package['poster']) ?>" 
+                        <img src="<?= $base ?>/images/packages/<?= e($package['poster']) ?>" 
                              alt="<?= e($package['title']) ?>" 
                              class="package-poster">
                     </div>

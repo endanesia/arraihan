@@ -1,4 +1,15 @@
 <?php require_once __DIR__ . '/inc/db.php';
+
+// Base URL configuration
+$base = '';
+if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost:8080') {
+    // Production environment
+    $base = '';
+} else {
+    // Development environment
+    $base = '';
+}
+
 // Fetch dynamic content (if DB available)
 $images = [];
 if (function_exists('db') && db()) {
@@ -9,8 +20,15 @@ if (function_exists('db') && db()) {
 // Packages
 $packages = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM packages ORDER BY featured DESC, id DESC LIMIT 6")) {
-        while ($row = $res->fetch_assoc()) { $packages[] = $row; }
+    try {
+        if ($res = db()->query("SELECT * FROM packages ORDER BY featured DESC, id DESC LIMIT 6")) {
+            while ($row = $res->fetch_assoc()) { 
+                $packages[] = $row; 
+            }
+        }
+    } catch (Exception $e) {
+        // Fallback jika ada error
+        error_log("Database error in index.php: " . $e->getMessage());
     }
 }
 // Partners
@@ -215,6 +233,18 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
             <div class="package-slider-container">
                 <div class="package-slider" id="packageSlider">
                     <?php if (!empty($packages)): ?>
+                        <!-- Debug info - hapus setelah testing -->
+                        <?php if (isset($_GET['debug'])): ?>
+                        <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; font-size: 12px; border: 1px solid #ddd;">
+                            <strong>Debug Info:</strong><br>
+                            Total packages: <?= count($packages) ?><br>
+                            <?php foreach ($packages as $idx => $pkg): ?>
+                                Package <?= $idx+1 ?>: <?= e($pkg['title'] ?: 'No title') ?> - Poster: <?= e($pkg['poster'] ?: 'No poster') ?><br>
+                                Image path: /images/packages/<?= e($pkg['poster'] ?: 'none') ?><br>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+                        
                         <?php 
                         $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
                         foreach ($chunks as $chunk): ?>
@@ -230,7 +260,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                                     
                                     <div class="package-poster-image">
                                         <?php if (!empty($p['poster'])): ?>
-                                            <img src="images/packages/<?= e($p['poster']) ?>" alt="<?= e($p['title']) ?>">
+                                            <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" alt="<?= e($p['title']) ?>" onerror="this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
                                         <?php else: ?>
                                             <div class="package-no-image">
                                                 <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
