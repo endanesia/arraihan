@@ -338,8 +338,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const slides = document.querySelectorAll('.package-slide');
     const dotsContainer = document.querySelector('.package-slider-dots');
-    const prevBtn = document.querySelector('.slider-prev');
-    const nextBtn = document.querySelector('.slider-next');
+    const prevBtn = document.getElementById('packagePrev');
+    const nextBtn = document.getElementById('packageNext');
     
     let currentSlide = 0;
     let isAutoPlaying = true;
@@ -360,6 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Show specific slide
     function showSlide(index) {
+        console.log('showSlide called with index:', index, 'Total slides:', slides.length);
         slides.forEach((slide, i) => {
             slide.classList.toggle('active', i === index);
         });
@@ -411,16 +412,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
+            console.log('Next button clicked, current:', currentSlide);
             nextSlide();
             resetAutoPlay();
         });
+    } else {
+        console.log('Next button not found!');
     }
     
     if (prevBtn) {
         prevBtn.addEventListener('click', () => {
+            console.log('Prev button clicked, current:', currentSlide);
             prevSlide();
             resetAutoPlay();
         });
+    } else {
+        console.log('Prev button not found!');
     }
     
     // Pause auto play on hover
