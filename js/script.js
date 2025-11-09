@@ -330,6 +330,250 @@ window.addEventListener('load', () => {
     }, 100);
 });
 
+// ===== PACKAGE SLIDER FUNCTIONALITY =====
+document.addEventListener('DOMContentLoaded', function() {
+    const packageSlider = document.querySelector('.package-slider');
+    
+    if (!packageSlider) return;
+    
+    const slides = document.querySelectorAll('.package-slide');
+    const dotsContainer = document.querySelector('.package-slider-dots');
+    const prevBtn = document.querySelector('.slider-prev');
+    const nextBtn = document.querySelector('.slider-next');
+    
+    let currentSlide = 0;
+    let isAutoPlaying = true;
+    let autoPlayInterval;
+    
+    // Create dots
+    if (dotsContainer) {
+        slides.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = 'slider-dot';
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+    }
+    
+    const dots = document.querySelectorAll('.slider-dot');
+    
+    // Show specific slide
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === index);
+        });
+        
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+    }
+    
+    // Go to specific slide
+    function goToSlide(index) {
+        currentSlide = index;
+        showSlide(currentSlide);
+        resetAutoPlay();
+    }
+    
+    // Next slide
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+    
+    // Previous slide
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    }
+    
+    // Auto play functionality
+    function startAutoPlay() {
+        if (isAutoPlaying && slides.length > 1) {
+            autoPlayInterval = setInterval(nextSlide, 5000);
+        }
+    }
+    
+    function stopAutoPlay() {
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval);
+        }
+    }
+    
+    function resetAutoPlay() {
+        stopAutoPlay();
+        if (isAutoPlaying) {
+            startAutoPlay();
+        }
+    }
+    
+    // Event listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            resetAutoPlay();
+        });
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            resetAutoPlay();
+        });
+    }
+    
+    // Pause auto play on hover
+    packageSlider.addEventListener('mouseenter', stopAutoPlay);
+    packageSlider.addEventListener('mouseleave', () => {
+        if (isAutoPlaying) startAutoPlay();
+    });
+    
+    // Touch/swipe support for mobile
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
+    
+    packageSlider.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isDragging = true;
+        stopAutoPlay();
+    }, { passive: true });
+    
+    packageSlider.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        const diffX = startX - currentX;
+        const diffY = startY - currentY;
+        
+        // Prevent default if horizontal swipe is detected
+        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    packageSlider.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const diffX = startX - endX;
+        
+        // Minimum swipe distance
+        if (Math.abs(diffX) > 50) {
+            if (diffX > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+        
+        isDragging = false;
+        resetAutoPlay();
+    }, { passive: true });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!packageSlider.matches(':hover')) return;
+        
+        switch(e.key) {
+            case 'ArrowLeft':
+                e.preventDefault();
+                prevSlide();
+                resetAutoPlay();
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                nextSlide();
+                resetAutoPlay();
+                break;
+        }
+    });
+    
+    // Initialize slider
+    if (slides.length > 0) {
+        showSlide(0);
+        startAutoPlay();
+    }
+    
+    // Pause/resume auto play when page visibility changes
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAutoPlay();
+        } else if (isAutoPlaying) {
+            startAutoPlay();
+        }
+    });
+    
+    // Intersection Observer to pause slider when not visible
+    const sliderObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (isAutoPlaying) startAutoPlay();
+            } else {
+                stopAutoPlay();
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    sliderObserver.observe(packageSlider);
+});
+
+// ===== PACKAGE DETAIL PAGE FUNCTIONALITY =====
+document.addEventListener('DOMContentLoaded', function() {
+    // WhatsApp consultation button
+    const consultationBtns = document.querySelectorAll('.btn-consultation');
+    
+    consultationBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const packageName = this.dataset.package || 'Paket Umroh';
+            const packagePrice = this.dataset.price || '';
+            
+            let message = `Assalamualaikum, saya tertarik dengan ${packageName}`;
+            
+            if (packagePrice) {
+                message += ` dengan harga ${packagePrice}`;
+            }
+            
+            message += '. Mohon informasi lebih lanjut.';
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappNumber = '6281234567890'; // Ganti dengan nomor yang sesuai
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        });
+    });
+    
+    // Booking button
+    const bookingBtns = document.querySelectorAll('.btn-booking');
+    
+    bookingBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const packageName = this.dataset.package || 'Paket Umroh';
+            const packagePrice = this.dataset.price || '';
+            
+            let message = `Assalamualaikum, saya ingin melakukan booking untuk ${packageName}`;
+            
+            if (packagePrice) {
+                message += ` dengan harga ${packagePrice}`;
+            }
+            
+            message += '. Mohon dibantu untuk proses selanjutnya.';
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappNumber = '6281234567890'; // Ganti dengan nomor yang sesuai
+            
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+        });
+    });
+});
+
 // ===== CONSOLE MESSAGE =====
 console.log(`
 %c🕌 Raihan Travelindo 

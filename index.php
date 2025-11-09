@@ -210,59 +210,93 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                 <h2 class="section-title">Paket Perjalanan Kami</h2>
                 <p class="section-desc">Pilih paket yang sesuai dengan kebutuhan ibadah Anda</p>
             </div>
-            <div class="paket-grid">
-                <?php if (!empty($packages)): ?>
-                    <?php foreach ($packages as $p): ?>
-                    <div class="paket-card <?= $p['featured'] ? 'featured' : '' ?>">
-                        <?php if ($p['featured']): ?><div class="paket-badge">Populer</div><?php endif; ?>
-                        <div class="paket-header">
-                            <div class="paket-icon"><i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?>"></i></div>
-                            <h3><?= e($p['title']) ?></h3>
-                        </div>
-                        <div class="paket-body">
-                            <div class="paket-price">
-                                <span class="price-label"><?= e($p['price_label']) ?></span>
-                                <span class="price-value"><?= e($p['price_value']) ?></span>
-                                <span class="price-person"><?= e($p['price_unit']) ?></span>
-                            </div>
-                            <ul class="paket-features">
-                                <?php 
-                                  $featLines = array_filter(array_map('trim', explode("\n", (string)$p['features'])));
-                                  foreach ($featLines as $line): 
-                                    $parts = explode('|', $line, 2); $fIcon = trim($parts[0] ?? 'fas fa-check'); $fText = trim($parts[1] ?? $line);
-                                ?>
-                                  <li><i class="<?= e($fIcon ?: 'fas fa-check') ?>"></i> <?= e($fText) ?></li>
+            
+            <!-- Package Slider -->
+            <div class="package-slider-container">
+                <div class="package-slider" id="packageSlider">
+                    <?php if (!empty($packages)): ?>
+                        <?php 
+                        $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
+                        foreach ($chunks as $chunk): ?>
+                        <div class="package-slide">
+                            <div class="package-slide-content">
+                                <?php foreach ($chunk as $p): ?>
+                                <div class="package-poster-card">
+                                    <?php if ($p['featured']): ?>
+                                    <div class="package-popular-badge">
+                                        <i class="fas fa-star"></i> Populer
+                                    </div>
+                                    <?php endif; ?>
+                                    
+                                    <div class="package-poster-image">
+                                        <?php if (!empty($p['poster'])): ?>
+                                            <img src="images/packages/<?= e($p['poster']) ?>" alt="<?= e($p['title']) ?>">
+                                        <?php else: ?>
+                                            <div class="package-no-image">
+                                                <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="package-overlay">
+                                            <div class="package-price">
+                                                <span class="price-label"><?= e($p['price_label']) ?></span>
+                                                <span class="price-value"><?= e($p['price_value']) ?></span>
+                                                <span class="price-unit"><?= e($p['price_unit']) ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="package-poster-info">
+                                        <h4><?= e($p['title']) ?></h4>
+                                        <a href="paket-detail.php?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
+                                            <i class="fas fa-info-circle"></i> Detail Paket
+                                        </a>
+                                    </div>
+                                </div>
                                 <?php endforeach; ?>
-                            </ul>
-                            <a href="<?= e($p['button_link'] ?: '#kontak') ?>" class="btn btn-primary"><?= e($p['button_text'] ?: 'Lihat Detail') ?></a>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <!-- fallback to static cards if no data -->
-                    <div class="paket-card">
-                        <div class="paket-header">
-                            <div class="paket-icon"><i class="fas fa-moon"></i></div>
-                            <h3>Paket Umroh</h3>
-                        </div>
-                        <div class="paket-body">
-                            <div class="paket-price">
-                                <span class="price-label">Mulai dari</span>
-                                <span class="price-value">Rp 24 Juta</span>
-                                <span class="price-person">/orang</span>
                             </div>
-                            <ul class="paket-features">
-                                <li><i class="fas fa-check"></i> Direct Flight</li>
-                                <li><i class="fas fa-check"></i> Hotel Bintang 4-5</li>
-                                <li><i class="fas fa-check"></i> Ring 1 Masjidil Haram</li>
-                                <li><i class="fas fa-check"></i> Muthawif Berpengalaman</li>
-                                <li><i class="fas fa-check"></i> City Tour</li>
-                                <li><i class="fas fa-check"></i> Ziarah Lengkap</li>
-                            </ul>
-                            <a href="#kontak" class="btn btn-primary">Lihat Detail</a>
                         </div>
-                    </div>
-                <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <!-- Fallback slide -->
+                        <div class="package-slide">
+                            <div class="package-slide-content">
+                                <div class="package-poster-card">
+                                    <div class="package-poster-image">
+                                        <div class="package-no-image">
+                                            <i class="fas fa-moon fa-3x"></i>
+                                        </div>
+                                        <div class="package-overlay">
+                                            <div class="package-price">
+                                                <span class="price-label">Mulai dari</span>
+                                                <span class="price-value">Rp 24 Juta</span>
+                                                <span class="price-unit">/orang</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="package-poster-info">
+                                        <h4>Paket Umroh</h4>
+                                        <a href="#kontak" class="btn btn-detail">
+                                            <i class="fas fa-info-circle"></i> Detail Paket
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <!-- Slider Navigation -->
+                <div class="package-slider-nav">
+                    <button class="slider-btn slider-prev" id="packagePrev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="slider-btn slider-next" id="packageNext">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <!-- Slider Dots -->
+                <div class="package-slider-dots" id="packageDots"></div>
             </div>
         </div>
     </section>

@@ -132,8 +132,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $icon_class = trim($_POST['icon_class'] ?? 'fas fa-moon');
     $features = trim($_POST['features'] ?? '');
     $featured = isset($_POST['featured']) ? 1 : 0;
-    $button_text = trim($_POST['button_text'] ?? 'Lihat Detail');
-    $button_link = trim($_POST['button_link'] ?? '#kontak');
+    // Call-to-action fields removed for simplification
+    $button_text = 'Lihat Detail';
+    $button_link = '#kontak';
     $hotel = trim($_POST['hotel'] ?? '');
     $pesawat = trim($_POST['pesawat'] ?? '');
     $price_quad = trim($_POST['price_quad'] ?? '');
@@ -147,15 +148,19 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     if (isset($_FILES['poster']) && $_FILES['poster']['error'] === UPLOAD_ERR_OK) {
         $f = $_FILES['poster'];
         
-        // Validate file type
-        $allowed = ['image/jpeg'=>'.jpg','image/png'=>'.png','image/webp'=>'.webp','image/jpg'=>'.jpg'];
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $detected_type = finfo_file($finfo, $f['tmp_name']);
-        finfo_close($finfo);
-        
-        if (!isset($allowed[$detected_type])) {
-            $err = 'Format poster tidak didukung. Terdeteksi: ' . $detected_type . '. Yang didukung: JPEG, PNG, WebP.';
+        // File size validation (2MB limit)
+        if ($f['size'] > 2 * 1024 * 1024) {
+            $err = 'Ukuran file poster terlalu besar. Maksimal 2MB. Ukuran file Anda: ' . number_format($f['size']/1024/1024, 2) . 'MB';
         } else {
+            // Validate file type
+            $allowed = ['image/jpeg'=>'.jpg','image/png'=>'.png','image/webp'=>'.webp','image/jpg'=>'.jpg'];
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $detected_type = finfo_file($finfo, $f['tmp_name']);
+            finfo_close($finfo);
+            
+            if (!isset($allowed[$detected_type])) {
+                $err = 'Format poster tidak didukung. Terdeteksi: ' . $detected_type . '. Yang didukung: JPEG, PNG, WebP.';
+            } else {
             // Create upload directory for posters
             $upload_dir = __DIR__ . '/../images/packages';
             if (!is_dir($upload_dir)) {
@@ -204,6 +209,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 }
             }
         }
+    }
+    
+    // Handle upload errors if file was attempted but failed
+    if (!$err && isset($_FILES['poster']) && $_FILES['poster']['error'] !== UPLOAD_ERR_NO_FILE && $_FILES['poster']['error'] !== UPLOAD_ERR_OK) {
+        $upload_errors = [
+            UPLOAD_ERR_INI_SIZE => 'File terlalu besar (melebihi upload_max_filesize)',
+            UPLOAD_ERR_FORM_SIZE => 'File terlalu besar (melebihi MAX_FILE_SIZE)',
+            UPLOAD_ERR_PARTIAL => 'File tidak terupload sempurna',
+            UPLOAD_ERR_NO_TMP_DIR => 'Direktori temporary tidak ditemukan',
+            UPLOAD_ERR_CANT_WRITE => 'Gagal menulis file ke disk',
+            UPLOAD_ERR_EXTENSION => 'Upload dihentikan oleh extension'
+        ];
+        $err = $upload_errors[$_FILES['poster']['error']] ?? 'Error upload tidak dikenal';
+    }
     }
 
     if (!$err) {
@@ -415,10 +434,21 @@ include __DIR__ . '/header.php';
           <div class="form-text">Poster saat ini</div>
         </div>
         <?php endif; ?>
-        <input type="file" name="poster" accept="image/*" class="form-control">
+        <input type="file" name="poster" accept="image/jpeg,image/png,image/webp" class="form-control">
         <div class="form-text">
-          Upload gambar poster untuk paket ini. Format yang didukung: JPEG, PNG, WebP. 
-          <?php if ($editing && $poster): ?>Kosongkan jika tidak ingin mengubah poster.<?php endif; ?>
+          <div class="text-info mb-1">
+            <i class="fas fa-info-circle me-1"></i>
+            <strong>Format:</strong> JPEG, PNG, WebP • 
+            <strong>Ukuran Max:</strong> 2MB • 
+            <strong>Resolusi Optimal:</strong> 1920x1080px
+          </div>
+          <div class="text-warning">
+            <i class="fas fa-exclamation-triangle me-1"></i>
+            File akan otomatis dikompres dan diubah ukurannya jika melebihi batas
+          </div>
+          <?php if ($editing && $poster): ?>
+          <div class="text-muted mt-1">Kosongkan jika tidak ingin mengubah poster saat ini</div>
+          <?php endif; ?>
         </div>
       </div>
       <?php else: ?>
@@ -492,20 +522,7 @@ include __DIR__ . '/header.php';
         </div>
       </div>
 
-      <!-- Call to Action -->
-      <div class="col-12 mt-4">
-        <h5 class="text-primary mb-3"><i class="fas fa-mouse-pointer me-2"></i>Call to Action</h5>
-      </div>
-      
-      <div class="col-md-6">
-        <label class="form-label">Teks Tombol</label>
-        <input name="button_text" class="form-control" value="<?= e($button_text) ?>" placeholder="Lihat Detail">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Link Tombol</label>
-        <input name="button_link" class="form-control" value="<?= e($button_link) ?>" placeholder="#kontak">
-        <div class="form-text">Link tujuan tombol (misal: #kontak, /paket-detail, dll)</div>
-      </div>
+      <!-- Call to Action fields removed for simplification -->
 
       <div class="col-12 mt-4">
         <button class="btn btn-primary btn-lg" type="submit">
