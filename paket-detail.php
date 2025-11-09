@@ -274,9 +274,6 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
             width: 100%;
         }
     }
-    </style>
-        margin-bottom: 30px;
-    }
     
     .price-main {
         font-size: 2.5rem;
