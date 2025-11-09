@@ -259,7 +259,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                             
                             <div class="package-poster-info">
                                 <h4><?= e($p['title']) ?></h4>
-                                <a href="paket-detail.php?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
+                                <a href="paket-detail/?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
                                     <i class="fas fa-info-circle"></i> Detail Paket
                                 </a>
                             </div>

@@ -62,26 +62,66 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Detail <?= e($package['title']) ?> - Travel Umroh & Haji Terpercaya">
     <title><?= e($package['title']) ?> - Ar Raihan Travelindo</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+    /* Package Detail Page Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    
     .package-detail {
-        padding: 100px 0 80px;
+        padding: 120px 0 80px;
         background: #f8f9fa;
+        min-height: 100vh;
+    }
+    
+    .breadcrumb {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .breadcrumb a {
+        color: #1a6b4a;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+    
+    .breadcrumb a:hover {
+        color: #0d4a33;
+        text-decoration: underline;
     }
     
     .package-header {
         background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
         color: white;
-        padding: 60px 0;
-        margin-bottom: 50px;
+        padding: 40px 20px;
+        margin-bottom: 40px;
+        border-radius: 15px;
+        text-align: center;
+    }
+    
+    .package-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
     }
     
     .package-poster {
+        width: 100%;
         max-width: 100%;
+        height: auto;
         border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         margin-bottom: 30px;
     }
     
@@ -89,8 +129,21 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
         background: white;
         padding: 40px;
         border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
         margin-bottom: 30px;
+    }
+    
+    .package-info h3 {
+        color: #1a6b4a;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #1a6b4a;
+    }
+    
+    .package-info h5 {
+        color: #333;
+        margin-top: 20px;
+        margin-bottom: 10px;
     }
     
     .price-section {
@@ -99,6 +152,129 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
         padding: 30px;
         border-radius: 15px;
         text-align: center;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+    
+    .price-section h3 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(255,255,255,0.3);
+        padding-bottom: 15px;
+    }
+    
+    .price-item {
+        background: rgba(255,255,255,0.1);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .price-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        display: block;
+        margin-bottom: 5px;
+    }
+    
+    .price-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: block;
+    }
+    
+    .cta-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        margin-top: 20px;
+    }
+    
+    .cta-section h4 {
+        color: #1a6b4a;
+        margin-bottom: 20px;
+    }
+    
+    .btn-consultation,
+    .btn-booking {
+        display: inline-block;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        margin: 5px;
+        width: calc(100% - 10px);
+        text-align: center;
+    }
+    
+    .btn-consultation {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        color: white;
+    }
+    
+    .btn-consultation:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        color: white;
+    }
+    
+    .btn-booking {
+        background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
+        color: white;
+    }
+    
+    .btn-booking:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(26, 107, 74, 0.4);
+        color: white;
+    }
+    
+    .features-content {
+        line-height: 1.8;
+    }
+    
+    .features-content ul {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .features-content li {
+        padding: 10px 0;
+        padding-left: 30px;
+        position: relative;
+    }
+    
+    .features-content li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #1a6b4a;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+    
+    @media (max-width: 768px) {
+        .package-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .package-info {
+            padding: 25px;
+        }
+        
+        .price-section {
+            padding: 20px;
+        }
+        
+        .btn-consultation,
+        .btn-booking {
+            width: 100%;
+        }
+    }
+    </style>
         margin-bottom: 30px;
     }
     
@@ -361,6 +537,10 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
     <script src="js/script.js"></script>
 </body>
 </html>
