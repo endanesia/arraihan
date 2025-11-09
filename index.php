@@ -254,13 +254,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                                         <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
                                     </div>
                                 <?php endif; ?>
-                                <div class="package-overlay">
-                                    <div class="package-price">
-                                        <span class="price-label"><?= e($p['price_label']) ?></span>
-                                        <span class="price-value"><?= e($p['price_value']) ?></span>
-                                        <span class="price-unit"><?= e($p['price_unit']) ?></span>
-                                    </div>
-                                </div>
+
                             </div>
                             
                             <div class="package-poster-info">
