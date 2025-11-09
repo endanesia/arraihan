@@ -122,6 +122,8 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
     <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
     <!-- Admin shortcut (optional): <link rel="nofollow" href="<?= e(($config['app']['base_url'] ?? '')); ?>/admin/login.php"> -->
   </head>
 <body>
@@ -229,139 +231,60 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                 <p class="section-desc">Pilih paket yang sesuai dengan kebutuhan ibadah Anda</p>
             </div>
             
-            <!-- Package Slider -->
-            <div class="package-slider-container">
-                <div class="package-slider" id="packageSlider">
-                    <?php if (!empty($packages)): ?>
-                        <!-- Desktop slides: 3 per slide -->
-                        <div class="desktop-slides">
-                            <?php 
-                            $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
-                            foreach ($chunks as $chunk_index => $chunk): ?>
-                            <div class="package-slide <?= $chunk_index === 0 ? 'active' : '' ?>">
-                                <div class="package-slide-content">
-                                    <?php foreach ($chunk as $p): ?>
-                                    <div class="package-poster-card">
-                                        <?php if ($p['featured']): ?>
-                                        <div class="package-popular-badge">
-                                            <i class="fas fa-star"></i> Populer
-                                        </div>
-                                        <?php endif; ?>
-                                        
-                                        <div class="package-poster-image">
-                                            <?php if (!empty($p['poster'])): ?>
-                                                <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
-                                                     alt="<?= e($p['title']) ?>" 
-                                                     loading="lazy"
-                                                     onerror="console.log('Image failed to load:', this.src); this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
-                                            <?php else: ?>
-                                                <div class="package-no-image">
-                                                    <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
-                                                </div>
-                                            <?php endif; ?>
-                                            <div class="package-overlay">
-                                                <div class="package-price">
-                                                    <span class="price-label"><?= e($p['price_label']) ?></span>
-                                                    <span class="price-value"><?= e($p['price_value']) ?></span>
-                                                    <span class="price-unit"><?= e($p['price_unit']) ?></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="package-poster-info">
-                                            <h4><?= e($p['title']) ?></h4>
-                                            <a href="paket-detail.php?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
-                                                <i class="fas fa-info-circle"></i> Detail Paket
-                                            </a>
-                                        </div>
+            <!-- Package Swiper Slider -->
+            <?php if (!empty($packages)): ?>
+            <div class="swiper packageSwiper">
+                <div class="swiper-wrapper">
+                    <?php foreach ($packages as $p): ?>
+                    <div class="swiper-slide">
+                        <div class="package-poster-card">
+                            <?php if ($p['featured']): ?>
+                            <div class="package-popular-badge">
+                                <i class="fas fa-star"></i> Populer
+                            </div>
+                            <?php endif; ?>
+                            
+                            <div class="package-poster-image">
+                                <?php if (!empty($p['poster'])): ?>
+                                    <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
+                                         alt="<?= e($p['title']) ?>" 
+                                         loading="lazy">
+                                <?php else: ?>
+                                    <div class="package-no-image">
+                                        <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="package-overlay">
+                                    <div class="package-price">
+                                        <span class="price-label"><?= e($p['price_label']) ?></span>
+                                        <span class="price-value"><?= e($p['price_value']) ?></span>
+                                        <span class="price-unit"><?= e($p['price_unit']) ?></span>
                                     </div>
                                 </div>
                             </div>
-                            <?php endforeach; ?>
-                        </div>
-                            <?php foreach ($packages as $index => $p): ?>
-                            <div class="package-slide <?= $index === 0 ? 'active' : '' ?>">
-                                <div class="package-slide-content">
-                                    <div class="package-poster-card">
-                                        <?php if ($p['featured']): ?>
-                                        <div class="package-popular-badge">
-                                            <i class="fas fa-star"></i> Populer
-                                        </div>
-                                        <?php endif; ?>
-                                        
-                                        <div class="package-poster-image">
-                                            <?php if (!empty($p['poster'])): ?>
-                                                <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
-                                                     alt="<?= e($p['title']) ?>" 
-                                                     loading="lazy"
-                                                     onerror="this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
-                                            <?php else: ?>
-                                            <div class="package-no-image">
-                                                <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
-                                            </div>
-                                        <?php endif; ?>
-                                        <div class="package-overlay">
-                                            <div class="package-price">
-                                                <span class="price-label"><?= e($p['price_label']) ?></span>
-                                                <span class="price-value"><?= e($p['price_value']) ?></span>
-                                                <span class="price-unit"><?= e($p['price_unit']) ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="package-poster-info">
-                                        <h4><?= e($p['title']) ?></h4>
-                                        <a href="paket-detail.php?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
-                                            <i class="fas fa-info-circle"></i> Detail Paket
-                                        </a>
-                                    </div>
-                                </div>
-                                <?php endforeach; ?>
+                            
+                            <div class="package-poster-info">
+                                <h4><?= e($p['title']) ?></h4>
+                                <a href="paket-detail.php?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
+                                    <i class="fas fa-info-circle"></i> Detail Paket
+                                </a>
                             </div>
                         </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <!-- Fallback slide -->
-                        <div class="package-slide">
-                            <div class="package-slide-content">
-                                <div class="package-poster-card">
-                                    <div class="package-poster-image">
-                                        <div class="package-no-image">
-                                            <i class="fas fa-moon fa-3x"></i>
-                                        </div>
-                                        <div class="package-overlay">
-                                            <div class="package-price">
-                                                <span class="price-label">Mulai dari</span>
-                                                <span class="price-value">Rp 24 Juta</span>
-                                                <span class="price-unit">/orang</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="package-poster-info">
-                                        <h4>Paket Umroh</h4>
-                                        <a href="#kontak" class="btn btn-detail">
-                                            <i class="fas fa-info-circle"></i> Detail Paket
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
                 
-                <!-- Slider Navigation -->
-                <div class="package-slider-nav">
-                    <button class="slider-btn slider-prev" id="packagePrev">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="slider-btn slider-next" id="packageNext">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+                <!-- Swiper Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
                 
-                <!-- Slider Dots -->
-                <div class="package-slider-dots" id="packageDots"></div>
+                <!-- Swiper Pagination -->
+                <div class="swiper-pagination"></div>
             </div>
+            <?php else: ?>
+            <!-- No packages message -->
+            <p class="text-center">Belum ada paket tersedia.</p>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -898,6 +821,41 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
+    <!-- Swiper Initialization -->
+    <script>
+        const packageSwiper = new Swiper('.packageSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
+            },
+        });
+    </script>
+    
     <script src="js/script.js"></script>
   </body>
   </html>
