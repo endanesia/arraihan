@@ -334,12 +334,21 @@ window.addEventListener('load', () => {
 document.addEventListener('DOMContentLoaded', function() {
     const packageSlider = document.querySelector('.package-slider');
     
-    if (!packageSlider) return;
+    if (!packageSlider) {
+        console.log('Package slider not found!');
+        return;
+    }
+    
+    console.log('Package slider found:', packageSlider);
     
     const slides = document.querySelectorAll('.package-slide');
     const dotsContainer = document.querySelector('.package-slider-dots');
     const prevBtn = document.querySelector('.slider-prev');
     const nextBtn = document.querySelector('.slider-next');
+    
+    console.log('Slides found:', slides.length);
+    console.log('Dots container:', dotsContainer);
+    console.log('Navigation buttons:', prevBtn, nextBtn);
     
     let currentSlide = 0;
     let isAutoPlaying = true;

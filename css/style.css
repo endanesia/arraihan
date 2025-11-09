@@ -1498,6 +1498,10 @@ ul {
     animation: slideIn 0.5s ease-in-out;
 }
 
+.package-slide:first-child {
+    display: block;
+}
+
 .package-slide.active {
     display: block;
 }

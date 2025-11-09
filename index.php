@@ -233,18 +233,6 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
             <div class="package-slider-container">
                 <div class="package-slider" id="packageSlider">
                     <?php if (!empty($packages)): ?>
-                        <!-- Debug info - hapus setelah testing -->
-                        <?php if (isset($_GET['debug'])): ?>
-                        <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; font-size: 12px; border: 1px solid #ddd;">
-                            <strong>Debug Info:</strong><br>
-                            Total packages: <?= count($packages) ?><br>
-                            <?php foreach ($packages as $idx => $pkg): ?>
-                                Package <?= $idx+1 ?>: <?= e($pkg['title'] ?: 'No title') ?> - Poster: <?= e($pkg['poster'] ?: 'No poster') ?><br>
-                                Image path: /images/packages/<?= e($pkg['poster'] ?: 'none') ?><br>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
-                        
                         <?php 
                         $chunks = array_chunk($packages, 3); // Group packages into chunks of 3 for desktop
                         foreach ($chunks as $chunk): ?>
@@ -260,7 +248,11 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
                                     
                                     <div class="package-poster-image">
                                         <?php if (!empty($p['poster'])): ?>
-                                            <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" alt="<?= e($p['title']) ?>" onerror="this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'">
+                                            <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 
+                                                 alt="<?= e($p['title']) ?>" 
+                                                 style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+                                                 onload="console.log('Image loaded:', this.src)"
+                                                 onerror="console.log('Image failed to load:', this.src); this.parentElement.innerHTML='<div class=\'package-no-image\'><i class=\'<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x\'></i></div>'"
                                         <?php else: ?>
                                             <div class="package-no-image">
                                                 <i class="<?= e($p['icon_class'] ?: 'fas fa-moon') ?> fa-3x"></i>
