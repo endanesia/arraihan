@@ -146,6 +146,11 @@ function nav_active($needle){
               <i class="fas fa-info-circle"></i>Tentang Kami
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link <?= nav_active('/admin/partners') ?>" href="<?= e($base) ?>/admin/partners">
+              <i class="fas fa-handshake"></i>Partner
+            </a>
+          </li>
         </ul>
       </li>
 
@@ -174,11 +179,7 @@ function nav_active($needle){
           <i class="fas fa-calendar-alt"></i>Jadwal Keberangkatan
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link <?= nav_active('/admin/partners') ?>" href="<?= e($base) ?>/admin/partners">
-          <i class="fas fa-handshake"></i>Partner
-        </a>
-      </li>
+
       <li class="nav-item">
         <a class="nav-link <?= nav_active('/admin/social-links') ?>" href="<?= e($base) ?>/admin/social-links">
           <i class="fas fa-cog"></i>Pengaturan Situs
