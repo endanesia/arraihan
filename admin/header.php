@@ -120,7 +120,7 @@ function nav_active($needle){
       
       <!-- Homepage Menu with Submenu -->
       <li class="nav-item">
-        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') ? 'active' : '' ?>" 
+        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/partners') ? 'active' : '' ?>" 
            href="#" onclick="toggleSubmenu('homepage-menu')">
           <span><i class="fas fa-home"></i>Homepage</span>
           <i class="fas fa-chevron-down submenu-toggle" id="homepage-arrow"></i>
