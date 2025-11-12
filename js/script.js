@@ -30,6 +30,12 @@ navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');
         
+        // If link contains full URL (http:// or https://), allow normal navigation
+        if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+            // Let browser handle the navigation normally
+            return;
+        }
+        
         // If link contains a page (like index.php#section), allow normal navigation
         if (href && href.includes('.php#')) {
             // Let browser handle the navigation normally
