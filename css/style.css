@@ -159,6 +159,8 @@ ul {
 .nav-menu {
     display: flex;
     gap: 30px;
+    flex: 1;
+    justify-content: center;
 }
 
 .nav-link {

@@ -28,24 +28,34 @@ navLinks.forEach(link => {
 // ===== SMOOTH SCROLL FOR NAVIGATION =====
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-        e.preventDefault();
+        const href = link.getAttribute('href');
         
-        // Remove active class from all links
-        navLinks.forEach(l => l.classList.remove('active'));
+        // If link contains a page (like index.php#section), allow normal navigation
+        if (href && href.includes('.php#')) {
+            // Let browser handle the navigation normally
+            return;
+        }
         
-        // Add active class to clicked link
-        link.classList.add('active');
-        
-        // Get target section
-        const targetId = link.getAttribute('href');
-        const targetSection = document.querySelector(targetId);
-        
-        if (targetSection) {
-            const offsetTop = targetSection.offsetTop - 80;
-            window.scrollTo({
-                top: offsetTop,
-                behavior: 'smooth'
-            });
+        // For hash-only links, do smooth scroll
+        if (href && href.startsWith('#')) {
+            e.preventDefault();
+            
+            // Remove active class from all links
+            navLinks.forEach(l => l.classList.remove('active'));
+            
+            // Add active class to clicked link
+            link.classList.add('active');
+            
+            // Get target section
+            const targetSection = document.querySelector(href);
+            
+            if (targetSection) {
+                const offsetTop = targetSection.offsetTop - 80;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
         }
     });
 });
