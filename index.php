@@ -111,55 +111,16 @@ $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
 // For tel: link, use first phone if available
 $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
+
+// Page configuration for header template
+$page_title = 'Raihan Travelindo - Travel Haji & Umroh Terpercaya';
+$page_description = 'Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI dengan Akreditasi A';
+$current_page = 'home';
+$include_swiper = true;
+
+// Include header template
+require_once __DIR__ . '/inc/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI dengan Akreditasi A">
-    <title>Raihan Travelindo - Travel Haji & Umroh Terpercaya</title>
-    <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <!-- Admin shortcut (optional): <link rel="nofollow" href="<?= e(($config['app']['base_url'] ?? '')); ?>/admin/login.php"> -->
-  </head>
-<body>
-    <!-- Header & Navigation -->
-    <header class="header" id="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="nav-wrapper">
-                    <div class="logo">
-                        <img src="images/logo.png" alt="Raihan Travelindo" style="height: 50px;">
-                        <span>Ar Raihan</span>
-                    </div>
-                    <ul class="nav-menu" id="navMenu">
-                        <li><a href="#home" class="nav-link active">Home</a></li>
-                        <li><a href="#paket" class="nav-link">Paket</a></li>
-                     <!--   <li><a href="#keunggulan" class="nav-link">Keunggulan</a></li> -->
-                        <li><a href="#jadwal" class="nav-link">Jadwal</a></li>
-                        <li><a href="#galeri" class="nav-link">Galeri</a></li>
-                        <li><a href="artikel.php" class="nav-link">Artikel</a></li>
-                        <li><a href="#tentang" class="nav-link">Tentang Kami</a></li>
-                        <li><a href="#kontak" class="nav-link">Kontak</a></li>
-                    </ul>
-                    <div class="nav-buttons">
-                        <?php if (!empty($link_whatsapp)): ?>
-                        <a href="<?= e($link_whatsapp) ?>" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Kami</a>
-                        <?php endif; ?>
-                        <button class="nav-toggle" id="navToggle">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
 
     <!-- Hero Section -->
     <section class="hero" id="home"<?php if ($hero_background): ?> style="background-image: url('<?= e($hero_background) ?>');"<?php endif; ?>>
@@ -715,141 +676,7 @@ $primary_phone_for_tel = !empty($phones) ? $phones[0] : $phone_number;
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <div class="footer-logo">
-                        <img src="images/logo.png" alt="Raihan Travelindo" style="height: 40px;">
-                        <span>Ar Raihan</span>
-                    </div>
-                    <p>PT. Raihan Islami Travelindo yang didirikan pada 05 Juli 2023 dan resmi dibuka pada 02 Agustus 2023.</p>
-                    <div class="footer-social">
-                        <?php if (!empty($link_whatsapp)): ?><a href="<?= e($link_whatsapp) ?>" target="_blank"><i class="fab fa-whatsapp"></i></a><?php endif; ?>
-                        <?php if (!empty($link_facebook)): ?><a href="<?= e($link_facebook) ?>" target="_blank"><i class="fab fa-facebook"></i></a><?php endif; ?>
-                        <?php if (!empty($link_instagram)): ?><a href="<?= e($link_instagram) ?>" target="_blank"><i class="fab fa-instagram"></i></a><?php endif; ?>
-                        <?php if (!empty($link_youtube)): ?><a href="<?= e($link_youtube) ?>" target="_blank"><i class="fab fa-youtube"></i></a><?php endif; ?>
-                        <?php if (!empty($link_twitter)): ?><a href="<?= e($link_twitter) ?>" target="_blank"><i class="fab fa-twitter"></i></a><?php endif; ?>
-                        <?php if (!empty($link_tiktok)): ?><a href="<?= e($link_tiktok) ?>" target="_blank"><i class="fab fa-tiktok"></i></a><?php endif; ?>
-                        <?php if (!empty($link_threads)): ?><a href="<?= e($link_threads) ?>" target="_blank"><i class="fas fa-at"></i></a><?php endif; ?>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <h4>Menu</h4>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#paket">Paket Umroh</a></li>
-                        <li><a href="#keunggulan">Keunggulan</a></li>
-                        <li><a href="#jadwal">Jadwal</a></li>
-                        <li><a href="#galeri">Galeri</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Layanan</h4>
-                    <ul>
-                        <li><a href="#paket">Paket Umroh</a></li>
-                        <li><a href="#paket">Haji Khusus</a></li>
-                        <li><a href="#paket">Badal Haji</a></li>
-                        <li><a href="#paket">Badal Umroh</a></li>
-                        <li><a href="#tentang">Tentang Kami</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Legalitas</h4>
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> Izin PPIU Kemenag RI</li>
-                        <li><i class="fas fa-check-circle"></i> Izin PIHK Resmi</li>
-                        <li><i class="fas fa-check-circle"></i> Tergabung AMPHURI</li>
-                        <li><i class="fas fa-check-circle"></i> Anggota IATA</li>
-                        <li><i class="fas fa-check-circle"></i> Anggota AITTA</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Raihan Travelindo. All Rights Reserved.</p>
-                <div class="footer-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- WhatsApp Float Button -->
-    <?php if (!empty($link_whatsapp)): ?>
-    <a href="<?= e($link_whatsapp) ?>" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
-    <?php endif; ?>
-
-    <!-- Social Media Float Buttons -->
-    <?php if (!empty($link_facebook)): ?>
-    <a href="<?= e($link_facebook) ?>" class="social-float facebook-float" target="_blank">
-        <i class="fab fa-facebook-f"></i>
-    </a>
-    <?php endif; ?>
-    
-    <?php if (!empty($link_youtube)): ?>
-    <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank" 
-       style="position: fixed; bottom: 175px; right: 30px; width: 50px; height: 50px; background: #FF0000 !important; z-index: 1000 !important; display: flex !important;">
-        <i class="fab fa-youtube"></i>
-    </a>
-    <?php endif; ?>
-    <?php if (!empty($link_instagram)): ?>
-    <a href="<?= e($link_instagram) ?>" class="social-float instagram-float" target="_blank">
-        <i class="fab fa-instagram"></i>
-    </a>
-    <?php endif; ?>
-    <?php if (!empty($link_threads)): ?>
-    <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank"
-       style="position: fixed; bottom: 240px; right: 30px; width: 50px; height: 50px; background: #000000 !important; z-index: 1000 !important; display: flex !important;">
-        <i class="fas fa-at"></i>
-    </a>
-    <?php endif; ?>
-    <?php if (!empty($link_tiktok)): ?>
-    <a href="<?= e($link_tiktok) ?>" class="social-float tiktok-float" target="_blank">
-        <i class="fab fa-tiktok"></i>
-    </a>
-    <?php endif; ?>
-    <!-- Scroll to Top Button -->
-    <button class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    
-    <!-- Swiper Initialization -->
-    <script>
-        const packageSwiper = new Swiper('.packageSwiper', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            loop: true,
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-                dynamicBullets: true,
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            breakpoints: {
-                640: {
-                    slidesPerView: 2,
-                    spaceBetween: 20,
-                },
-                1024: {
-                    slidesPerView: 3,
-                    spaceBetween: 30,
-                },
-            },
-        });
-    </script>
-    
-    <script src="js/script.js"></script>
-  </body>
-  </html>
+<?php
+// Include footer template
+require_once __DIR__ . '/inc/footer.php';
+?>

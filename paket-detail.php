@@ -54,364 +54,19 @@ if (!$package) {
 $link_whatsapp = function_exists('get_setting') ? get_setting('whatsapp', '') : '';
 $phone_number = function_exists('get_setting') ? get_setting('phone', '+6281234567890') : '+6281234567890';
 $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890';
+
+// Page configuration for header template
+$page_title = e($package['title']) . ' - Ar Raihan Travelindo';
+$page_description = 'Detail ' . e($package['title']) . ' - Travel Umroh & Haji Terpercaya';
+$current_page = 'paket';
+$include_bootstrap = true;
+
+// Extra head content for page-specific styles
+$extra_head_content = '<link rel="stylesheet" href="css/paket-detail.css?v=' . time() . '">';
+
+// Include header template
+require_once __DIR__ . '/inc/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Detail <?= e($package['title']) ?> - Travel Umroh & Haji Terpercaya">
-    <title><?= e($package['title']) ?> - Ar Raihan Travelindo</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css?v=<?= time() ?>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-    /* Package Detail Page Styles */
-    body {
-        font-family: 'Poppins', sans-serif;
-        background: #f8f9fa;
-    }
-    
-    .package-detail {
-        padding: 120px 0 80px;
-        background: #f8f9fa;
-        min-height: 100vh;
-    }
-    
-    /* Ensure header styles work on detail page */
-    .header {
-        background: rgba(26, 107, 74, 0.95);
-    }
-    
-    .header.scrolled {
-        background: white;
-        box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-    }
-    
-    .breadcrumb {
-        background: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    
-    .breadcrumb a {
-        color: #1a6b4a;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-    
-    .breadcrumb a:hover {
-        color: #0d4a33;
-        text-decoration: underline;
-    }
-    
-    .package-header {
-        background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
-        color: white;
-        padding: 40px 20px;
-        margin-bottom: 40px;
-        border-radius: 15px;
-        text-align: center;
-    }
-    
-    .package-header h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-    }
-    
-    .package-poster {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        margin-bottom: 30px;
-    }
-    
-    .package-info {
-        background: white;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        margin-bottom: 30px;
-    }
-    
-    .package-info h3 {
-        color: #1a6b4a;
-        margin-bottom: 30px;
-        padding-bottom: 15px;
-        border-bottom: 3px solid #1a6b4a;
-    }
-    
-    .package-info h5 {
-        color: #333;
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-    
-    .price-section {
-        background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
-        color: white;
-        padding: 30px;
-        border-radius: 15px;
-        text-align: center;
-        margin-bottom: 20px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    }
-    
-    .price-section h3 {
-        font-size: 1.8rem;
-        margin-bottom: 20px;
-        border-bottom: 2px solid rgba(255,255,255,0.3);
-        padding-bottom: 15px;
-    }
-    
-    .price-item {
-        background: rgba(255,255,255,0.1);
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        backdrop-filter: blur(10px);
-    }
-    
-    .price-label {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        display: block;
-        margin-bottom: 5px;
-    }
-    
-    .price-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        display: block;
-    }
-    
-    .cta-section {
-        background: white;
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        margin-top: 20px;
-    }
-    
-    .cta-section h4 {
-        color: #1a6b4a;
-        margin-bottom: 20px;
-    }
-    
-    .btn-consultation,
-    .btn-booking {
-        display: inline-block;
-        padding: 15px 30px;
-        border-radius: 10px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        margin: 5px;
-        width: calc(100% - 10px);
-        text-align: center;
-    }
-    
-    .btn-consultation {
-        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-        color: white;
-    }
-    
-    .btn-consultation:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
-        color: white;
-    }
-    
-    .btn-booking {
-        background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
-        color: white;
-    }
-    
-    .btn-booking:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(26, 107, 74, 0.4);
-        color: white;
-    }
-    
-    .features-content {
-        line-height: 1.8;
-    }
-    
-    .features-content ul {
-        list-style: none;
-        padding: 0;
-    }
-    
-    .features-content li {
-        padding: 10px 0;
-        padding-left: 30px;
-        position: relative;
-    }
-    
-    .features-content li:before {
-        content: "✓";
-        position: absolute;
-        left: 0;
-        color: #1a6b4a;
-        font-weight: bold;
-        font-size: 1.2rem;
-    }
-    
-    @media (max-width: 768px) {
-        .package-header h1 {
-            font-size: 1.8rem;
-        }
-        
-        .package-info {
-            padding: 25px;
-        }
-        
-        .price-section {
-            padding: 20px;
-        }
-        
-        .btn-consultation,
-        .btn-booking {
-            width: 100%;
-        }
-    }
-    
-    .price-main {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin: 10px 0;
-    }
-    
-    .price-options {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
-    }
-    
-    .price-option {
-        background: rgba(255,255,255,0.1);
-        padding: 15px;
-        border-radius: 10px;
-        backdrop-filter: blur(10px);
-    }
-    
-    .features-section {
-        background: white;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        margin-bottom: 30px;
-    }
-    
-    .features-section h3 {
-        color: #1a6b4a;
-        margin-bottom: 25px;
-        font-size: 1.5rem;
-    }
-    
-    .cta-section {
-        background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
-        color: white;
-        padding: 40px;
-        border-radius: 15px;
-        text-align: center;
-    }
-    
-    .btn-cta {
-        background: white;
-        color: #1a6b4a;
-        padding: 15px 30px;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        display: inline-block;
-        margin: 10px;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-cta:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        color: #1a6b4a;
-    }
-    
-    .breadcrumb {
-        padding: 20px 0;
-        background: transparent;
-    }
-    
-    .breadcrumb a {
-        color: #1a6b4a;
-        text-decoration: none;
-    }
-    
-    .breadcrumb a:hover {
-        text-decoration: underline;
-    }
-    
-    @media (max-width: 768px) {
-        .package-detail {
-            padding: 80px 0 60px;
-        }
-        
-        .package-header {
-            padding: 40px 0;
-        }
-        
-        .package-info, .features-section {
-            padding: 25px;
-        }
-        
-        .price-main {
-            font-size: 2rem;
-        }
-    }
-    </style>
-</head>
-<body>
-    <!-- Header & Navigation -->
-    <header class="header" id="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="nav-wrapper">
-                    <div class="logo">
-                        <img src="images/logo.png" alt="Raihan Travelindo" style="height: 50px;">
-                        <span>Ar Raihan</span>
-                    </div>
-                    <ul class="nav-menu" id="navMenu">
-                        <li><a href="index.php#home" class="nav-link">Home</a></li>
-                        <li><a href="index.php#paket" class="nav-link">Paket</a></li>
-                        <li><a href="index.php#jadwal" class="nav-link">Jadwal</a></li>
-                        <li><a href="index.php#galeri" class="nav-link">Galeri</a></li>
-                        <li><a href="artikel.php" class="nav-link">Artikel</a></li>
-                        <li><a href="index.php#tentang" class="nav-link">Tentang Kami</a></li>
-                        <li><a href="index.php#kontak" class="nav-link">Kontak</a></li>
-                    </ul>
-                    <div class="nav-buttons">
-                        <?php if (!empty($link_whatsapp)): ?>
-                        <a href="<?= e($link_whatsapp) ?>" class="btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Kami</a>
-                        <?php endif; ?>
-                        <button class="nav-toggle" id="navToggle">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
 
     <!-- Package Detail Section -->
     <section class="package-detail">
@@ -430,104 +85,83 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
                     <?php endif; ?>
                     <h1><?= e($package['title']) ?></h1>
                     <?php if ($package['featured']): ?>
-                    <span class="badge bg-warning text-dark fs-6 mt-2">
-                        <i class="fas fa-star"></i> Paket Populer
-                    </span>
+                    <span class="badge bg-warning text-dark">⭐ Paket Populer</span>
                     <?php endif; ?>
                 </div>
             </div>
 
             <div class="row">
-                <div class="col-lg-8">
-                    <!-- Poster -->
+                <div class="col-lg-8 mb-4">
+                    <!-- Package Poster -->
                     <?php if (!empty($package['poster'])): ?>
-                    <div class="text-center mb-4">
-                        <img src="<?= $base ?>/images/packages/<?= e($package['poster']) ?>" 
-                             alt="<?= e($package['title']) ?>" 
-                             class="package-poster">
-                    </div>
+                    <img src="<?= e($package['poster']) ?>" alt="<?= e($package['title']) ?>" class="package-poster">
                     <?php endif; ?>
 
-                    <!-- Package Info -->
+                    <!-- Package Features/Description -->
                     <div class="package-info">
-                        <h3 class="mb-4"><i class="fas fa-info-circle me-2"></i>Informasi Paket</h3>
+                        <h3>Detail Paket</h3>
                         
-                        <?php if ($package['hotel']): ?>
-                        <div class="mb-3">
-                            <h5><i class="fas fa-hotel me-2 text-primary"></i>Hotel</h5>
-                            <p><?= e($package['hotel']) ?></p>
-                        </div>
+                        <?php if (!empty($package['hotel'])): ?>
+                        <h5><i class="fas fa-hotel"></i> Hotel</h5>
+                        <p><?= nl2br(e($package['hotel'])) ?></p>
                         <?php endif; ?>
-                        
-                        <?php if ($package['pesawat']): ?>
-                        <div class="mb-3">
-                            <h5><i class="fas fa-plane me-2 text-primary"></i>Pesawat</h5>
-                            <p><?= e($package['pesawat']) ?></p>
-                        </div>
-                        <?php endif; ?>
-                    </div>
 
-                    <!-- Features -->
-                    <?php if ($package['features']): ?>
-                    <div class="features-section">
-                        <h3><i class="fas fa-list-check me-2"></i>Fasilitas & Layanan</h3>
+                        <?php if (!empty($package['pesawat'])): ?>
+                        <h5><i class="fas fa-plane"></i> Penerbangan</h5>
+                        <p><?= nl2br(e($package['pesawat'])) ?></p>
+                        <?php endif; ?>
+
+                        <?php if (!empty($package['features'])): ?>
+                        <h5><i class="fas fa-check-circle"></i> Fasilitas</h5>
                         <div class="features-content">
-                            <?= $package['features'] ?>
+                            <?= nl2br(e($package['features'])) ?>
                         </div>
+                        <?php endif; ?>
                     </div>
-                    <?php endif; ?>
                 </div>
 
                 <div class="col-lg-4">
                     <!-- Price Section -->
                     <div class="price-section">
-                        <div class="price-label"><?= e($package['price_label']) ?></div>
-                        <div class="price-main"><?= e($package['price_value']) ?></div>
-                        <div class="price-unit"><?= e($package['price_unit']) ?></div>
-                        
-                        <?php if ($package['price_quad'] || $package['price_triple'] || $package['price_double']): ?>
-                        <div class="price-options">
-                            <?php if ($package['price_quad']): ?>
-                            <div class="price-option">
-                                <strong>Quad</strong><br>
-                                <?= e($package['price_quad']) ?>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($package['price_triple']): ?>
-                            <div class="price-option">
-                                <strong>Triple</strong><br>
-                                <?= e($package['price_triple']) ?>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($package['price_double']): ?>
-                            <div class="price-option">
-                                <strong>Double</strong><br>
-                                <?= e($package['price_double']) ?>
-                            </div>
-                            <?php endif; ?>
+                        <h3>Harga Paket</h3>
+                        <?php if (!empty($package['price_quad'])): ?>
+                        <div class="price-item">
+                            <span class="price-label">Quad</span>
+                            <span class="price-value"><?= e($package['price_quad']) ?></span>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($package['price_triple'])): ?>
+                        <div class="price-item">
+                            <span class="price-label">Triple</span>
+                            <span class="price-value"><?= e($package['price_triple']) ?></span>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($package['price_double'])): ?>
+                        <div class="price-item">
+                            <span class="price-label">Double</span>
+                            <span class="price-value"><?= e($package['price_double']) ?></span>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if (empty($package['price_quad']) && empty($package['price_triple']) && empty($package['price_double'])): ?>
+                        <div class="price-main">
+                            <?= e($package['price_value']) ?> <?= e($package['price_unit'] ?? '') ?>
                         </div>
                         <?php endif; ?>
                     </div>
 
                     <!-- CTA Section -->
                     <div class="cta-section">
-                        <h4 class="mb-3">Tertarik dengan paket ini?</h4>
-                        <p class="mb-4">Hubungi kami untuk informasi lebih lanjut dan reservasi</p>
-                        
+                        <h4>Tertarik dengan Paket Ini?</h4>
                         <?php if (!empty($link_whatsapp)): ?>
-                        <a href="<?= e($link_whatsapp) ?>" class="btn-cta" target="_blank">
-                            <i class="fab fa-whatsapp me-2"></i>WhatsApp Kami
+                        <a href="<?= e($link_whatsapp) ?>" class="btn-consultation" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Konsultasi Gratis
                         </a>
                         <?php endif; ?>
-                        
-                        <a href="tel:<?= e($primary_phone_for_tel) ?>" class="btn-cta">
-                            <i class="fas fa-phone me-2"></i>Telepon Kami
-                        </a>
-                        
-                        <a href="index.php#kontak" class="btn-cta">
-                            <i class="fas fa-envelope me-2"></i>Kirim Pesan
+                        <a href="tel:<?= e($primary_phone_for_tel) ?>" class="btn-booking">
+                            <i class="fas fa-phone"></i> Hubungi Kami
                         </a>
                     </div>
                 </div>
@@ -535,20 +169,7 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
         </div>
     </section>
 
-    <!-- WhatsApp Float Button -->
-    <?php if (!empty($link_whatsapp)): ?>
-    <a href="<?= e($link_whatsapp) ?>" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
-    <?php endif; ?>
-
-    <!-- Scroll to Top Button -->
-    <button class="scroll-top" id="scrollTop">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Custom JS -->
-    <script src="js/script.js"></script>
-</body>
-</html>
+<?php
+// Include footer template
+require_once __DIR__ . '/inc/footer.php';
+?>
