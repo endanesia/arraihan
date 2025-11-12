@@ -1,0 +1,336 @@
+/* Jadwal Page Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f8f9fa;
+}
+
+/* Page Header Section */
+.page-header {
+    background: linear-gradient(135deg, #1a6b4a 0%, #123e2c 100%);
+    color: white;
+    padding: 120px 0 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../images/bg.jpeg') center/cover;
+    opacity: 0.1;
+    z-index: 1;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 20px;
+}
+
+.breadcrumb-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-nav a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-nav a:hover {
+    color: white;
+}
+
+.breadcrumb-nav i {
+    font-size: 0.7rem;
+    opacity: 0.6;
+}
+
+.breadcrumb-nav span {
+    color: white;
+    font-weight: 600;
+}
+
+/* Schedule Section */
+.schedule-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    color: #1a6b4a;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.back-btn:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    color: #1a6b4a;
+}
+
+/* Schedule Grid */
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.schedule-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.schedule-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.schedule-header {
+    background: linear-gradient(135deg, #1a6b4a 0%, #0d4a33 100%);
+    color: white;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.package-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    backdrop-filter: blur(10px);
+}
+
+.package-info h3 {
+    font-size: 1.3rem;
+    margin: 0 0 5px 0;
+    font-weight: 700;
+}
+
+.package-info .duration {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+.schedule-body {
+    padding: 25px;
+}
+
+.info-row {
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row.price-row {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+    margin: 15px -25px -25px -25px;
+    padding: 20px 25px;
+    border-bottom: none;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.info-item > i {
+    font-size: 1.2rem;
+    color: #1a6b4a;
+    margin-top: 3px;
+    min-width: 20px;
+}
+
+.info-item .label {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.info-item .value {
+    display: block;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.info-item .price-value {
+    color: #856404;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.schedule-footer {
+    padding: 20px 25px;
+    background: #f8f9fa;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-book,
+.btn-detail {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-book {
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: white;
+}
+
+.btn-book:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    color: white;
+}
+
+.btn-detail {
+    background: white;
+    color: #1a6b4a;
+    border: 2px solid #1a6b4a;
+}
+
+.btn-detail:hover {
+    background: #1a6b4a;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 107, 74, 0.3);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.empty-state h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.btn-contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: white;
+    padding: 15px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-contact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 1.8rem;
+    }
+    
+    .schedule-section {
+        padding: 60px 0 40px;
+    }
+    
+    .schedule-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .schedule-footer {
+        flex-direction: column;
+    }
+    
+    .btn-book,
+    .btn-detail {
+        width: 100%;
+    }
+    
+    .package-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .package-info h3 {
+        font-size: 1.1rem;
+    }
+}

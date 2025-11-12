@@ -258,7 +258,7 @@ require_once __DIR__ . '/inc/header.php';
                     <i class="fas fa-calendar-alt"></i>
                     <h3>Lihat Jadwal Lengkap Keberangkatan</h3>
                     <p>Tersedia berbagai pilihan tanggal keberangkatan yang bisa disesuaikan dengan jadwal Anda</p>
-                    <a href="#kontak" class="btn btn-primary">
+                    <a href="jadwal.php" class="btn btn-primary">
                         <i class="fas fa-calendar-check"></i> Cek Jadwal
                     </a>
                 </div>
