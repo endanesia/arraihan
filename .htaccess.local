@@ -1,5 +1,5 @@
-# .htaccess for ROOT domain deployment
-# Deploy to /public_html/ directly (not /public_html/dev/)
+# .htaccess for LOCAL development in /dev/ subfolder
+# For production deployment to root, use .htaccess (with RewriteBase /)
 
 # Set index files
 DirectoryIndex index.php index.html index.htm
@@ -7,7 +7,7 @@ DirectoryIndex index.php index.html index.htm
 # Enable mod_rewrite for clean URLs
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
+    RewriteBase /dev/
     
     # Remove .php extension - External redirects (301)
     RewriteCond %{THE_REQUEST} \s/+[^?\s]*?([^/.\s]+)\.php[\s?] [NC]
