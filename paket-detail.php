@@ -96,7 +96,7 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="col-lg-8 mb-4">
                     <!-- Package Poster -->
                     <?php if (!empty($package['poster'])): ?>
-                    <img src="<?= e($package['poster']) ?>" alt="<?= e($package['title']) ?>" class="package-poster">
+                    <img src="images/packages/<?= e($package['poster']) ?>" alt="<?= e($package['title']) ?>" class="package-poster">
                     <?php endif; ?>
 
                     <!-- Package Features/Description -->

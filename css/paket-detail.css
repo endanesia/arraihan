@@ -10,16 +10,7 @@ body {
     min-height: 100vh;
 }
 
-/* Ensure header styles work on detail page */
-.header {
-    background: rgba(26, 107, 74, 0.95) !important;
-}
-
-.header.scrolled {
-    background: white !important;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-}
-
+/* Breadcrumb navigation */
 .page-breadcrumb {
     background: white;
     padding: 15px 20px;
