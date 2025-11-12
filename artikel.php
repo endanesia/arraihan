@@ -38,7 +38,7 @@ if (function_exists('db') && db()) {
     }
     
     // Fetch articles
-    $query = "SELECT id, title, content, created_at, featured_image FROM posts $searchCondition ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+    $query = "SELECT id, title, content, created_at, cover_image FROM posts $searchCondition ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
     if (!empty($searchParams)) {
         $stmt = db()->prepare($query);
         $stmt->bind_param('ss', ...$searchParams);
@@ -62,7 +62,7 @@ $totalPages = ceil($totalArticles / $limit);
 // Fetch featured articles (latest 3)
 $featuredArticles = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT id, title, content, created_at, featured_image FROM posts ORDER BY created_at DESC LIMIT 3")) {
+    if ($res = db()->query("SELECT id, title, content, created_at, cover_image FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT 3")) {
         while ($row = $res->fetch_assoc()) {
             $featuredArticles[] = $row;
         }
@@ -387,7 +387,7 @@ if (function_exists('db') && db()) {
                 <?php foreach (array_slice($featuredArticles, 0, 3) as $article): ?>
                 <div class="article-card" onclick="location.href='artikel-detail.php?id=<?= $article['id'] ?>'">
                     <div class="article-image">
-                        <img src="<?= !empty($article['featured_image']) ? e($article['featured_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=500&h=300&fit=crop' ?>" alt="<?= e($article['title']) ?>">
+                        <img src="<?= !empty($article['cover_image']) ? e($article['cover_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=500&h=300&fit=crop' ?>" alt="<?= e($article['title']) ?>">
                         <div class="article-date">
                             <i class="fas fa-calendar"></i>
                             <?= date('d M Y', strtotime($article['created_at'])) ?>
@@ -441,7 +441,7 @@ if (function_exists('db') && db()) {
                 <?php foreach ($articles as $article): ?>
                 <div class="article-card" onclick="location.href='artikel-detail.php?id=<?= $article['id'] ?>'">
                     <div class="article-image">
-                        <img src="<?= !empty($article['featured_image']) ? e($article['featured_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=500&h=300&fit=crop' ?>" alt="<?= e($article['title']) ?>">
+                        <img src="<?= !empty($article['cover_image']) ? e($article['cover_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=500&h=300&fit=crop' ?>" alt="<?= e($article['title']) ?>">
                         <div class="article-date">
                             <i class="fas fa-calendar"></i>
                             <?= date('d M Y', strtotime($article['created_at'])) ?>
