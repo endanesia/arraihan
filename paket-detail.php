@@ -72,25 +72,29 @@ $extra_head_content = '<link rel="stylesheet" href="css/paket-detail.css?v=' . t
 require_once __DIR__ . '/inc/header.php';
 ?>
 
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title"><?= e($package['title']) ?></h1>
+            <p class="page-subtitle">
+                <?php if ($package['featured']): ?>
+                <span class="badge-popular">⭐ Paket Populer</span>
+                <?php endif; ?>
+                Detail lengkap paket umroh terbaik untuk perjalanan ibadah Anda
+            </p>
+            <div class="breadcrumb-nav">
+                <a href="<?= $base ?>index.php">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <a href="<?= $base ?>index.php#paket">Paket</a>
+                <i class="fas fa-chevron-right"></i>
+                <span><?= e($package['title']) ?></span>
+            </div>
+        </div>
+    </section>
+
     <!-- Package Detail Section -->
     <section class="package-detail">
         <div class="container">
-            <!-- Breadcrumb -->
-            <nav class="page-breadcrumb">
-                <a href="index.php">Home</a> > 
-                <a href="index.php#paket">Paket</a> > 
-                <span><?= e($package['title']) ?></span>
-            </nav>
-
-            <div class="package-header">
-                <?php if ($package['icon_class']): ?>
-                <i class="<?= e($package['icon_class']) ?> fa-3x mb-3"></i>
-                <?php endif; ?>
-                <h1><?= e($package['title']) ?></h1>
-                <?php if ($package['featured']): ?>
-                <span class="badge bg-warning text-dark">⭐ Paket Populer</span>
-                <?php endif; ?>
-            </div>
 
             <div class="row">
                 <div class="col-lg-8 mb-4">
@@ -140,22 +144,22 @@ require_once __DIR__ . '/inc/header.php';
                         <h3>Harga Paket</h3>
                         <?php if (!empty($package['price_quad'])): ?>
                         <div class="price-item">
-                            <span class="price-label">Quad</span>
-                            <span class="price-value"><?= e($package['price_quad']) ?></span>
+                            <span class="price-label" style="color:white;">Quad</span>
+                            <span class="price-value" style="color:white;"><?= e($package['price_quad']) ?></span>
                         </div>
                         <?php endif; ?>
 
                         <?php if (!empty($package['price_triple'])): ?>
                         <div class="price-item">
-                            <span class="price-label">Triple</span>
-                            <span class="price-value"><?= e($package['price_triple']) ?></span>
+                            <span class="price-label" style="color:white;">Triple</span>
+                            <span class="price-value" style="color:white;"><?= e($package['price_triple']) ?></span>
                         </div>
                         <?php endif; ?>
 
                         <?php if (!empty($package['price_double'])): ?>
                         <div class="price-item">
-                            <span class="price-label">Double</span>
-                            <span class="price-value"><?= e($package['price_double']) ?></span>
+                            <span class="price-label" style="color:white;">Double</span>
+                            <span class="price-value" style="color:white;"><?= e($package['price_double']) ?></span>
                         </div>
                         <?php endif; ?>
 
