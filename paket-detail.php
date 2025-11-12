@@ -114,7 +114,16 @@ require_once __DIR__ . '/inc/header.php';
                         <?php if (!empty($package['features'])): ?>
                         <h5><i class="fas fa-check-circle"></i> Fasilitas</h5>
                         <div class="features-content">
-                            <?= nl2br(e($package['features'])) ?>
+                            <?php 
+                            // Check if features contain HTML tags
+                            if (strip_tags($package['features']) !== $package['features']) {
+                                // Has HTML, display as-is
+                                echo $package['features'];
+                            } else {
+                                // Plain text, escape and add line breaks
+                                echo nl2br(e($package['features']));
+                            }
+                            ?>
                         </div>
                         <?php endif; ?>
                     </div>

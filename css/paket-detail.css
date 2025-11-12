@@ -1,5 +1,5 @@
 /* Package Detail Page Styles */
-body.page-detail {
+body {
     font-family: 'Poppins', sans-serif;
     background: #f8f9fa;
 }
@@ -12,11 +12,11 @@ body.page-detail {
 
 /* Ensure header styles work on detail page */
 .header {
-    background: rgba(26, 107, 74, 0.95);
+    background: rgba(26, 107, 74, 0.95) !important;
 }
 
 .header.scrolled {
-    background: white;
+    background: white !important;
     box-shadow: 0 2px 20px rgba(0,0,0,0.1);
 }
 
@@ -26,6 +26,7 @@ body.page-detail {
     border-radius: 10px;
     margin-bottom: 30px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    display: block;
 }
 
 .breadcrumb a {
@@ -177,6 +178,7 @@ body.page-detail {
 .features-content ul {
     list-style: none;
     padding: 0;
+    margin: 15px 0;
 }
 
 .features-content li {
@@ -192,6 +194,17 @@ body.page-detail {
     color: #1a6b4a;
     font-weight: bold;
     font-size: 1.2rem;
+}
+
+.features-content p {
+    margin-bottom: 10px;
+}
+
+.features-content strong {
+    color: #1a6b4a;
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
 .price-main {
