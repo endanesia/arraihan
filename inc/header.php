@@ -45,7 +45,7 @@ if (!isset($link_whatsapp)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= e($page_description) ?>">
-    <title><?= e($page_title) ?></title>
+    <title><?= e($page_title) ?> <?= e($current_script) ?></title>
     
     <!-- CSS -->
     <link rel="stylesheet" href="<?= $base ?? '' ?>css/style.css?v=<?= time() ?>">
