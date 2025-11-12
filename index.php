@@ -2,11 +2,13 @@
 
 // Base URL configuration
 $base = '';
-if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost:8080') {
-    // Production environment
+if (isset($_SERVER['HTTP_HOST']) && 
+    (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || 
+     $_SERVER['HTTP_HOST'] === '127.0.0.1')) {
+    // Local development environment in /dev/ subfolder
     $base = '/dev/';
 } else {
-    // Development environment
+    // Production environment (root domain)
     $base = '';
 }
 
