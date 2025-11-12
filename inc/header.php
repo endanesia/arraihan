@@ -58,13 +58,13 @@ if (!isset($link_whatsapp)) {
                         <span>Ar Raihan</span>
                     </div>
                     <ul class="nav-menu" id="navMenu">
-                        <li><a href="<?= $base ?? '' ?>index.php#home" class="nav-link <?= $current_page === 'home' ? 'active' : '' ?>">Home</a></li>
-                        <li><a href="<?= $base ?? '' ?>index.php#paket" class="nav-link <?= $current_page === 'paket' ? 'active' : '' ?>">Paket</a></li>
-                        <li><a href="<?= $base ?? '' ?>index.php#jadwal" class="nav-link <?= $current_page === 'jadwal' ? 'active' : '' ?>">Jadwal</a></li>
-                        <li><a href="<?= $base ?? '' ?>index.php#galeri" class="nav-link <?= $current_page === 'galeri' ? 'active' : '' ?>">Galeri</a></li>
+                        <li><a href="<?= $base ?? '' ?>#home" class="nav-link <?= $current_page === 'home' ? 'active' : '' ?>">Home</a></li>
+                        <li><a href="<?= $base ?? '' ?>#paket" class="nav-link <?= $current_page === 'paket' ? 'active' : '' ?>">Paket</a></li>
+                        <li><a href="<?= $base ?? '' ?>#jadwal" class="nav-link <?= $current_page === 'jadwal' ? 'active' : '' ?>">Jadwal</a></li>
+                        <li><a href="<?= $base ?? '' ?>#galeri" class="nav-link <?= $current_page === 'galeri' ? 'active' : '' ?>">Galeri</a></li>
                         <li><a href="<?= $base ?? '' ?>artikel.php" class="nav-link <?= $current_page === 'artikel' ? 'active' : '' ?>">Artikel</a></li>
-                        <li><a href="<?= $base ?? '' ?>index.php#tentang" class="nav-link <?= $current_page === 'tentang' ? 'active' : '' ?>">Tentang Kami</a></li>
-                        <li><a href="<?= $base ?? '' ?>index.php#kontak" class="nav-link <?= $current_page === 'kontak' ? 'active' : '' ?>">Kontak</a></li>
+                        <li><a href="<?= $base ?? '' ?>#tentang" class="nav-link <?= $current_page === 'tentang' ? 'active' : '' ?>">Tentang Kami</a></li>
+                        <li><a href="<?= $base ?? '' ?>#kontak" class="nav-link <?= $current_page === 'kontak' ? 'active' : '' ?>">Kontak</a></li>
                     </ul>
                     <div class="nav-buttons">
                         <?php if (!empty($link_whatsapp)): ?>

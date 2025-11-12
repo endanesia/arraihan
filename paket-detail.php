@@ -10,7 +10,7 @@ if (isset($_SERVER['HTTP_HOST']) &&
     $base = '/dev/';
 } else {
     // Production environment (root domain)
-    $base = '';
+    $base = 'https://arraihantravelindo.com';
 }
 
 // Get package ID from URL
