@@ -47,6 +47,16 @@ if (!isset($link_whatsapp)) {
     <meta name="description" content="<?= e($page_description) ?>">
     <title><?= e($page_title) ?> <?= e($curpos) ?></title>
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX5K83WL9K"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-TX5K83WL9K');
+    </script>
+
     <!-- CSS -->
     <link rel="stylesheet" href="<?= $base ?? '' ?>css/style.css?v=<?= time() ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
