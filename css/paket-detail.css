@@ -91,6 +91,18 @@ body {
     min-height: 100vh;
 }
 
+.detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .package-poster {
     width: 100%;
     max-width: 100%;

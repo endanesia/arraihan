@@ -1,18 +1,6 @@
 <?php 
 require_once __DIR__ . '/inc/db.php';
 
-// Base URL configuration
-$base = '';
-if (isset($_SERVER['HTTP_HOST']) && 
-    (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || 
-     $_SERVER['HTTP_HOST'] === '127.0.0.1')) {
-    // Local development environment in /dev/ subfolder
-    $base = '/dev/';
-} else {
-    // Production environment (root domain)
-    $base = '';
-}
-
 // Get package ID from URL
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if ($id <= 0) {
@@ -63,7 +51,6 @@ $primary_phone_for_tel = !empty($phone_number) ? $phone_number : '+6281234567890
 $page_title = e($package['title']) . ' - Ar Raihan Travelindo';
 $page_description = 'Detail ' . e($package['title']) . ' - Travel Umroh & Haji Terpercaya';
 $current_page = 'paket';
-$include_bootstrap = true;
 
 // Extra head content for page-specific styles
 $extra_head_content = '<link rel="stylesheet" href="css/paket-detail.css?v=' . time() . '">';
@@ -95,9 +82,8 @@ require_once __DIR__ . '/inc/header.php';
     <!-- Package Detail Section -->
     <section class="package-detail">
         <div class="container">
-
-            <div class="row">
-                <div class="col-lg-8 mb-4">
+            <div class="detail-grid">
+                <div class="detail-main">
                     <!-- Package Poster -->
                     <?php if (!empty($package['poster'])): ?>
                     <img src="images/packages/<?= e($package['poster']) ?>" alt="<?= e($package['title']) ?>" class="package-poster">
@@ -138,7 +124,7 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                 </div>
 
-                <div class="col-lg-4">
+                <div class="detail-sidebar">
                     <!-- Price Section -->
                     <div class="price-section">
                         <h3>Harga Paket</h3>
