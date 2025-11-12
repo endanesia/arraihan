@@ -5,12 +5,12 @@ return [
         'host' => 'localhost',
         'user' => 'root',
         'pass' => '',
-        'name' => 'arraihan_dev',
+        'name' => 'arraihan_db',
         'charset' => 'utf8mb4'
     ],
     'app' => [
-        'base_url' => 'http://localhost:8080',
+        'base_url' => 'http://localhost/dev',
         'uploads_dir' => __DIR__ . '/../images/gallery',
-        'uploads_url' => '/images/gallery'
+        'uploads_url' => '/dev/images/gallery'
     ]
 ];

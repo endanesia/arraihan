@@ -2,8 +2,11 @@
 // App configuration
 // Environment detection - only use local config in development
 $isLocal = ($_SERVER['SERVER_NAME'] ?? '') === 'localhost' || 
+           ($_SERVER['HTTP_HOST'] ?? '') === 'localhost' ||
            ($_SERVER['HTTP_HOST'] ?? '') === 'localhost:8080' || 
-           strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1') !== false;
+           strpos($_SERVER['HTTP_HOST'] ?? '', '127.0.0.1') !== false ||
+           strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false ||
+           php_sapi_name() === 'cli'; // Also detect CLI for local development
 
 if ($isLocal) {
     $localConfigPath = __DIR__ . '/config-local.php';

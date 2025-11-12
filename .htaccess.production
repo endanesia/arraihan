@@ -7,7 +7,7 @@ DirectoryIndex index.php index.html index.htm
 # Enable mod_rewrite for clean URLs
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /dev/
+    RewriteBase /
     
     # Remove .php extension - External redirects (301)
     RewriteCond %{THE_REQUEST} \s/+[^?\s]*?([^/.\s]+)\.php[\s?] [NC]

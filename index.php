@@ -4,7 +4,7 @@
 $base = '';
 if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST'] !== 'localhost:8080') {
     // Production environment
-    $base = '';
+    $base = '/dev/';
 } else {
     // Development environment
     $base = '';
@@ -220,7 +220,7 @@ require_once __DIR__ . '/inc/header.php';
                             
                             <div class="package-poster-info">
                                 <h4><?= e($p['title']) ?></h4>
-                                <a href="paket-detail/?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
+                                <a href="paket-detail?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
                                     <i class="fas fa-info-circle"></i> Detail Paket
                                 </a>
                             </div>
@@ -343,7 +343,7 @@ require_once __DIR__ . '/inc/header.php';
                     <?php foreach ($images as $img): ?>
                     <div class="galeri-item">
                         <div class="galeri-image">
-                            <img src="<?= e($img['file_path']) ?>" alt="<?= e($img['title'] ?: 'Galeri') ?>">
+                            <img src="<?= $base . e($img['file_path']) ?>" alt="<?= e($img['title'] ?: 'Galeri') ?>">
                             <div class="galeri-overlay">
                                 <i class="fas fa-search-plus"></i>
                             </div>
@@ -447,7 +447,7 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                 </div>
                 <div class="tentang-image">
-                    <img src="<?= !empty($about_image) ? e($about_image) : 'images/bg.jpeg' ?>" alt="<?= e($about_title) ?>">
+                    <img src="<?= !empty($about_image) ? $base . e($about_image) : $base . 'images/bg.jpeg' ?>" alt="<?= e($about_title) ?>">
                     <?php if ($about_badge_number || $about_badge_text): ?>
                     <div class="tentang-badge">
                         <i class="fas fa-users"></i>
