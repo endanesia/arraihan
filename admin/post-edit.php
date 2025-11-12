@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
 
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h3 class="mb-0"><?= $id? 'Edit Artikel' : 'Tambah Artikel' ?></h3>
-  <a class="btn btn-outline-secondary" href="posts">Kembali</a>
+  <a class="btn btn-outline-secondary" href="/admin/posts">Kembali</a>
 </div>
 
 <?php if ($err): ?><div class="alert alert-danger"><?= e($err) ?></div><?php endif; ?>

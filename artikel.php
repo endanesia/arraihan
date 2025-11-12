@@ -385,7 +385,7 @@ if (function_exists('db') && db()) {
             </div>
             <div class="featured-grid">
                 <?php foreach (array_slice($featuredArticles, 0, 3) as $article): ?>
-                <div class="article-card" onclick="location.href='artikel-detail.php?id=<?= $article['id'] ?>'">
+                <div class="article-card" onclick="location.href='artikel-detail?id=<?= $article['id'] ?>'">
                     <div class="article-image">
                         <img src="<?= !empty($article['cover_image']) ? e($article['cover_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=500&h=300&fit=crop' ?>" alt="<?= e($article['title']) ?>">
                         <div class="article-date">
@@ -398,7 +398,7 @@ if (function_exists('db') && db()) {
                         <p class="article-excerpt"><?= e(substr(strip_tags($article['content']), 0, 150)) ?>...</p>
                         <div class="article-meta">
                             <span><i class="fas fa-clock"></i> <?= date('H:i', strtotime($article['created_at'])) ?></span>
-                            <a href="artikel-detail.php?id=<?= $article['id'] ?>" class="read-more">
+                            <a href="artikel-detail?id=<?= $article['id'] ?>" class="read-more">
                                 Baca Selengkapnya <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
@@ -439,7 +439,7 @@ if (function_exists('db') && db()) {
             <?php if (!empty($articles)): ?>
             <div class="articles-grid">
                 <?php foreach ($articles as $article): ?>
-                <div class="article-card" onclick="location.href='artikel-detail.php?id=<?= $article['id'] ?>'">
+                <div class="article-card" onclick="location.href='artikel-detail?id=<?= $article['id'] ?>'">
                     <div class="article-image">
                         <img src="<?= !empty($article['cover_image']) ? e($article['cover_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=500&h=300&fit=crop' ?>" alt="<?= e($article['title']) ?>">
                         <div class="article-date">
@@ -452,7 +452,7 @@ if (function_exists('db') && db()) {
                         <p class="article-excerpt"><?= e(substr(strip_tags($article['content']), 0, 150)) ?>...</p>
                         <div class="article-meta">
                             <span><i class="fas fa-clock"></i> <?= date('H:i', strtotime($article['created_at'])) ?></span>
-                            <a href="artikel-detail.php?id=<?= $article['id'] ?>" class="read-more">
+                            <a href="artikel-detail?id=<?= $article['id'] ?>" class="read-more">
                                 Baca Selengkapnya <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
@@ -500,53 +500,7 @@ if (function_exists('db') && db()) {
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <div class="footer-logo">
-                        <i class="fas fa-kaaba"></i>
-                        <span>Raihan Travelindo</span>
-                    </div>
-                    <p>Travel Haji & Umroh Terpercaya sejak 2005. Melayani dengan sepenuh hati untuk kenyamanan ibadah Anda.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Menu</h4>
-                    <ul>
-                        <li><a href="index.php#home">Home</a></li>
-                        <li><a href="index.php#paket">Paket Umroh</a></li>
-                        <li><a href="index.php#jadwal">Jadwal</a></li>
-                        <li><a href="galeri.php">Galeri</a></li>
-                        <li><a href="artikel.php">Artikel</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Layanan</h4>
-                    <ul>
-                        <li><a href="index.php#paket">Paket Umroh</a></li>
-                        <li><a href="index.php#paket">Haji Khusus</a></li>
-                        <li><a href="index.php#paket">Badal Haji</a></li>
-                        <li><a href="index.php#paket">Badal Umroh</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Legalitas</h4>
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> Izin PPIU Kemenag RI</li>
-                        <li><i class="fas fa-check-circle"></i> Izin PIHK Resmi</li>
-                        <li><i class="fas fa-check-circle"></i> Akreditasi A</li>
-                        <li><i class="fas fa-check-circle"></i> Sertifikat ISO 9001:2015</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Raihan Travelindo. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="js/script.js"></script>
-</body>
-</html>
+<?php
+// Include footer template
+require_once __DIR__ . '/inc/footer.php';
+?>

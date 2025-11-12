@@ -7,7 +7,7 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 // Fetch article details
 $article = null;
 if ($id > 0 && function_exists('db') && db()) {
-    $stmt = db()->prepare("SELECT id, title, content, created_at, featured_image FROM posts WHERE id = ? LIMIT 1");
+    $stmt = db()->prepare("SELECT id, title, content, created_at, cover_image FROM posts WHERE id = ? AND published = 1 LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -25,7 +25,7 @@ if (!$article) {
 // Fetch related articles (latest 3, excluding current)
 $relatedArticles = [];
 if (function_exists('db') && db()) {
-    $stmt = db()->prepare("SELECT id, title, content, created_at, featured_image FROM posts WHERE id != ? ORDER BY created_at DESC LIMIT 3");
+    $stmt = db()->prepare("SELECT id, title, content, created_at, cover_image FROM posts WHERE id != ? AND published = 1 ORDER BY created_at DESC LIMIT 3");
     $stmt->bind_param('i', $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -374,9 +374,9 @@ if (function_exists('db') && db()) {
             </a>
             
             <div class="article-container">
-                <?php if (!empty($article['featured_image'])): ?>
+                <?php if (!empty($article['cover_image'])): ?>
                 <div class="article-featured-image">
-                    <img src="<?= e($article['featured_image']) ?>" alt="<?= e($article['title']) ?>">
+                    <img src="<?= e($article['cover_image']) ?>" alt="<?= e($article['title']) ?>">
                 </div>
                 <?php endif; ?>
                 
@@ -424,9 +424,9 @@ if (function_exists('db') && db()) {
             </div>
             <div class="related-grid">
                 <?php foreach ($relatedArticles as $related): ?>
-                <div class="related-card" onclick="location.href='artikel-detail.php?id=<?= $related['id'] ?>'">
+                <div class="related-card" onclick="location.href='artikel-detail?id=<?= $related['id'] ?>'">
                     <div class="related-image">
-                        <img src="<?= !empty($related['featured_image']) ? e($related['featured_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=250&fit=crop' ?>" alt="<?= e($related['title']) ?>">
+                        <img src="<?= !empty($related['cover_image']) ? e($related['cover_image']) : 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?w=400&h=250&fit=crop' ?>" alt="<?= e($related['title']) ?>">
                     </div>
                     <div class="related-content">
                         <h4 class="related-title"><?= e($related['title']) ?></h4>
@@ -443,53 +443,7 @@ if (function_exists('db') && db()) {
     </section>
     <?php endif; ?>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-col">
-                    <div class="footer-logo">
-                        <i class="fas fa-kaaba"></i>
-                        <span>Raihan Travelindo</span>
-                    </div>
-                    <p>Travel Haji & Umroh Terpercaya sejak 2005. Melayani dengan sepenuh hati untuk kenyamanan ibadah Anda.</p>
-                </div>
-                <div class="footer-col">
-                    <h4>Menu</h4>
-                    <ul>
-                        <li><a href="index.php#home">Home</a></li>
-                        <li><a href="index.php#paket">Paket Umroh</a></li>
-                        <li><a href="index.php#jadwal">Jadwal</a></li>
-                        <li><a href="galeri.php">Galeri</a></li>
-                        <li><a href="artikel.php">Artikel</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Layanan</h4>
-                    <ul>
-                        <li><a href="index.php#paket">Paket Umroh</a></li>
-                        <li><a href="index.php#paket">Haji Khusus</a></li>
-                        <li><a href="index.php#paket">Badal Haji</a></li>
-                        <li><a href="index.php#paket">Badal Umroh</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h4>Legalitas</h4>
-                    <ul>
-                        <li><i class="fas fa-check-circle"></i> Izin PPIU Kemenag RI</li>
-                        <li><i class="fas fa-check-circle"></i> Izin PIHK Resmi</li>
-                        <li><i class="fas fa-check-circle"></i> Akreditasi A</li>
-                        <li><i class="fas fa-check-circle"></i> Sertifikat ISO 9001:2015</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Raihan Travelindo. All Rights Reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Scripts -->
-    <script src="js/script.js"></script>
-</body>
-</html>
+<?php
+// Include footer template
+require_once __DIR__ . '/inc/footer.php';
+?>
