@@ -13,11 +13,11 @@
 $page_title = $page_title ?? 'Raihan Travelindo - Travel Haji & Umroh Terpercaya';
 $page_description = $page_description ?? 'Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI dengan Akreditasi A';
 $current_page = $current_page ?? 'home';
-
+$curpos = $_SERVER['PHP_SELF'] ?? '';
 // Auto-detect base URL for non-index pages
 // If current page is NOT index.php or root, use full URL
 $current_script = basename($_SERVER['SCRIPT_FILENAME']);
-$is_index_page = ($current_script === 'index.php' || $current_script === '');
+$is_index_page = ($curpos === 'index.php' || $curpos === '');
 $base2 = '';
 if (!$is_index_page && !isset($base)) {
     // Not on index page, use full URL
@@ -45,7 +45,7 @@ if (!isset($link_whatsapp)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= e($page_description) ?>">
-    <title><?= e($page_title) ?> <?= e($current_script) ?></title>
+    <title><?= e($page_title) ?> <?= e($curpos) ?></title>
     
     <!-- CSS -->
     <link rel="stylesheet" href="<?= $base ?? '' ?>css/style.css?v=<?= time() ?>">
