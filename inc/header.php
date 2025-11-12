@@ -17,7 +17,7 @@ $curpos = $_SERVER['PHP_SELF'] ?? '';
 // Auto-detect base URL for non-index pages
 // If current page is NOT index.php or root, use full URL
 $current_script = basename($_SERVER['SCRIPT_FILENAME']);
-$is_index_page = ($curpos === 'index.php' || $curpos === '');
+$is_index_page = ($curpos === '/index.php' || $curpos === '/');
 $base2 = '';
 if (!$is_index_page && !isset($base)) {
     // Not on index page, use full URL
