@@ -18,7 +18,7 @@ $curpos = $_SERVER['PHP_SELF'] ?? '';
 // If current page is NOT index.php or root, use full URL
 $current_script = basename($_SERVER['SCRIPT_FILENAME']);
 $is_index_page = ($curpos === '/index.php' || $curpos === '/');
-$base2 = '';
+$base2 = 'https://arraihantravelindo.com/';
 if (!$is_index_page && !isset($base)) {
     // Not on index page, use full URL
     $is_localhost = (strpos($_SERVER['HTTP_HOST'] ?? '', 'localhost') !== false || 
