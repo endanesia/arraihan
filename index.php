@@ -120,6 +120,9 @@ $page_description = 'Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI d
 $current_page = 'home';
 $include_swiper = true;
 
+// Extra head content for Cloudflare Turnstile
+$extra_head_content = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
+
 // Include header template
 require_once __DIR__ . '/inc/header.php';
 ?>
@@ -658,16 +661,11 @@ require_once __DIR__ . '/inc/header.php';
                             <input type="tel" id="phone" placeholder="Nomor WhatsApp" required>
                         </div>
                         <div class="form-group">
-                            <select id="paket" required>
-                                <option value="">Pilih Paket</option>
-                                <option value="umroh">Paket Umroh</option>
-                                <option value="haji">Haji Khusus</option>
-                                <option value="badal-haji">Badal Haji</option>
-                                <option value="badal-umroh">Badal Umroh</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <textarea id="message" rows="5" placeholder="Pesan Anda"></textarea>
+                        </div>
+                        <!-- Cloudflare Turnstile -->
+                        <div class="form-group">
+                            <div class="cf-turnstile" data-sitekey="0x4AAAAAACAl8S6dya4dFd3k"></div>
                         </div>
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i> Kirim Pesan

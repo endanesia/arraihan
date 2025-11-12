@@ -181,6 +181,12 @@ function nav_active($needle){
       </li>
 
       <li class="nav-item">
+        <a class="nav-link <?= nav_active('/admin/messages') ?>" href="<?= e($base) ?>/admin/messages">
+          <i class="fas fa-envelope"></i>Pesan Masuk
+        </a>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link <?= nav_active('/admin/social-links') ?>" href="<?= e($base) ?>/admin/social-links">
           <i class="fas fa-cog"></i>Pengaturan Situs
         </a>
