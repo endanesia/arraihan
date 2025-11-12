@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h3 class="mb-0"><?= $id? 'Edit Post' : 'Tambah Post' ?></h3>
+  <h3 class="mb-0"><?= $id? 'Edit Artikel' : 'Tambah Artikel' ?></h3>
   <a class="btn btn-outline-secondary" href="posts">Kembali</a>
 </div>
 
@@ -118,12 +118,13 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
       <?php endif; ?>
     </div>
     <div class="col-12">
-      <label class="form-label">Excerpt</label>
-      <textarea name="excerpt" rows="3" class="form-control"><?= e($post['excerpt']) ?></textarea>
+      <label class="form-label">Intro</label>
+      <textarea name="excerpt" id="excerpt" rows="3" class="form-control"><?= e($post['excerpt']) ?></textarea>
+      <small class="text-muted">Ringkasan singkat artikel (opsional)</small>
     </div>
     <div class="col-12">
-      <label class="form-label">Content</label>
-      <textarea name="content" rows="8" class="form-control"><?= e($post['content']) ?></textarea>
+      <label class="form-label">Content (Isi Artikel)</label>
+      <textarea name="content" id="content" rows="8" class="form-control"><?= e($post['content']) ?></textarea>
     </div>
     <div class="col-12 form-check">
       <input class="form-check-input" type="checkbox" id="published" name="published" <?= $post['published']? 'checked':'' ?>>
@@ -135,5 +136,62 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
     <a class="btn btn-outline-secondary" href="posts.php">Batal</a>
   </div>
 </form>
+
+<!-- CKEditor 5 Script -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+<script>
+// CKEditor configuration
+const editorConfig = {
+    toolbar: {
+        items: [
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'link', 'bulletedList', 'numberedList', '|',
+            'indent', 'outdent', '|',
+            'blockQuote', 'insertTable', '|',
+            'undo', 'redo'
+        ]
+    },
+    heading: {
+        options: [
+            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+            { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+            { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' }
+        ]
+    },
+    table: {
+        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+    }
+};
+
+// Initialize CKEditor for Excerpt (simpler toolbar)
+ClassicEditor
+    .create(document.querySelector('#excerpt'), {
+        toolbar: {
+            items: [
+                'bold', 'italic', '|',
+                'link', '|',
+                'undo', 'redo'
+            ]
+        }
+    })
+    .catch(error => {
+        console.error('Error initializing excerpt editor:', error);
+    });
+
+// Initialize CKEditor for Content (full toolbar)
+ClassicEditor
+    .create(document.querySelector('#content'), editorConfig)
+    .then(editor => {
+        // Set editor height to be 3x larger (default is ~200px, so we set to 600px)
+        editor.editing.view.change(writer => {
+            writer.setStyle('min-height', '600px', editor.editing.view.document.getRoot());
+        });
+    })
+    .catch(error => {
+        console.error('Error initializing content editor:', error);
+    });
+</script>
 
 <?php require_once __DIR__ . '/footer.php'; ?>
