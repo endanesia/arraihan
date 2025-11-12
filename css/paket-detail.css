@@ -20,7 +20,7 @@ body {
     box-shadow: 0 2px 20px rgba(0,0,0,0.1);
 }
 
-.breadcrumb {
+.page-breadcrumb {
     background: white;
     padding: 15px 20px;
     border-radius: 10px;
@@ -29,13 +29,13 @@ body {
     display: block;
 }
 
-.breadcrumb a {
+.page-breadcrumb a {
     color: #1a6b4a;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
-.breadcrumb a:hover {
+.page-breadcrumb a:hover {
     color: #0d4a33;
     text-decoration: underline;
 }

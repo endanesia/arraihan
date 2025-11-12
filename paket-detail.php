@@ -72,22 +72,20 @@ require_once __DIR__ . '/inc/header.php';
     <section class="package-detail">
         <div class="container">
             <!-- Breadcrumb -->
-            <nav class="breadcrumb">
+            <nav class="page-breadcrumb">
                 <a href="index.php">Home</a> > 
                 <a href="index.php#paket">Paket</a> > 
                 <span><?= e($package['title']) ?></span>
             </nav>
 
-            <div class="package-header text-center">
-                <div class="container">
-                    <?php if ($package['icon_class']): ?>
-                    <i class="<?= e($package['icon_class']) ?> fa-3x mb-3"></i>
-                    <?php endif; ?>
-                    <h1><?= e($package['title']) ?></h1>
-                    <?php if ($package['featured']): ?>
-                    <span class="badge bg-warning text-dark">⭐ Paket Populer</span>
-                    <?php endif; ?>
-                </div>
+            <div class="package-header">
+                <?php if ($package['icon_class']): ?>
+                <i class="<?= e($package['icon_class']) ?> fa-3x mb-3"></i>
+                <?php endif; ?>
+                <h1><?= e($package['title']) ?></h1>
+                <?php if ($package['featured']): ?>
+                <span class="badge bg-warning text-dark">⭐ Paket Populer</span>
+                <?php endif; ?>
             </div>
 
             <div class="row">
@@ -115,13 +113,16 @@ require_once __DIR__ . '/inc/header.php';
                         <h5><i class="fas fa-check-circle"></i> Fasilitas</h5>
                         <div class="features-content">
                             <?php 
+                            // Decode HTML entities first if they exist
+                            $features = html_entity_decode($package['features'], ENT_QUOTES, 'UTF-8');
+                            
                             // Check if features contain HTML tags
-                            if (strip_tags($package['features']) !== $package['features']) {
-                                // Has HTML, display as-is
-                                echo $package['features'];
+                            if (strip_tags($features) !== $features) {
+                                // Has HTML, display as-is but sanitize dangerous tags
+                                echo strip_tags($features, '<p><br><strong><b><em><i><ul><li><ol>');
                             } else {
                                 // Plain text, escape and add line breaks
-                                echo nl2br(e($package['features']));
+                                echo nl2br(e($features));
                             }
                             ?>
                         </div>
