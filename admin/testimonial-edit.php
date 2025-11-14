@@ -50,14 +50,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = db()->prepare("UPDATE testimonials SET nama=?, judul=?, pesan=?, is_approved=?, is_featured=? WHERE id=?");
             $stmt->bind_param('sssiii', $nama, $judul, $pesan, $is_approved, $is_featured, $id);
             $stmt->execute();
-            header('Location: testimonials.php?success=edit');
+            header('Location: testimonials?success=edit');
             exit;
         } else {
             // Insert
             $stmt = db()->prepare("INSERT INTO testimonials (nama, judul, pesan, is_approved, is_featured) VALUES (?, ?, ?, ?, ?)");
             $stmt->bind_param('sssii', $nama, $judul, $pesan, $is_approved, $is_featured);
             $stmt->execute();
-            header('Location: testimonials.php?success=add');
+            header('Location: testimonials?success=add');
             exit;
         }
     }

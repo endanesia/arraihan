@@ -76,12 +76,7 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                     
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fas fa-paper-plane"></i> Kirim Testimonial
-                            </button>
-                        </div>
+                        
                     </div>
                 </div>
                 
@@ -100,9 +95,12 @@ require_once __DIR__ . '/inc/header.php';
                     <div class="cf-turnstile" data-sitekey="0x4AAAAAACAl8S6dya4dFd3k"></div>
                 </div>
                 
-                <p class="small text-muted mb-0">
-                    <i class="fas fa-info-circle"></i> Testimonial Anda akan ditampilkan setelah disetujui oleh admin.
-                </p>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-paper-plane"></i> Kirim Testimonial
+                    </button>
+                </div>
             </form>
         </div>
 

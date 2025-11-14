@@ -67,7 +67,7 @@ if (function_exists('db') && db()) {
 // Testimonials - latest 4 approved for homepage
 $testimonials = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM testimonials WHERE is_approved = 1 ORDER BY created_at DESC LIMIT 4")) {
+    if ($res = db()->query("SELECT * FROM testimonials WHERE is_approved = 1 ORDER BY created_at DESC LIMIT 6")) {
         while ($row = $res->fetch_assoc()) { $testimonials[] = $row; }
     }
 }
