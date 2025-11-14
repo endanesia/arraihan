@@ -459,3 +459,45 @@ console.log(`
 'color: #d4a518; font-size: 16px;',
 'color: #6c757d; font-size: 12px;'
 );
+
+// ===== POPUP BANNER FUNCTIONALITY =====
+function closePopup() {
+    const popup = document.getElementById('popup-banner-modal');
+    if (popup) {
+        popup.style.display = 'none';
+        // Set cookie to not show popup again for 24 hours
+        const now = new Date();
+        now.setTime(now.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
+        document.cookie = "popup_shown=true; expires=" + now.toUTCString() + "; path=/";
+    }
+}
+
+// Show popup on page load if not shown in last 24 hours
+window.addEventListener('load', function() {
+    // Check if popup exists
+    const popup = document.getElementById('popup-banner-modal');
+    if (!popup) return;
+    
+    // Check cookie
+    const popupShown = document.cookie.split('; ').find(row => row.startsWith('popup_shown='));
+    
+    if (!popupShown) {
+        // Show popup after 1 second delay
+        setTimeout(function() {
+            popup.style.display = 'flex';
+        }, 1000);
+    }
+    
+    // Close on overlay click
+    const overlay = popup.querySelector('.popup-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', closePopup);
+    }
+    
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && popup.style.display === 'flex') {
+            closePopup();
+        }
+    });
+});

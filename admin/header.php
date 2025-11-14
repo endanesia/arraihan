@@ -120,12 +120,12 @@ function nav_active($needle){
       
       <!-- Homepage Menu with Submenu -->
       <li class="nav-item">
-        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/partners') || nav_active('/admin/mutawwif') ? 'active' : '' ?>" 
+        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/partners') || nav_active('/admin/mutawwif') || nav_active('/admin/popup-banner') ? 'active' : '' ?>" 
            href="#" onclick="toggleSubmenu('homepage-menu')">
           <span><i class="fas fa-home"></i>Homepage</span>
           <i class="fas fa-chevron-down submenu-toggle" id="homepage-arrow"></i>
         </a>
-        <ul class="nav flex-column submenu" id="homepage-menu" style="display: <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/mutawwif') ? 'block' : 'none' ?>;">
+        <ul class="nav flex-column submenu" id="homepage-menu" style="display: <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/mutawwif') || nav_active('/admin/popup-banner') ? 'block' : 'none' ?>;">
           <li class="nav-item">
             <a class="nav-link <?= nav_active('/admin/hero') ?>" href="<?= e($base) ?>/admin/hero">
               <i class="fas fa-image"></i>Hero Section
@@ -154,6 +154,11 @@ function nav_active($needle){
           <li class="nav-item">
             <a class="nav-link <?= nav_active('/admin/partners') ?>" href="<?= e($base) ?>/admin/partners">
               <i class="fas fa-handshake"></i>Partner
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <?= nav_active('/admin/popup-banner') ?>" href="<?= e($base) ?>/admin/popup-banner">
+              <i class="fas fa-window-restore"></i>Popup Banner
             </a>
           </li>
         </ul>

@@ -71,6 +71,15 @@ if (function_exists('db') && db()) {
         while ($row = $res->fetch_assoc()) { $testimonials[] = $row; }
     }
 }
+
+// Popup Banner - get active popup
+$popup_banner = null;
+if (function_exists('db') && db()) {
+    if ($res = db()->query("SELECT * FROM popup_banner WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1")) {
+        $popup_banner = $res->fetch_assoc();
+    }
+}
+
 // Social links from settings
 $link_whatsapp = function_exists('get_setting') ? get_setting('whatsapp', '') : '';
 $link_facebook = function_exists('get_setting') ? get_setting('facebook', '') : '';
@@ -810,6 +819,23 @@ require_once __DIR__ . '/inc/header.php';
             </div>
         </div>
     </section>
+
+<!-- Popup Banner Modal -->
+<?php if ($popup_banner): ?>
+<div id="popup-banner-modal" class="popup-modal" style="display: none;">
+    <div class="popup-overlay"></div>
+    <div class="popup-content">
+        <button class="popup-close" onclick="closePopup()">&times;</button>
+        <?php if (!empty($popup_banner['link_url'])): ?>
+            <a href="<?= e($popup_banner['link_url']) ?>" target="_blank">
+                <img src="<?= e($popup_banner['image_url']) ?>" alt="<?= e($popup_banner['title']) ?>">
+            </a>
+        <?php else: ?>
+            <img src="<?= e($popup_banner['image_url']) ?>" alt="<?= e($popup_banner['title']) ?>">
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <?php
 // Include footer template
