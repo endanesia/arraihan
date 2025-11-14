@@ -64,10 +64,10 @@ if (function_exists('db') && db()) {
         while ($row = $res->fetch_assoc()) { $mutawwif[] = $row; }
     }
 }
-// Testimonials - latest 10 approved
+// Testimonials - latest 4 approved for homepage
 $testimonials = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM testimonials WHERE is_approved = 1 ORDER BY created_at DESC LIMIT 10")) {
+    if ($res = db()->query("SELECT * FROM testimonials WHERE is_approved = 1 ORDER BY created_at DESC LIMIT 4")) {
         while ($row = $res->fetch_assoc()) { $testimonials[] = $row; }
     }
 }
@@ -670,40 +670,29 @@ require_once __DIR__ . '/inc/header.php';
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Testimoni Jamaah</h2>
-                <p class="section-desc">Pengalaman berharga jamaah bersama Chatour</p>
+                <p class="section-desc">Pengalaman berharga jamaah bersama Arraihan Travelindo</p>
             </div>
             
             <?php if (!empty($testimonials)): ?>
-            <div class="swiper testimonialSwiper">
-                <div class="swiper-wrapper">
-                    <?php foreach ($testimonials as $testi): ?>
-                    <div class="swiper-slide">
-                        <div class="testimonial-card">
-                            <div class="testimonial-icon">
-                                <i class="fas fa-quote-left"></i>
-                            </div>
-                            <h4 class="testimonial-title"><?= e($testi['judul']) ?></h4>
-                            <p class="testimonial-text"><?= e($testi['pesan']) ?></p>
-                            <div class="testimonial-author">
-                                <div class="author-avatar">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="author-info">
-                                    <h5><?= e($testi['nama']) ?></h5>
-                                    <p><?= date('d M Y', strtotime($testi['created_at'])) ?></p>
-                                </div>
-                            </div>
+            <div class="testimonial-grid">
+                <?php foreach ($testimonials as $testi): ?>
+                <div class="testimonial-card">
+                    <div class="testimonial-icon">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    <h4 class="testimonial-title"><?= e($testi['judul']) ?></h4>
+                    <p class="testimonial-text"><?= e(substr($testi['pesan'], 0, 150)) . (strlen($testi['pesan']) > 150 ? '...' : '') ?></p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h5><?= e($testi['nama']) ?></h5>
+                            <p><?= date('d M Y', strtotime($testi['created_at'])) ?></p>
                         </div>
                     </div>
-                    <?php endforeach; ?>
                 </div>
-                
-                <!-- Swiper Navigation -->
-                <div class="swiper-button-next"></div>
-                <div class="swiper-button-prev"></div>
-                
-                <!-- Swiper Pagination -->
-                <div class="swiper-pagination"></div>
+                <?php endforeach; ?>
             </div>
             <?php else: ?>
             <div class="text-center py-5">

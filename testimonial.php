@@ -42,46 +42,16 @@ require_once __DIR__ . '/inc/header.php';
 <!-- Testimonial Content -->
 <section class="testimonial-page">
     <div class="container">
-        <div class="row">
-            <!-- Testimonial List -->
-            <div class="col-lg-8">
-                <h2 class="section-title mb-4">Testimoni Jamaah</h2>
-                
-                <?php if (!empty($testimonials)): ?>
-                <div class="testimonial-list">
-                    <?php foreach ($testimonials as $testi): ?>
-                    <div class="testimonial-item">
-                        <div class="testimonial-header">
-                            <div class="author-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="author-info">
-                                <h4><?= e($testi['nama']) ?></h4>
-                                <p class="text-muted"><?= date('d F Y', strtotime($testi['created_at'])) ?></p>
-                            </div>
-                        </div>
-                        <h5 class="testimonial-title"><?= e($testi['judul']) ?></h5>
-                        <p class="testimonial-text"><?= nl2br(e($testi['pesan'])) ?></p>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <?php else: ?>
-                <div class="text-center py-5">
-                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">Belum ada testimonial yang disetujui.</p>
-                </div>
-                <?php endif; ?>
-            </div>
+        <!-- Testimonial Form -->
+        <div class="testimonial-form-card mb-5">
+            <h3><i class="fas fa-pen"></i> Kirim Testimonial Anda</h3>
+            <p class="text-muted mb-4">Silakan bagikan kesan, cerita, atau saran Anda selama mengikuti perjalanan ibadah bersama kami</p>
             
-            <!-- Testimonial Form -->
-            <div class="col-lg-4">
-                <div class="testimonial-form-wrapper">
-                    <h3>Kirim Testimonial</h3>
-                    <p class="text-muted mb-4">Silakan bagikan kesan, cerita, atau saran Anda selama mengikuti perjalanan ibadah bersama kami</p>
-                    
-                    <div id="formMessage"></div>
-                    
-                    <form id="testimonialForm">
+            <div id="formMessage"></div>
+            
+            <form id="testimonialForm">
+                <div class="row">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Nama <span class="text-danger">*</span></label>
                             <input type="text" 
@@ -91,7 +61,9 @@ require_once __DIR__ . '/inc/header.php';
                                    placeholder="Masukkan Nama Anda" 
                                    required>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>Judul <span class="text-danger">*</span></label>
                             <input type="text" 
@@ -101,33 +73,69 @@ require_once __DIR__ . '/inc/header.php';
                                    placeholder="Masukan Judul" 
                                    required>
                         </div>
-                        
+                    </div>
+                    
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label>Pengalaman atau kesan Anda <span class="text-danger">*</span></label>
-                            <textarea class="form-control" 
-                                      id="pesan" 
-                                      name="pesan" 
-                                      rows="5" 
-                                      placeholder="Ceritakan pengalaman atau kesan Anda" 
-                                      required></textarea>
+                            <label>&nbsp;</label>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-paper-plane"></i> Kirim Testimonial
+                            </button>
                         </div>
-                        
-                        <!-- Cloudflare Turnstile -->
-                        <div class="form-group">
-                            <div class="cf-turnstile" data-sitekey="0x4AAAAAACAl8S6dya4dFd3k"></div>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-paper-plane"></i> Kirim Testimonial
-                        </button>
-                        
-                        <p class="small text-muted mt-3 mb-0">
-                            <i class="fas fa-info-circle"></i> Testimonial Anda akan ditampilkan setelah disetujui oleh admin.
-                        </p>
-                    </form>
+                    </div>
                 </div>
-            </div>
+                
+                <div class="form-group">
+                    <label>Pengalaman atau kesan Anda <span class="text-danger">*</span></label>
+                    <textarea class="form-control" 
+                              id="pesan" 
+                              name="pesan" 
+                              rows="4" 
+                              placeholder="Ceritakan pengalaman atau kesan Anda" 
+                              required></textarea>
+                </div>
+                
+                <!-- Cloudflare Turnstile -->
+                <div class="form-group">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACAl8S6dya4dFd3k"></div>
+                </div>
+                
+                <p class="small text-muted mb-0">
+                    <i class="fas fa-info-circle"></i> Testimonial Anda akan ditampilkan setelah disetujui oleh admin.
+                </p>
+            </form>
         </div>
+
+        <!-- Testimonial List -->
+        <h2 class="section-title mb-4"><i class="fas fa-comments"></i> Testimoni Jamaah</h2>
+        
+        <?php if (!empty($testimonials)): ?>
+        <div class="testimonial-grid">
+            <?php foreach ($testimonials as $testi): ?>
+            <div class="testimonial-card">
+                <div class="testimonial-icon">
+                    <i class="fas fa-quote-left"></i>
+                </div>
+                <div class="testimonial-header">
+                    <div class="author-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="author-info">
+                        <h5><?= e($testi['nama']) ?></h5>
+                        <p class="text-muted"><?= date('d F Y', strtotime($testi['created_at'])) ?></p>
+                    </div>
+                </div>
+                <h5 class="testimonial-title"><?= e($testi['judul']) ?></h5>
+                <p class="testimonial-text"><?= nl2br(e($testi['pesan'])) ?></p>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php else: ?>
+        <div class="text-center py-5">
+            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Belum ada testimonial yang disetujui.</p>
+        </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -152,25 +160,49 @@ require_once __DIR__ . '/inc/header.php';
 
 .testimonial-page {
     padding: 80px 0;
+    background: var(--light-gray);
 }
 
-.testimonial-list {
-    display: flex;
-    flex-direction: column;
+.testimonial-form-card {
+    background: var(--light-color);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-md);
+}
+
+.testimonial-form-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
 }
 
-.testimonial-item {
+.testimonial-card {
     background: var(--light-color);
     padding: 30px;
     border-radius: 15px;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-.testimonial-item:hover {
+.testimonial-card:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-5px);
+}
+
+.testimonial-icon {
+    color: var(--primary-color);
+    font-size: 36px;
+    margin-bottom: 15px;
+    opacity: 0.3;
 }
 
 .testimonial-header {
@@ -193,44 +225,31 @@ require_once __DIR__ . '/inc/header.php';
     flex-shrink: 0;
 }
 
-.author-info h4 {
+.author-info h5 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: var(--dark-color);
 }
 
 .author-info p {
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
 }
 
-.testimonial-item .testimonial-title {
-    font-size: 20px;
+.testimonial-card .testimonial-title {
+    font-size: 18px;
     font-weight: 600;
     color: var(--primary-color);
     margin-bottom: 15px;
 }
 
-.testimonial-item .testimonial-text {
-    font-size: 16px;
+.testimonial-card .testimonial-text {
+    font-size: 15px;
     line-height: 1.8;
     color: var(--gray-color);
     margin: 0;
-}
-
-.testimonial-form-wrapper {
-    background: var(--light-gray);
-    padding: 30px;
-    border-radius: 15px;
-    position: sticky;
-    top: 100px;
-}
-
-.testimonial-form-wrapper h3 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 10px;
+    flex: 1;
 }
 
 .form-group {
@@ -267,9 +286,14 @@ require_once __DIR__ . '/inc/header.php';
 }
 
 @media (max-width: 991px) {
-    .testimonial-form-wrapper {
-        position: static;
-        margin-top: 40px;
+    .testimonial-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .testimonial-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>

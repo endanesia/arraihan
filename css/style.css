@@ -1031,8 +1031,11 @@ ul {
     background: var(--light-color);
 }
 
-.testimonialSwiper {
-    padding: 40px 20px 60px;
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 50px;
 }
 
 .testimonial-card {
@@ -1040,8 +1043,7 @@ ul {
     padding: 35px 30px;
     border-radius: 15px;
     box-shadow: var(--shadow-md);
-    height: auto;
-    min-height: 320px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
