@@ -465,6 +465,7 @@ function closePopup() {
     const popup = document.getElementById('popup-banner-modal');
     if (popup) {
         popup.style.display = 'none';
+        document.body.style.overflow = 'auto';
         // Set cookie to not show popup again for 24 hours
         const now = new Date();
         now.setTime(now.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
@@ -473,7 +474,7 @@ function closePopup() {
 }
 
 // Show popup on page load if not shown in last 24 hours
-window.addEventListener('load', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Check if popup exists
     const popup = document.getElementById('popup-banner-modal');
     if (!popup) return;
@@ -482,22 +483,36 @@ window.addEventListener('load', function() {
     const popupShown = document.cookie.split('; ').find(row => row.startsWith('popup_shown='));
     
     if (!popupShown) {
-        // Show popup after 1 second delay
+        // Show popup after 2 second delay to ensure page is fully loaded
         setTimeout(function() {
             popup.style.display = 'flex';
-        }, 1000);
+            // Prevent body scroll when popup is shown
+            document.body.style.overflow = 'hidden';
+        }, 2000);
     }
     
     // Close on overlay click
     const overlay = popup.querySelector('.popup-overlay');
     if (overlay) {
-        overlay.addEventListener('click', closePopup);
+        overlay.addEventListener('click', function() {
+            closePopup();
+            document.body.style.overflow = 'auto';
+        });
     }
     
     // Close on ESC key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && popup.style.display === 'flex') {
             closePopup();
+            document.body.style.overflow = 'auto';
         }
     });
+    
+    // Update close button to restore scroll
+    const closeBtn = popup.querySelector('.popup-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            document.body.style.overflow = 'auto';
+        });
+    }
 });
