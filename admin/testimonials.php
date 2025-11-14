@@ -55,7 +55,7 @@ $pending = db()->query("SELECT COUNT(*) as count FROM testimonials WHERE is_appr
             <h2 class="mb-1">Testimonial</h2>
             <p class="text-muted mb-0">Kelola testimonial jamaah</p>
         </div>
-        <a href="testimonial-edit.php" class="btn btn-success">
+        <a href="testimonial-edit" class="btn btn-success">
             <i class="fas fa-plus"></i> Tambah Testimonial
         </a>
     </div>
@@ -211,24 +211,24 @@ $pending = db()->query("SELECT COUNT(*) as count FROM testimonials WHERE is_appr
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
                                         <?php if (!$testi['is_approved']): ?>
-                                        <a href="testimonial-approve.php?id=<?= (int)$testi['id'] ?>&action=approve" 
+                                        <a href="testimonial-approve?id=<?= (int)$testi['id'] ?>&action=approve" 
                                            class="btn btn-outline-success" 
                                            title="Setujui">
                                             <i class="fas fa-check"></i>
                                         </a>
                                         <?php else: ?>
-                                        <a href="testimonial-approve.php?id=<?= (int)$testi['id'] ?>&action=unapprove" 
+                                        <a href="testimonial-approve?id=<?= (int)$testi['id'] ?>&action=unapprove" 
                                            class="btn btn-outline-warning" 
                                            title="Batalkan">
                                             <i class="fas fa-times"></i>
                                         </a>
                                         <?php endif; ?>
-                                        <a href="testimonial-edit.php?id=<?= (int)$testi['id'] ?>" 
+                                        <a href="testimonial-edit?id=<?= (int)$testi['id'] ?>" 
                                            class="btn btn-outline-primary" 
                                            title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="testimonial-delete.php?id=<?= (int)$testi['id'] ?>" 
+                                        <a href="testimonial-delete?id=<?= (int)$testi['id'] ?>" 
                                            class="btn btn-outline-danger" 
                                            onclick="return confirm('Yakin ingin menghapus testimonial ini?')"
                                            title="Hapus">
