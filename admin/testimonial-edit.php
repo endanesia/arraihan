@@ -25,6 +25,14 @@ if ($isEdit) {
     }
 }
 
+// Debug: aktifkan untuk troubleshooting
+echo '<!-- DEBUG INFO:';
+echo ' ID: ' . $id;
+echo ' IsEdit: ' . ($isEdit ? 'true' : 'false');
+echo ' Data: ';
+print_r($testimonial);
+echo '-->';
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama = trim($_POST['nama'] ?? '');
@@ -84,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="text" 
                                    class="form-control" 
                                    name="nama" 
-                                   value="<?= e($testimonial['nama']) ?>" 
+                                   value="<?= isset($testimonial['nama']) ? e($testimonial['nama']) : '' ?>" 
                                    required 
                                    placeholder="Nama jamaah">
                         </div>
@@ -94,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="text" 
                                    class="form-control" 
                                    name="judul" 
-                                   value="<?= e($testimonial['judul']) ?>" 
+                                   value="<?= isset($testimonial['judul']) ? e($testimonial['judul']) : '' ?>" 
                                    required 
                                    placeholder="Judul testimonial">
                         </div>
@@ -105,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                       name="pesan" 
                                       rows="8" 
                                       required 
-                                      placeholder="Isi testimonial"><?= e($testimonial['pesan']) ?></textarea>
+                                      placeholder="Isi testimonial"><?= isset($testimonial['pesan']) ? e($testimonial['pesan']) : '' ?></textarea>
                         </div>
 
                         <div class="mb-3">
@@ -114,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                        type="checkbox" 
                                        name="is_approved" 
                                        id="is_approved" 
-                                       <?= $testimonial['is_approved'] ? 'checked' : '' ?>>
+                                       <?= !empty($testimonial['is_approved']) ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="is_approved">
                                     <strong>Setujui dan tampilkan di website</strong>
                                 </label>
@@ -127,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                        type="checkbox" 
                                        name="is_featured" 
                                        id="is_featured" 
-                                       <?= $testimonial['is_featured'] ? 'checked' : '' ?>>
+                                       <?= !empty($testimonial['is_featured']) ? 'checked' : '' ?>>
                                 <label class="form-check-label" for="is_featured">
                                     <strong>Jadikan testimonial unggulan</strong>
                                     <small class="d-block text-muted">Testimonial unggulan akan diprioritaskan untuk ditampilkan</small>
