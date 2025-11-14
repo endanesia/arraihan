@@ -1025,6 +1025,89 @@ ul {
     flex-wrap: wrap;
 }
 
+/* ===== TESTIMONIAL SECTION ===== */
+.testimonial-section {
+    padding: 80px 0;
+    background: var(--light-color);
+}
+
+.testimonialSwiper {
+    padding: 40px 20px 60px;
+}
+
+.testimonial-card {
+    background: var(--light-gray);
+    padding: 35px 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-md);
+    height: auto;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.testimonial-icon {
+    color: var(--primary-color);
+    font-size: 36px;
+    margin-bottom: 20px;
+    opacity: 0.3;
+}
+
+.testimonial-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.testimonial-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--gray-color);
+    flex: 1;
+    margin-bottom: 25px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(10, 126, 62, 0.1);
+}
+
+.testimonial-author .author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--light-color);
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.testimonial-author .author-info h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.testimonial-author .author-info p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--gray-color);
+}
+
 /* ===== KONTAK SECTION ===== */
 .kontak {
     padding: 80px 0;

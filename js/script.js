@@ -459,3 +459,36 @@ console.log(`
 'color: #d4a518; font-size: 16px;',
 'color: #6c757d; font-size: 12px;'
 );
+
+// ===== TESTIMONIAL SWIPER INITIALIZATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    const testimonialSwiper = document.querySelector('.testimonialSwiper');
+    
+    if (testimonialSwiper) {
+        new Swiper('.testimonialSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 30,
+            loop: true,
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                768: {
+                    slidesPerView: 2,
+                },
+                992: {
+                    slidesPerView: 3,
+                }
+            }
+        });
+    }
+});

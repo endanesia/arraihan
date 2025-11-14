@@ -184,6 +184,11 @@ function nav_active($needle){
           <i class="fas fa-calendar-alt"></i>Jadwal Keberangkatan
         </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link <?= nav_active('/admin/testimonial') ?>" href="<?= e($base) ?>/admin/testimonials">
+          <i class="fas fa-comments"></i>Testimonial
+        </a>
+      </li>
 
       <!--<li class="nav-item">
         <a class="nav-link <?= nav_active('/admin/messages') ?>" href="<?= e($base) ?>/admin/messages">
