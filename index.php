@@ -627,35 +627,6 @@ require_once __DIR__ . '/inc/header.php';
         </div>
     </section>
 
-    <!-- Partners Section -->
-    <section class="partners">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Partner & Corporate Client</h2>
-                <p class="section-desc">Dipercaya oleh berbagai lembaga dan instansi</p>
-            </div>
-            <div class="partners-grid">
-                <?php if (!empty($partners)): ?>
-                    <?php foreach ($partners as $pr): ?>
-                    <div class="partner-item">
-                        <div class="partner-logo">
-                            <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
-                            <span><?= e($pr['name']) ?></span>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-building"></i><span>PT. Maju Sejahtera</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-industry"></i><span>CV. Berkah Jaya</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-store"></i><span>Toko Amanah</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-hospital"></i><span>RS. Harapan Sehat</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-university"></i><span>Universitas Islam</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-landmark"></i><span>Bank Syariah</span></div></div>
-                <?php endif; ?>
-            </div>
-        </div>
-    </section>
-
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
@@ -816,6 +787,35 @@ require_once __DIR__ . '/inc/header.php';
                         </button>
                     </form>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section class="partners">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Partner & Corporate Client</h2>
+                <p class="section-desc">Dipercaya oleh berbagai lembaga dan instansi</p>
+            </div>
+            <div class="partners-grid">
+                <?php if (!empty($partners)): ?>
+                    <?php foreach ($partners as $pr): ?>
+                    <div class="partner-item">
+                        <div class="partner-logo">
+                            <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
+                            <span><?= e($pr['name']) ?></span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-building"></i><span>PT. Maju Sejahtera</span></div></div>
+                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-industry"></i><span>CV. Berkah Jaya</span></div></div>
+                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-store"></i><span>Toko Amanah</span></div></div>
+                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-hospital"></i><span>RS. Harapan Sehat</span></div></div>
+                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-university"></i><span>Universitas Islam</span></div></div>
+                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-landmark"></i><span>Bank Syariah</span></div></div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
