@@ -120,12 +120,12 @@ function nav_active($needle){
       
       <!-- Homepage Menu with Submenu -->
       <li class="nav-item">
-        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/partners') ? 'active' : '' ?>" 
+        <a class="nav-link d-flex align-items-center justify-content-between <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/partners') || nav_active('/admin/mutawwif') ? 'active' : '' ?>" 
            href="#" onclick="toggleSubmenu('homepage-menu')">
           <span><i class="fas fa-home"></i>Homepage</span>
           <i class="fas fa-chevron-down submenu-toggle" id="homepage-arrow"></i>
         </a>
-        <ul class="nav flex-column submenu" id="homepage-menu" style="display: <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') ? 'block' : 'none' ?>;">
+        <ul class="nav flex-column submenu" id="homepage-menu" style="display: <?= nav_active('/admin/hero') || nav_active('/admin/greeting') || nav_active('/admin/keunggulan') || nav_active('/admin/about') || nav_active('/admin/mutawwif') ? 'block' : 'none' ?>;">
           <li class="nav-item">
             <a class="nav-link <?= nav_active('/admin/hero') ?>" href="<?= e($base) ?>/admin/hero">
               <i class="fas fa-image"></i>Hero Section
@@ -139,6 +139,11 @@ function nav_active($needle){
           <li class="nav-item">
             <a class="nav-link <?= nav_active('/admin/keunggulan') ?>" href="<?= e($base) ?>/admin/keunggulan">
               <i class="fas fa-star"></i>Keunggulan
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <?= nav_active('/admin/mutawwif') ?>" href="<?= e($base) ?>/admin/mutawwif-list">
+              <i class="fas fa-user-tie"></i>Mutawwif & Tour Leader
             </a>
           </li>
           <li class="nav-item">
@@ -180,12 +185,12 @@ function nav_active($needle){
         </a>
       </li>
 
-      <li class="nav-item">
+      <!--<li class="nav-item">
         <a class="nav-link <?= nav_active('/admin/messages') ?>" href="<?= e($base) ?>/admin/messages">
           <i class="fas fa-envelope"></i>Pesan Masuk
         </a>
       </li>
-
+      -->
       <li class="nav-item">
         <a class="nav-link <?= nav_active('/admin/social-links') ?>" href="<?= e($base) ?>/admin/social-links">
           <i class="fas fa-cog"></i>Pengaturan Situs

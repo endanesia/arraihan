@@ -57,6 +57,13 @@ if (function_exists('db') && db()) {
         while ($row = $res->fetch_assoc()) { $videos[] = $row; }
     }
 }
+// Mutawwif dan Tour Leader
+$mutawwif = [];
+if (function_exists('db') && db()) {
+    if ($res = db()->query("SELECT * FROM mutawwif WHERE is_active = 1 ORDER BY urutan ASC, id ASC")) {
+        while ($row = $res->fetch_assoc()) { $mutawwif[] = $row; }
+    }
+}
 // Social links from settings
 $link_whatsapp = function_exists('get_setting') ? get_setting('whatsapp', '') : '';
 $link_facebook = function_exists('get_setting') ? get_setting('facebook', '') : '';
@@ -134,7 +141,7 @@ require_once __DIR__ . '/inc/header.php';
             <div class="hero-content">
                 <div class="hero-badge">
                     <i class="fas fa-certificate"></i>
-                    <span>PT. ArRaihan Islami Travelindo</span>
+                    <span>PT. Raihan Islami Travelindo</span>
                 </div>
                 <h1 class="hero-title"><?= e($hero_title) ?></h1>
                 <p class="hero-subtitle"><?= e($hero_subtitle) ?></p>
@@ -412,6 +419,83 @@ require_once __DIR__ . '/inc/header.php';
                 <a href="galeri.php" class="btn btn-outline">
                     <i class="fas fa-images"></i> Lihat Semua Galeri
                 </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mutawwif dan Tour Leader Section -->
+    <section class="mutawwif">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-subtitle">MUTAWWIF DAN TOUR LEADER</p>
+                <h2 class="section-title">Mutawwif dan Tour Leader Professional</h2>
+            </div>
+            <div class="mutawwif-grid">
+                <?php if (!empty($mutawwif)): ?>
+                    <?php foreach ($mutawwif as $mw): ?>
+                    <div class="mutawwif-card">
+                        <div class="mutawwif-image">
+                            <?php if (!empty($mw['foto'])): ?>
+                                <img src="<?= $base . 'images/mutawwif/' . e($mw['foto']) ?>" alt="<?= e($mw['nama']) ?>" loading="lazy">
+                            <?php else: ?>
+                                <div class="mutawwif-placeholder">
+                                    <i class="fas fa-user-tie fa-3x"></i>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="mutawwif-info">
+                            <h3><?= e($mw['nama']) ?></h3>
+                            <p class="mutawwif-jabatan"><?= e($mw['jabatan']) ?></p>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <!-- Fallback jika belum ada data -->
+                    <div class="mutawwif-card">
+                        <div class="mutawwif-image">
+                            <div class="mutawwif-placeholder">
+                                <i class="fas fa-user-tie fa-3x"></i>
+                            </div>
+                        </div>
+                        <div class="mutawwif-info">
+                            <h3>Uztad Mochammad Munir Djamil</h3>
+                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                        </div>
+                    </div>
+                    <div class="mutawwif-card">
+                        <div class="mutawwif-image">
+                            <div class="mutawwif-placeholder">
+                                <i class="fas fa-user-tie fa-3x"></i>
+                            </div>
+                        </div>
+                        <div class="mutawwif-info">
+                            <h3>Ustad Achmad Suudi Bin Sulaiman</h3>
+                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                        </div>
+                    </div>
+                    <div class="mutawwif-card">
+                        <div class="mutawwif-image">
+                            <div class="mutawwif-placeholder">
+                                <i class="fas fa-user-tie fa-3x"></i>
+                            </div>
+                        </div>
+                        <div class="mutawwif-info">
+                            <h3>Ustad Muhammad Yazid Abdul Malik</h3>
+                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                        </div>
+                    </div>
+                    <div class="mutawwif-card">
+                        <div class="mutawwif-image">
+                            <div class="mutawwif-placeholder">
+                                <i class="fas fa-user-tie fa-3x"></i>
+                            </div>
+                        </div>
+                        <div class="mutawwif-info">
+                            <h3>Ustad Muzakki Munawi</h3>
+                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                        </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
