@@ -97,7 +97,7 @@ require_once __DIR__ . '/inc/header.php';
                 
                 <div class="form-group">
                     <label>&nbsp;</label>
-                    <button type="submit" class="btn btn-primary btn-block">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> Kirim Testimonial
                     </button>
                 </div>
