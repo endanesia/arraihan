@@ -276,6 +276,33 @@ require_once __DIR__ . '/inc/header.php';
     box-shadow: 0 0 0 3px rgba(10, 126, 62, 0.1);
 }
 
+.alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
 .btn-block {
     width: 100%;
     padding: 12px 20px;
@@ -301,7 +328,15 @@ document.getElementById('testimonialForm').addEventListener('submit', async func
     e.preventDefault();
     
     const formData = new FormData(this);
-    const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]').value;
+    const turnstileElement = document.querySelector('[name="cf-turnstile-response"]');
+    
+    if (!turnstileElement || !turnstileElement.value) {
+        const messageDiv = document.getElementById('formMessage');
+        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Mohon selesaikan verifikasi keamanan terlebih dahulu.</div>';
+        return;
+    }
+    
+    const turnstileResponse = turnstileElement.value;
     formData.append('cf-turnstile-response', turnstileResponse);
     
     const messageDiv = document.getElementById('formMessage');
@@ -313,19 +348,33 @@ document.getElementById('testimonialForm').addEventListener('submit', async func
             body: formData
         });
         
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
         const result = await response.json();
         
         if (result.success) {
             messageDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> ' + result.message + '</div>';
             this.reset();
-            turnstile.reset();
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
+            
+            // Scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
-            messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> ' + result.message + '</div>';
-            turnstile.reset();
+            messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> ' + (result.message || 'Terjadi kesalahan. Silakan coba lagi.') + '</div>';
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
         }
     } catch (error) {
-        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan. Silakan coba lagi.</div>';
-        turnstile.reset();
+        console.error('Error:', error);
+        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan koneksi. Silakan periksa koneksi internet dan coba lagi. Error: ' + error.message + '</div>';
+        if (window.turnstile) {
+            window.turnstile.reset();
+        }
     }
 });
 </script>
