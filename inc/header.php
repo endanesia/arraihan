@@ -83,7 +83,7 @@ if (!isset($link_whatsapp)) {
         <nav class="navbar">
             <div class="container">
                 <div class="nav-wrapper">
-                    <a href="<?= $base2 ?: ($base ?? '') ?>" class="logo">
+                    <a href="<?= !empty($base2) ? $base2 : ($base ?? '') ?>" class="logo">
                         <img src="<?= $base ?? '' ?>images/logo.png" alt="Raihan Travelindo" style="height: 50px;">
                         <span>Ar Raihan</span>
                     </a>
