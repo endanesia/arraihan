@@ -342,8 +342,11 @@ document.getElementById('testimonialForm').addEventListener('submit', async func
     const messageDiv = document.getElementById('formMessage');
     messageDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Mengirim testimonial...</div>';
     
+    // Get base URL from current page
+    const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    
     try {
-        const response = await fetch('testimonial-submit.php', {
+        const response = await fetch(baseUrl + 'testimonial-submit.php', {
             method: 'POST',
             body: formData
         });
