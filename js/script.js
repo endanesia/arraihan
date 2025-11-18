@@ -153,7 +153,7 @@ ${message ? `*Pesan:* ${message}` : ''}
         const encodedMessage = encodeURIComponent(whatsappMessage);
         
         // WhatsApp number from settings
-        const whatsappNumber = '6281234567890'; // Update with actual number
+        const whatsappNumber = '6282132087805'; // Update with actual number
         
         // Reset form
         contactForm.reset();
