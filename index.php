@@ -542,13 +542,14 @@ require_once __DIR__ . '/inc/header.php';
                                 <p>Terdaftar Kementerian Agama RI</p>
                             </div>
                         </div>
-                        <div class="feature-item">
+                        <!-- <div class="feature-item">
                             <i class="fas fa-award"></i>
                             <div>
                                 <h4>Izin PIHK Resmi</h4>
                                 <p>Penyelenggara Ibadah Haji Khusus</p>
                             </div>
                         </div>
+                        -->
                     </div>
                 </div>
                 <div class="tentang-image">
