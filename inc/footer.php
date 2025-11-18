@@ -66,7 +66,6 @@ if (!isset($link_whatsapp)) {
                     <h4>Legalitas</h4>
                     <ul>
                         <li><i class="fas fa-check-circle"></i> Izin PPIU Kemenag RI</li>
-                        <li><i class="fas fa-check-circle"></i> Izin PIHK Resmi</li>
                         <li><i class="fas fa-check-circle"></i> Tergabung AMPHURI</li>
                         <li><i class="fas fa-check-circle"></i> Anggota IATA</li>
                         <li><i class="fas fa-check-circle"></i> Anggota AITTA</li>
