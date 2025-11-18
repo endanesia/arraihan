@@ -109,13 +109,13 @@ scrollTopBtn.addEventListener('click', () => {
 const contactForm = document.getElementById('contactForm');
 
 if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
+    contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const message = document.getElementById('message').value;
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const message = document.getElementById('message').value.trim();
         
         // Get Turnstile token
         const turnstileToken = document.querySelector('[name="cf-turnstile-response"]');
@@ -126,70 +126,45 @@ if (contactForm) {
             return;
         }
         
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('nama', name);
-        formData.append('email', email);
-        formData.append('wa', phone);
-        formData.append('pesan', message);
-        formData.append('cf-turnstile-response', turnstileToken.value);
+        // Validate fields
+        if (!name || !email || !phone) {
+            alert('Mohon lengkapi semua field yang wajib diisi.');
+            return;
+        }
         
-        try {
-            // Submit to database
-            const response = await fetch('contact-submit.php', {
-                method: 'POST',
-                body: formData
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                // Create WhatsApp message
-                const whatsappMessage = `
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Format email tidak valid.');
+            return;
+        }
+        
+        // Create WhatsApp message
+        const whatsappMessage = `
 Assalamualaikum, saya ingin berkonsultasi tentang paket umroh.
 
 *Nama:* ${name}
 *Email:* ${email}
 *No. WhatsApp:* ${phone}
-*Pesan:* ${message}
-                `.trim();
-                
-                // Encode message for URL
-                const encodedMessage = encodeURIComponent(whatsappMessage);
-                
-                // WhatsApp number (ganti dengan nomor yang sesuai)
-                const whatsappNumber = '6281234567890';
-                
-                // Reset form
-                contactForm.reset();
-                
-                // Reset Turnstile
-                if (window.turnstile) {
-                    window.turnstile.reset();
-                }
-                
-                // Show success message
-                alert(result.message);
-                
-                // Open WhatsApp
-                window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-            } else {
-                alert(result.message || 'Terjadi kesalahan. Silakan coba lagi.');
-                
-                // Reset Turnstile on error
-                if (window.turnstile) {
-                    window.turnstile.reset();
-                }
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Terjadi kesalahan. Silakan coba lagi.');
-            
-            // Reset Turnstile on error
-            if (window.turnstile) {
-                window.turnstile.reset();
-            }
+${message ? `*Pesan:* ${message}` : ''}
+        `.trim();
+        
+        // Encode message for URL
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        
+        // WhatsApp number from settings
+        const whatsappNumber = '6281234567890'; // Update with actual number
+        
+        // Reset form
+        contactForm.reset();
+        
+        // Reset Turnstile
+        if (window.turnstile) {
+            window.turnstile.reset();
         }
+        
+        // Open WhatsApp
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
     });
 }
 
