@@ -807,6 +807,9 @@ require_once __DIR__ . '/inc/header.php';
                             <div class="partner-logo-img">
                                 <img src="<?= e($pr['logo_url']) ?>" alt="<?= e($pr['name']) ?>">
                             </div>
+                            <div class="partner-name">
+                                <?= e($pr['name']) ?>
+                            </div>
                         <?php else: ?>
                             <div class="partner-logo">
                                 <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>

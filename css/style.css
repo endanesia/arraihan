@@ -1022,6 +1022,15 @@ ul {
     opacity: 1;
 }
 
+.partner-name {
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--dark-color);
+    padding: 10px 15px 15px;
+    margin-top: -10px;
+}
+
 /* ===== CTA SECTION ===== */
 .cta-section {
     padding: 80px 0;
