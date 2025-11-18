@@ -1000,6 +1000,28 @@ ul {
     font-size: 14px;
 }
 
+.partner-logo-img {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+}
+
+.partner-logo-img img {
+    max-width: 100%;
+    max-height: 80px;
+    object-fit: contain;
+    filter: grayscale(100%);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.partner-item:hover .partner-logo-img img {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
 /* ===== CTA SECTION ===== */
 .cta-section {
     padding: 80px 0;

@@ -803,10 +803,16 @@ require_once __DIR__ . '/inc/header.php';
                 <?php if (!empty($partners)): ?>
                     <?php foreach ($partners as $pr): ?>
                     <div class="partner-item">
-                        <div class="partner-logo">
-                            <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
-                            <span><?= e($pr['name']) ?></span>
-                        </div>
+                        <?php if (!empty($pr['logo_url'])): ?>
+                            <div class="partner-logo-img">
+                                <img src="<?= e($pr['logo_url']) ?>" alt="<?= e($pr['name']) ?>">
+                            </div>
+                        <?php else: ?>
+                            <div class="partner-logo">
+                                <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
+                                <span><?= e($pr['name']) ?></span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>

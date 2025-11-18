@@ -6,13 +6,14 @@ $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $editing = $id > 0;
 $name = '';
 $icon_class = '';
+$logo_url = '';
 $err = null; $ok = null;
 
 if ($editing) {
-    $stmt = db()->prepare("SELECT name, icon_class FROM partners WHERE id=? LIMIT 1");
+    $stmt = db()->prepare("SELECT name, icon_class, logo_url FROM partners WHERE id=? LIMIT 1");
     $stmt->bind_param('i', $id);
     $stmt->execute();
-    $stmt->bind_result($name, $icon_class);
+    $stmt->bind_result($name, $icon_class, $logo_url);
     if (!$stmt->fetch()) { $editing = false; }
     $stmt->close();
 }
@@ -20,16 +21,40 @@ if ($editing) {
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $icon_class = trim($_POST['icon_class'] ?? '');
+    $new_logo_url = $_POST['existing_logo'] ?? '';
+    
     if ($name === '') { $err = 'Nama wajib diisi'; }
+    
+    // Handle logo upload
+    if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = __DIR__ . '/../images/partners/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0755, true);
+        }
+        
+        $ext = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
+        $filename = 'partner_' . time() . '_' . uniqid() . '.' . $ext;
+        $filepath = $upload_dir . $filename;
+        
+        if (move_uploaded_file($_FILES['logo']['tmp_name'], $filepath)) {
+            // Delete old logo if exists
+            if (!empty($new_logo_url) && file_exists(__DIR__ . '/../' . $new_logo_url)) {
+                unlink(__DIR__ . '/../' . $new_logo_url);
+            }
+            $new_logo_url = 'images/partners/' . $filename;
+        }
+    }
+    
     if (!$err) {
         if ($editing) {
-            $stmt = db()->prepare("UPDATE partners SET name=?, icon_class=? WHERE id=?");
-            $stmt->bind_param('ssi', $name, $icon_class, $id);
+            $stmt = db()->prepare("UPDATE partners SET name=?, icon_class=?, logo_url=? WHERE id=?");
+            $stmt->bind_param('sssi', $name, $icon_class, $new_logo_url, $id);
             $stmt->execute();
+            $logo_url = $new_logo_url; // Update display
             $ok = 'Partner diperbarui';
         } else {
-            $stmt = db()->prepare("INSERT INTO partners(name, icon_class) VALUES(?, ?)");
-            $stmt->bind_param('ss', $name, $icon_class);
+            $stmt = db()->prepare("INSERT INTO partners(name, icon_class, logo_url) VALUES(?, ?, ?)");
+            $stmt->bind_param('sss', $name, $icon_class, $new_logo_url);
             $stmt->execute();
             header('Location: ' . $base . '/admin/partners'); exit;
         }
@@ -47,15 +72,27 @@ include __DIR__ . '/header.php';
   <?php if ($ok): ?><div class="alert alert-success"><?= e($ok) ?></div><?php endif; ?>
 
   <div class="card"><div class="card-body">
-    <form method="post" class="row g-3">
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+      <input type="hidden" name="existing_logo" value="<?= e($logo_url) ?>">
       <div class="col-12 col-md-6">
-        <label class="form-label">Nama</label>
+        <label class="form-label">Nama Partner <span class="text-danger">*</span></label>
         <input name="name" class="form-control" value="<?= e($name) ?>" required>
       </div>
       <div class="col-12 col-md-6">
-        <label class="form-label">Font Awesome Icon</label>
+        <label class="form-label">Logo Partner</label>
+        <input type="file" name="logo" class="form-control" accept="image/*">
+        <div class="form-text">Upload logo partner (PNG/JPG, max 2MB). Ukuran disarankan: 200x100px</div>
+        <?php if (!empty($logo_url)): ?>
+        <div class="mt-2">
+          <img src="<?= e($base . '/' . $logo_url) ?>" alt="Current logo" class="img-thumbnail" style="max-height: 80px;">
+          <p class="text-muted small mb-0">Logo saat ini</p>
+        </div>
+        <?php endif; ?>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Font Awesome Icon (Opsional)</label>
         <input name="icon_class" class="form-control" placeholder="fas fa-building" value="<?= e($icon_class) ?>">
-        <div class="form-text">Contoh: fas fa-building, fas fa-industry, fas fa-store</div>
+        <div class="form-text">Icon akan digunakan jika logo tidak diupload. Contoh: fas fa-building, fas fa-industry</div>
       </div>
       <div class="col-12">
         <button class="btn btn-primary" type="submit">Simpan</button>

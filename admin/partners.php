@@ -35,6 +35,10 @@ include __DIR__ . '/header.php';
   <?php if ($err): ?><div class="alert alert-danger"><?= e($err) ?></div><?php endif; ?>
   <?php if ($ok): ?><div class="alert alert-success"><?= e($ok) ?></div><?php endif; ?>
 
+  <div class="alert alert-info">
+    <i class="fas fa-info-circle"></i> <strong>Catatan:</strong> Gunakan tombol "Tambah Partner" untuk upload logo. Form "Tambah Cepat" di bawah hanya untuk menambah partner dengan icon saja.
+  </div>
+
   <div class="card mb-3">
     <div class="card-body">
       <form method="post" class="row g-2">
@@ -50,16 +54,22 @@ include __DIR__ . '/header.php';
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-striped align-middle">
-          <thead><tr><th>ID</th><th>Nama</th><th>Icon</th><th>Aksi</th></tr></thead>
+          <thead><tr><th>ID</th><th>Logo</th><th>Nama</th><th>Aksi</th></tr></thead>
           <tbody>
             <?php foreach ($rows as $r): ?>
             <tr>
               <td>#<?= (int)$r['id'] ?></td>
+              <td>
+                <?php if (!empty($r['logo_url'])): ?>
+                  <img src="<?= e($base . '/' . $r['logo_url']) ?>" alt="<?= e($r['name']) ?>" style="max-height: 50px; max-width: 100px; object-fit: contain;">
+                <?php else: ?>
+                  <i class="<?= e($r['icon_class'] ?: 'fas fa-building') ?>" style="font-size: 24px;"></i>
+                <?php endif; ?>
+              </td>
               <td><?= e($r['name']) ?></td>
-              <td><i class="<?= e($r['icon_class'] ?: 'fas fa-building') ?>"></i> <code><?= e($r['icon_class'] ?: 'fas fa-building') ?></code></td>
               <td>
                 <a class="btn btn-sm btn-outline-primary" href="<?= e($base) ?>/admin/partner-edit?id=<?= (int)$r['id'] ?>">Edit</a>
-                <a class="btn btn-sm btn-outline-danger" href="<?= e($base) ?>/admin/partners/<?= (int)$r['id'] ?>/delete" onclick="return confirm('Hapus partner ini?')">Hapus</a>
+                <a class="btn btn-sm btn-outline-danger" href="<?= e($base) ?>/admin/partner-delete?id=<?= (int)$r['id'] ?>" onclick="return confirm('Hapus partner ini?')">Hapus</a>
               </td>
             </tr>
             <?php endforeach; ?>
