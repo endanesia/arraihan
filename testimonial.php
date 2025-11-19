@@ -324,7 +324,7 @@ require_once __DIR__ . '/inc/header.php';
 </style>
 
 <script>
-document.getElementById('testimonialForm').addEventListener('submit', function(e) {
+document.getElementById('testimonialForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const nama = document.getElementById('nama').value.trim();
@@ -345,39 +345,50 @@ document.getElementById('testimonialForm').addEventListener('submit', function(e
         return;
     }
     
-    // Create WhatsApp message for testimonial
-    const whatsappMessage = `
-Assalamualaikum, saya ingin mengirim testimonial:
-
-*Nama:* ${nama}
-*Judul:* ${judul}
-*Testimonial:* ${pesan}
-    `.trim();
+    // Show loading
+    messageDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Mengirim testimonial...</div>';
     
-    // Encode message for URL
-    const encodedMessage = encodeURIComponent(whatsappMessage);
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('nama', nama);
+    formData.append('judul', judul);
+    formData.append('pesan', pesan);
+    formData.append('cf-turnstile-response', turnstileElement.value);
     
-    // WhatsApp number (same as contact form)
-    const whatsappNumber = '6282132087805';
-    
-    // Show success message
-    messageDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> Terima kasih! Anda akan diarahkan ke WhatsApp untuk mengirim testimonial.</div>';
-    
-    // Reset form
-    this.reset();
-    
-    // Reset Turnstile
-    if (window.turnstile) {
-        window.turnstile.reset();
+    try {
+        const response = await fetch('testimonial-submit.php', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            messageDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> ' + result.message + '</div>';
+            this.reset();
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
+            
+            // Scroll to message
+            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> ' + (result.message || 'Terjadi kesalahan. Silakan coba lagi.') + '</div>';
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan koneksi. Silakan coba lagi. Error: ' + error.message + '</div>';
+        if (window.turnstile) {
+            window.turnstile.reset();
+        }
     }
-    
-    // Scroll to message
-    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Open WhatsApp after short delay
-    setTimeout(() => {
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
-    }, 1000);
 });
 </script>
 
