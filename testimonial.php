@@ -1,11 +1,5 @@
 <?php
-session_start();
 require_once __DIR__ . '/inc/db.php';
-
-// Escape HTML output helper
-function e($str) {
-    return htmlspecialchars($str ?? '', ENT_QUOTES, 'UTF-8');
-}
 
 // Get session message
 $sessionMessage = '';
@@ -70,7 +64,7 @@ require_once __DIR__ . '/inc/header.php';
             </div>
             <?php endif; ?>
             
-            <form method="POST" action="testimonial-submit.php">
+            <form method="POST" action="testimonial-submit">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
