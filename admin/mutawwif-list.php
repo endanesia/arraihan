@@ -86,12 +86,12 @@ while ($row = $res->fetch_assoc()) {
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group btn-group-sm" role="group">
-                                        <a href="mutawwif-edit.php?id=<?= (int)$mw['id'] ?>" 
+                                        <a href="mutawwif-edit?id=<?= (int)$mw['id'] ?>" 
                                            class="btn btn-outline-primary" 
                                            title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a href="mutawwif-delete.php?id=<?= (int)$mw['id'] ?>" 
+                                        <a href="mutawwif-delete?id=<?= (int)$mw['id'] ?>" 
                                            class="btn btn-outline-danger" 
                                            onclick="return confirm('Yakin ingin menghapus mutawwif ini?')"
                                            title="Hapus">
