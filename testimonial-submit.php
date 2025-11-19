@@ -1,11 +1,10 @@
 <?php
+session_start();
 require_once __DIR__ . '/inc/db.php';
-
-header('Content-Type: application/json');
 
 // Enable error reporting for debugging
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Don't display errors in response
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 
 // Verify Turnstile
@@ -50,29 +49,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Validate
     if (empty($nama)) {
-        echo json_encode(['success' => false, 'message' => 'Nama harus diisi!']);
+        $_SESSION['testimonial_message'] = 'Nama harus diisi!';
+        $_SESSION['testimonial_type'] = 'danger';
+        header('Location: testimonial.php');
         exit;
     }
     
     if (empty($judul)) {
-        echo json_encode(['success' => false, 'message' => 'Judul harus diisi!']);
+        $_SESSION['testimonial_message'] = 'Judul harus diisi!';
+        $_SESSION['testimonial_type'] = 'danger';
+        header('Location: testimonial.php');
         exit;
     }
     
     if (empty($pesan)) {
-        echo json_encode(['success' => false, 'message' => 'Pesan harus diisi!']);
+        $_SESSION['testimonial_message'] = 'Pesan harus diisi!';
+        $_SESSION['testimonial_type'] = 'danger';
+        header('Location: testimonial.php');
         exit;
     }
     
     // Verify Turnstile
     if (!verifyTurnstile($turnstileToken)) {
-        echo json_encode(['success' => false, 'message' => 'Verifikasi keamanan gagal. Silakan refresh halaman dan coba lagi.']);
+        $_SESSION['testimonial_message'] = 'Verifikasi keamanan gagal. Silakan coba lagi.';
+        $_SESSION['testimonial_type'] = 'danger';
+        header('Location: testimonial.php');
         exit;
     }
     
     // Check database connection
     if (!db()) {
-        echo json_encode(['success' => false, 'message' => 'Koneksi database gagal. Silakan hubungi administrator.']);
+        $_SESSION['testimonial_message'] = 'Koneksi database gagal. Silakan hubungi administrator.';
+        $_SESSION['testimonial_type'] = 'danger';
+        header('Location: testimonial.php');
         exit;
     }
     
@@ -81,7 +90,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = db()->prepare("INSERT INTO testimonials (nama, judul, pesan, is_approved) VALUES (?, ?, ?, 0)");
         
         if (!$stmt) {
-            echo json_encode(['success' => false, 'message' => 'Error preparing statement: ' . db()->error]);
+            $_SESSION['testimonial_message'] = 'Error preparing statement: ' . db()->error;
+            $_SESSION['testimonial_type'] = 'danger';
+            header('Location: testimonial.php');
             exit;
         }
         
@@ -89,18 +100,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($stmt->execute()) {
             $stmt->close();
-            echo json_encode([
-                'success' => true, 
-                'message' => 'Terima kasih! Testimonial Anda telah dikirim dan akan ditampilkan setelah disetujui oleh admin.'
-            ]);
+            $_SESSION['testimonial_message'] = 'Terima kasih! Testimonial Anda telah dikirim dan akan ditampilkan setelah disetujui oleh admin.';
+            $_SESSION['testimonial_type'] = 'success';
+            header('Location: testimonial.php');
+            exit;
         } else {
-            echo json_encode(['success' => false, 'message' => 'Gagal menyimpan testimonial: ' . $stmt->error]);
+            $_SESSION['testimonial_message'] = 'Gagal menyimpan testimonial: ' . $stmt->error;
+            $_SESSION['testimonial_type'] = 'danger';
             $stmt->close();
+            header('Location: testimonial.php');
+            exit;
         }
     } catch (Exception $e) {
-        echo json_encode(['success' => false, 'message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        $_SESSION['testimonial_message'] = 'Terjadi kesalahan: ' . $e->getMessage();
+        $_SESSION['testimonial_type'] = 'danger';
+        header('Location: testimonial.php');
+        exit;
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    $_SESSION['testimonial_message'] = 'Invalid request method';
+    $_SESSION['testimonial_type'] = 'danger';
+    header('Location: testimonial.php');
+    exit;
 }
 ?>

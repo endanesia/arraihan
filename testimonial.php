@@ -1,5 +1,21 @@
 <?php
+session_start();
 require_once __DIR__ . '/inc/db.php';
+
+// Escape HTML output helper
+function e($str) {
+    return htmlspecialchars($str ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+// Get session message
+$sessionMessage = '';
+$messageType = 'success';
+if (isset($_SESSION['testimonial_message'])) {
+    $sessionMessage = $_SESSION['testimonial_message'];
+    $messageType = $_SESSION['testimonial_type'] ?? 'success';
+    unset($_SESSION['testimonial_message']);
+    unset($_SESSION['testimonial_type']);
+}
 
 // Base URL configuration
 $base = '';
@@ -47,9 +63,14 @@ require_once __DIR__ . '/inc/header.php';
             <h3><i class="fas fa-pen"></i> Kirim Testimonial Anda</h3>
             <p class="text-muted mb-4">Silakan bagikan kesan, cerita, atau saran Anda selama mengikuti perjalanan ibadah bersama kami</p>
             
-            <div id="formMessage"></div>
+            <?php if ($sessionMessage): ?>
+            <div class="alert alert-<?= $messageType ?>">
+                <i class="fas fa-<?= $messageType == 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i> 
+                <?= e($sessionMessage) ?>
+            </div>
+            <?php endif; ?>
             
-            <form id="testimonialForm">
+            <form method="POST" action="testimonial-submit.php">
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -322,75 +343,6 @@ require_once __DIR__ . '/inc/header.php';
     }
 }
 </style>
-
-<script>
-document.getElementById('testimonialForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const nama = document.getElementById('nama').value.trim();
-    const judul = document.getElementById('judul').value.trim();
-    const pesan = document.getElementById('pesan').value.trim();
-    const turnstileElement = document.querySelector('[name="cf-turnstile-response"]');
-    const messageDiv = document.getElementById('formMessage');
-    
-    // Validate Turnstile
-    if (!turnstileElement || !turnstileElement.value) {
-        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Mohon selesaikan verifikasi keamanan terlebih dahulu.</div>';
-        return;
-    }
-    
-    // Validate required fields
-    if (!nama || !judul || !pesan) {
-        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Semua field harus diisi.</div>';
-        return;
-    }
-    
-    // Show loading
-    messageDiv.innerHTML = '<div class="alert alert-info"><i class="fas fa-spinner fa-spin"></i> Mengirim testimonial...</div>';
-    
-    // Prepare form data
-    const formData = new FormData();
-    formData.append('nama', nama);
-    formData.append('judul', judul);
-    formData.append('pesan', pesan);
-    formData.append('cf-turnstile-response', turnstileElement.value);
-    
-    try {
-        const response = await fetch('testimonial-submit.php', {
-            method: 'POST',
-            body: formData
-        });
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            messageDiv.innerHTML = '<div class="alert alert-success"><i class="fas fa-check-circle"></i> ' + result.message + '</div>';
-            this.reset();
-            if (window.turnstile) {
-                window.turnstile.reset();
-            }
-            
-            // Scroll to message
-            messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> ' + (result.message || 'Terjadi kesalahan. Silakan coba lagi.') + '</div>';
-            if (window.turnstile) {
-                window.turnstile.reset();
-            }
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        messageDiv.innerHTML = '<div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> Terjadi kesalahan koneksi. Silakan coba lagi. Error: ' + error.message + '</div>';
-        if (window.turnstile) {
-            window.turnstile.reset();
-        }
-    }
-});
-</script>
 
 <?php
 // Include footer template
