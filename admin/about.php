@@ -274,6 +274,15 @@ include __DIR__ . '/header.php';
                                          class="img-fluid rounded shadow" style="max-height: 300px;">
                                     <div class="mt-2">
                                         <small class="text-muted">Gambar Tentang Kami</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card shadow-sm mt-4">
                 <div class="card-header">
                     <h6 class="card-title mb-0">
