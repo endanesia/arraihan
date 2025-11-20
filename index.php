@@ -114,13 +114,24 @@ $greeting_button_text = get_setting('greeting_button_text', 'Pelajari Lebih Lanj
 $greeting_button_link = get_setting('greeting_button_link', '#paket');
 $greeting_background = get_setting('greeting_background', '');
 
-// Keunggulan (Benefits) data from database
-$keunggulan = [];
-if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM keunggulan WHERE is_active = 1 ORDER BY order_num ASC, id ASC")) {
-        while ($row = $res->fetch_assoc()) { $keunggulan[] = $row; }
-    }
-}
+// Keunggulan (Benefits) data from settings
+$keunggulan = [
+    [
+        'icon' => get_setting('about_keunggulan_1_icon', 'fas fa-certificate'),
+        'title' => get_setting('about_keunggulan_1_title', 'Izin PPIU Resmi'),
+        'description' => get_setting('about_keunggulan_1_desc', 'Terdaftar Kementerian Agama RI')
+    ],
+    [
+        'icon' => get_setting('about_keunggulan_2_icon', 'fas fa-award'),
+        'title' => get_setting('about_keunggulan_2_title', 'Izin PIHK Resmi'),
+        'description' => get_setting('about_keunggulan_2_desc', 'Penyelenggara Ibadah Haji Khusus')
+    ],
+    [
+        'icon' => get_setting('about_keunggulan_3_icon', 'fas fa-shield-alt'),
+        'title' => get_setting('about_keunggulan_3_title', 'Sertifikat ISO 9001:2015'),
+        'description' => get_setting('about_keunggulan_3_desc', 'Sistem Manajemen Mutu Terjamin')
+    ]
+];
 
 // About Us data from database
 $about_title = get_setting('about_title', 'Tentang Kami');

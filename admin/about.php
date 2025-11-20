@@ -12,6 +12,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content_p3 = trim($_POST['content_p3'] ?? '');
     $badge_number = trim($_POST['badge_number'] ?? '');
     $badge_text = trim($_POST['badge_text'] ?? '');
+    
+    // Keunggulan data
+    $keunggulan_1_icon = trim($_POST['keunggulan_1_icon'] ?? '');
+    $keunggulan_1_title = trim($_POST['keunggulan_1_title'] ?? '');
+    $keunggulan_1_desc = trim($_POST['keunggulan_1_desc'] ?? '');
+    
+    $keunggulan_2_icon = trim($_POST['keunggulan_2_icon'] ?? '');
+    $keunggulan_2_title = trim($_POST['keunggulan_2_title'] ?? '');
+    $keunggulan_2_desc = trim($_POST['keunggulan_2_desc'] ?? '');
+    
+    $keunggulan_3_icon = trim($_POST['keunggulan_3_icon'] ?? '');
+    $keunggulan_3_title = trim($_POST['keunggulan_3_title'] ?? '');
+    $keunggulan_3_desc = trim($_POST['keunggulan_3_desc'] ?? '');
+    
     $image_path = '';
 
     if ($title && $content_p1) {
@@ -72,6 +86,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         set_setting('about_badge_number', $badge_number);
         set_setting('about_badge_text', $badge_text);
         
+        // Save keunggulan data
+        set_setting('about_keunggulan_1_icon', $keunggulan_1_icon);
+        set_setting('about_keunggulan_1_title', $keunggulan_1_title);
+        set_setting('about_keunggulan_1_desc', $keunggulan_1_desc);
+        
+        set_setting('about_keunggulan_2_icon', $keunggulan_2_icon);
+        set_setting('about_keunggulan_2_title', $keunggulan_2_title);
+        set_setting('about_keunggulan_2_desc', $keunggulan_2_desc);
+        
+        set_setting('about_keunggulan_3_icon', $keunggulan_3_icon);
+        set_setting('about_keunggulan_3_title', $keunggulan_3_title);
+        set_setting('about_keunggulan_3_desc', $keunggulan_3_desc);
+        
         // Only update image if new one was uploaded
         if ($image_path) {
             set_setting('about_image', $image_path);
@@ -91,7 +118,16 @@ $about_data = [
     'content_p3' => get_setting('about_content_p3', 'Kami telah mengantongi berbagai izin resmi dari Pemerintah RI. Hal ini merupakan bukti nyata keseriusan kami dalam memberikan layanan terbaik untuk para calon Tamu Allah SWT. Dengan pengalaman lebih dari 18 tahun dan telah melayani lebih dari 15.000 jamaah, kami berkomitmen untuk terus meningkatkan kualitas pelayanan.'),
     'badge_number' => get_setting('about_badge_number', '15.000+'),
     'badge_text' => get_setting('about_badge_text', 'Jamaah Terlayani'),
-    'image' => get_setting('about_image', '')
+    'image' => get_setting('about_image', ''),
+    'keunggulan_1_icon' => get_setting('about_keunggulan_1_icon', 'fas fa-certificate'),
+    'keunggulan_1_title' => get_setting('about_keunggulan_1_title', 'Izin PPIU Resmi'),
+    'keunggulan_1_desc' => get_setting('about_keunggulan_1_desc', 'Terdaftar Kementerian Agama RI'),
+    'keunggulan_2_icon' => get_setting('about_keunggulan_2_icon', 'fas fa-award'),
+    'keunggulan_2_title' => get_setting('about_keunggulan_2_title', 'Izin PIHK Resmi'),
+    'keunggulan_2_desc' => get_setting('about_keunggulan_2_desc', 'Penyelenggara Ibadah Haji Khusus'),
+    'keunggulan_3_icon' => get_setting('about_keunggulan_3_icon', 'fas fa-shield-alt'),
+    'keunggulan_3_title' => get_setting('about_keunggulan_3_title', 'Sertifikat ISO 9001:2015'),
+    'keunggulan_3_desc' => get_setting('about_keunggulan_3_desc', 'Sistem Manajemen Mutu Terjamin')
 ];
 
 include __DIR__ . '/header.php';
@@ -238,15 +274,6 @@ include __DIR__ . '/header.php';
                                          class="img-fluid rounded shadow" style="max-height: 300px;">
                                     <div class="mt-2">
                                         <small class="text-muted">Gambar Tentang Kami</small>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="card shadow-sm mt-4">
                 <div class="card-header">
                     <h6 class="card-title mb-0">
@@ -255,34 +282,206 @@ include __DIR__ . '/header.php';
                     </h6>
                 </div>
                 <div class="card-body">
+                    <p class="text-muted mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        Kelola 3 fitur keunggulan yang akan ditampilkan di bagian Tentang Kami di homepage
+                    </p>
+                    
+                    <form method="post">
+                        <!-- Keunggulan 1 -->
+                        <div class="border rounded p-3 mb-3">
+                            <h6 class="text-primary mb-3">Keunggulan 1</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_1_icon" class="form-label">Icon</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i id="icon_preview_1" class="<?= e($about_data['keunggulan_1_icon']) ?>"></i></span>
+                                            <select class="form-select" id="keunggulan_1_icon" name="keunggulan_1_icon" onchange="document.getElementById('icon_preview_1').className=this.value">
+                                                <option value="fas fa-certificate" <?= $about_data['keunggulan_1_icon'] == 'fas fa-certificate' ? 'selected' : '' ?>>Sertifikat</option>
+                                                <option value="fas fa-award" <?= $about_data['keunggulan_1_icon'] == 'fas fa-award' ? 'selected' : '' ?>>Penghargaan</option>
+                                                <option value="fas fa-shield-alt" <?= $about_data['keunggulan_1_icon'] == 'fas fa-shield-alt' ? 'selected' : '' ?>>Perlindungan</option>
+                                                <option value="fas fa-check-circle" <?= $about_data['keunggulan_1_icon'] == 'fas fa-check-circle' ? 'selected' : '' ?>>Centang</option>
+                                                <option value="fas fa-star" <?= $about_data['keunggulan_1_icon'] == 'fas fa-star' ? 'selected' : '' ?>>Bintang</option>
+                                                <option value="fas fa-thumbs-up" <?= $about_data['keunggulan_1_icon'] == 'fas fa-thumbs-up' ? 'selected' : '' ?>>Jempol</option>
+                                                <option value="fas fa-medal" <?= $about_data['keunggulan_1_icon'] == 'fas fa-medal' ? 'selected' : '' ?>>Medali</option>
+                                                <option value="fas fa-trophy" <?= $about_data['keunggulan_1_icon'] == 'fas fa-trophy' ? 'selected' : '' ?>>Trofi</option>
+                                                <option value="fas fa-crown" <?= $about_data['keunggulan_1_icon'] == 'fas fa-crown' ? 'selected' : '' ?>>Mahkota</option>
+                                                <option value="fas fa-gem" <?= $about_data['keunggulan_1_icon'] == 'fas fa-gem' ? 'selected' : '' ?>>Permata</option>
+                                                <option value="fas fa-heart" <?= $about_data['keunggulan_1_icon'] == 'fas fa-heart' ? 'selected' : '' ?>>Hati</option>
+                                                <option value="fas fa-handshake" <?= $about_data['keunggulan_1_icon'] == 'fas fa-handshake' ? 'selected' : '' ?>>Jabat Tangan</option>
+                                                <option value="fas fa-user-shield" <?= $about_data['keunggulan_1_icon'] == 'fas fa-user-shield' ? 'selected' : '' ?>>Perlindungan User</option>
+                                                <option value="fas fa-globe" <?= $about_data['keunggulan_1_icon'] == 'fas fa-globe' ? 'selected' : '' ?>>Dunia</option>
+                                                <option value="fas fa-plane" <?= $about_data['keunggulan_1_icon'] == 'fas fa-plane' ? 'selected' : '' ?>>Pesawat</option>
+                                                <option value="fas fa-kaaba" <?= $about_data['keunggulan_1_icon'] == 'fas fa-kaaba' ? 'selected' : '' ?>>Ka'bah</option>
+                                                <option value="fas fa-mosque" <?= $about_data['keunggulan_1_icon'] == 'fas fa-mosque' ? 'selected' : '' ?>>Masjid</option>
+                                                <option value="fas fa-praying-hands" <?= $about_data['keunggulan_1_icon'] == 'fas fa-praying-hands' ? 'selected' : '' ?>>Berdoa</option>
+                                                <option value="fas fa-book-quran" <?= $about_data['keunggulan_1_icon'] == 'fas fa-book-quran' ? 'selected' : '' ?>>Al-Quran</option>
+                                                <option value="fas fa-users" <?= $about_data['keunggulan_1_icon'] == 'fas fa-users' ? 'selected' : '' ?>>Pengguna</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_1_title" class="form-label">Judul</label>
+                                        <input type="text" class="form-control" id="keunggulan_1_title" name="keunggulan_1_title" 
+                                               value="<?= e($about_data['keunggulan_1_title']) ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_1_desc" class="form-label">Deskripsi</label>
+                                        <input type="text" class="form-control" id="keunggulan_1_desc" name="keunggulan_1_desc" 
+                                               value="<?= e($about_data['keunggulan_1_desc']) ?>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Keunggulan 2 -->
+                        <div class="border rounded p-3 mb-3">
+                            <h6 class="text-primary mb-3">Keunggulan 2</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_2_icon" class="form-label">Icon</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i id="icon_preview_2" class="<?= e($about_data['keunggulan_2_icon']) ?>"></i></span>
+                                            <select class="form-select" id="keunggulan_2_icon" name="keunggulan_2_icon" onchange="document.getElementById('icon_preview_2').className=this.value">
+                                                <option value="fas fa-certificate" <?= $about_data['keunggulan_2_icon'] == 'fas fa-certificate' ? 'selected' : '' ?>>Sertifikat</option>
+                                                <option value="fas fa-award" <?= $about_data['keunggulan_2_icon'] == 'fas fa-award' ? 'selected' : '' ?>>Penghargaan</option>
+                                                <option value="fas fa-shield-alt" <?= $about_data['keunggulan_2_icon'] == 'fas fa-shield-alt' ? 'selected' : '' ?>>Perlindungan</option>
+                                                <option value="fas fa-check-circle" <?= $about_data['keunggulan_2_icon'] == 'fas fa-check-circle' ? 'selected' : '' ?>>Centang</option>
+                                                <option value="fas fa-star" <?= $about_data['keunggulan_2_icon'] == 'fas fa-star' ? 'selected' : '' ?>>Bintang</option>
+                                                <option value="fas fa-thumbs-up" <?= $about_data['keunggulan_2_icon'] == 'fas fa-thumbs-up' ? 'selected' : '' ?>>Jempol</option>
+                                                <option value="fas fa-medal" <?= $about_data['keunggulan_2_icon'] == 'fas fa-medal' ? 'selected' : '' ?>>Medali</option>
+                                                <option value="fas fa-trophy" <?= $about_data['keunggulan_2_icon'] == 'fas fa-trophy' ? 'selected' : '' ?>>Trofi</option>
+                                                <option value="fas fa-crown" <?= $about_data['keunggulan_2_icon'] == 'fas fa-crown' ? 'selected' : '' ?>>Mahkota</option>
+                                                <option value="fas fa-gem" <?= $about_data['keunggulan_2_icon'] == 'fas fa-gem' ? 'selected' : '' ?>>Permata</option>
+                                                <option value="fas fa-heart" <?= $about_data['keunggulan_2_icon'] == 'fas fa-heart' ? 'selected' : '' ?>>Hati</option>
+                                                <option value="fas fa-handshake" <?= $about_data['keunggulan_2_icon'] == 'fas fa-handshake' ? 'selected' : '' ?>>Jabat Tangan</option>
+                                                <option value="fas fa-user-shield" <?= $about_data['keunggulan_2_icon'] == 'fas fa-user-shield' ? 'selected' : '' ?>>Perlindungan User</option>
+                                                <option value="fas fa-globe" <?= $about_data['keunggulan_2_icon'] == 'fas fa-globe' ? 'selected' : '' ?>>Dunia</option>
+                                                <option value="fas fa-plane" <?= $about_data['keunggulan_2_icon'] == 'fas fa-plane' ? 'selected' : '' ?>>Pesawat</option>
+                                                <option value="fas fa-kaaba" <?= $about_data['keunggulan_2_icon'] == 'fas fa-kaaba' ? 'selected' : '' ?>>Ka'bah</option>
+                                                <option value="fas fa-mosque" <?= $about_data['keunggulan_2_icon'] == 'fas fa-mosque' ? 'selected' : '' ?>>Masjid</option>
+                                                <option value="fas fa-praying-hands" <?= $about_data['keunggulan_2_icon'] == 'fas fa-praying-hands' ? 'selected' : '' ?>>Berdoa</option>
+                                                <option value="fas fa-book-quran" <?= $about_data['keunggulan_2_icon'] == 'fas fa-book-quran' ? 'selected' : '' ?>>Al-Quran</option>
+                                                <option value="fas fa-users" <?= $about_data['keunggulan_2_icon'] == 'fas fa-users' ? 'selected' : '' ?>>Pengguna</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_2_title" class="form-label">Judul</label>
+                                        <input type="text" class="form-control" id="keunggulan_2_title" name="keunggulan_2_title" 
+                                               value="<?= e($about_data['keunggulan_2_title']) ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_2_desc" class="form-label">Deskripsi</label>
+                                        <input type="text" class="form-control" id="keunggulan_2_desc" name="keunggulan_2_desc" 
+                                               value="<?= e($about_data['keunggulan_2_desc']) ?>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Keunggulan 3 -->
+                        <div class="border rounded p-3 mb-3">
+                            <h6 class="text-primary mb-3">Keunggulan 3</h6>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_3_icon" class="form-label">Icon</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i id="icon_preview_3" class="<?= e($about_data['keunggulan_3_icon']) ?>"></i></span>
+                                            <select class="form-select" id="keunggulan_3_icon" name="keunggulan_3_icon" onchange="document.getElementById('icon_preview_3').className=this.value">
+                                                <option value="fas fa-certificate" <?= $about_data['keunggulan_3_icon'] == 'fas fa-certificate' ? 'selected' : '' ?>>Sertifikat</option>
+                                                <option value="fas fa-award" <?= $about_data['keunggulan_3_icon'] == 'fas fa-award' ? 'selected' : '' ?>>Penghargaan</option>
+                                                <option value="fas fa-shield-alt" <?= $about_data['keunggulan_3_icon'] == 'fas fa-shield-alt' ? 'selected' : '' ?>>Perlindungan</option>
+                                                <option value="fas fa-check-circle" <?= $about_data['keunggulan_3_icon'] == 'fas fa-check-circle' ? 'selected' : '' ?>>Centang</option>
+                                                <option value="fas fa-star" <?= $about_data['keunggulan_3_icon'] == 'fas fa-star' ? 'selected' : '' ?>>Bintang</option>
+                                                <option value="fas fa-thumbs-up" <?= $about_data['keunggulan_3_icon'] == 'fas fa-thumbs-up' ? 'selected' : '' ?>>Jempol</option>
+                                                <option value="fas fa-medal" <?= $about_data['keunggulan_3_icon'] == 'fas fa-medal' ? 'selected' : '' ?>>Medali</option>
+                                                <option value="fas fa-trophy" <?= $about_data['keunggulan_3_icon'] == 'fas fa-trophy' ? 'selected' : '' ?>>Trofi</option>
+                                                <option value="fas fa-crown" <?= $about_data['keunggulan_3_icon'] == 'fas fa-crown' ? 'selected' : '' ?>>Mahkota</option>
+                                                <option value="fas fa-gem" <?= $about_data['keunggulan_3_icon'] == 'fas fa-gem' ? 'selected' : '' ?>>Permata</option>
+                                                <option value="fas fa-heart" <?= $about_data['keunggulan_3_icon'] == 'fas fa-heart' ? 'selected' : '' ?>>Hati</option>
+                                                <option value="fas fa-handshake" <?= $about_data['keunggulan_3_icon'] == 'fas fa-handshake' ? 'selected' : '' ?>>Jabat Tangan</option>
+                                                <option value="fas fa-user-shield" <?= $about_data['keunggulan_3_icon'] == 'fas fa-user-shield' ? 'selected' : '' ?>>Perlindungan User</option>
+                                                <option value="fas fa-globe" <?= $about_data['keunggulan_3_icon'] == 'fas fa-globe' ? 'selected' : '' ?>>Dunia</option>
+                                                <option value="fas fa-plane" <?= $about_data['keunggulan_3_icon'] == 'fas fa-plane' ? 'selected' : '' ?>>Pesawat</option>
+                                                <option value="fas fa-kaaba" <?= $about_data['keunggulan_3_icon'] == 'fas fa-kaaba' ? 'selected' : '' ?>>Ka'bah</option>
+                                                <option value="fas fa-mosque" <?= $about_data['keunggulan_3_icon'] == 'fas fa-mosque' ? 'selected' : '' ?>>Masjid</option>
+                                                <option value="fas fa-praying-hands" <?= $about_data['keunggulan_3_icon'] == 'fas fa-praying-hands' ? 'selected' : '' ?>>Berdoa</option>
+                                                <option value="fas fa-book-quran" <?= $about_data['keunggulan_3_icon'] == 'fas fa-book-quran' ? 'selected' : '' ?>>Al-Quran</option>
+                                                <option value="fas fa-users" <?= $about_data['keunggulan_3_icon'] == 'fas fa-users' ? 'selected' : '' ?>>Pengguna</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_3_title" class="form-label">Judul</label>
+                                        <input type="text" class="form-control" id="keunggulan_3_title" name="keunggulan_3_title" 
+                                               value="<?= e($about_data['keunggulan_3_title']) ?>">
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label for="keunggulan_3_desc" class="form-label">Deskripsi</label>
+                                        <input type="text" class="form-control" id="keunggulan_3_desc" name="keunggulan_3_desc" 
+                                               value="<?= e($about_data['keunggulan_3_desc']) ?>">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Simpan Keunggulan
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="mb-3">Preview Keunggulan</h6>
                     <div class="row g-3">
                         <div class="col-md-4">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="fas fa-certificate text-success"></i>
+                                <i class="<?= e($about_data['keunggulan_1_icon']) ?> text-success"></i>
                                 <div>
-                                    <strong>Izin PPIU Resmi</strong>
-                                    <div class="small text-muted">Terdaftar Kementerian Agama RI</div>
+                                    <strong><?= e($about_data['keunggulan_1_title']) ?></strong>
+                                    <div class="small text-muted"><?= e($about_data['keunggulan_1_desc']) ?></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="fas fa-award text-success"></i>
+                                <i class="<?= e($about_data['keunggulan_2_icon']) ?> text-success"></i>
                                 <div>
-                                    <strong>Izin PIHK Resmi</strong>
-                                    <div class="small text-muted">Penyelenggara Ibadah Haji Khusus</div>
+                                    <strong><?= e($about_data['keunggulan_2_title']) ?></strong>
+                                    <div class="small text-muted"><?= e($about_data['keunggulan_2_desc']) ?></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="d-flex align-items-center gap-2">
-                                <i class="fas fa-shield-alt text-success"></i>
+                                <i class="<?= e($about_data['keunggulan_3_icon']) ?> text-success"></i>
                                 <div>
-                                    <strong>Sertifikat ISO 9001:2015</strong>
-                                    <div class="small text-muted">Sistem Manajemen Mutu Terjamin</div>
+                                    <strong><?= e($about_data['keunggulan_3_title']) ?></strong>
+                                    <div class="small text-muted"><?= e($about_data['keunggulan_3_desc']) ?></div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>      </div>
                     </div>
                     <div class="mt-3">
                         <small class="text-muted">
