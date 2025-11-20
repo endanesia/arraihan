@@ -6,27 +6,46 @@ $base = rtrim($config['app']['base_url'] ?? '', '/');
 // Handle form submission
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $title = trim($_POST['title'] ?? '');
-    $content_p1 = trim($_POST['content_p1'] ?? '');
-    $content_p2 = trim($_POST['content_p2'] ?? '');
-    $content_p3 = trim($_POST['content_p3'] ?? '');
-    $badge_number = trim($_POST['badge_number'] ?? '');
-    $badge_text = trim($_POST['badge_text'] ?? '');
+    // Check which form was submitted
+    $is_keunggulan_form = isset($_POST['submit_keunggulan']);
     
-    // Keunggulan data
-    $keunggulan_1_icon = trim($_POST['keunggulan_1_icon'] ?? '');
-    $keunggulan_1_title = trim($_POST['keunggulan_1_title'] ?? '');
-    $keunggulan_1_desc = trim($_POST['keunggulan_1_desc'] ?? '');
-    
-    $keunggulan_2_icon = trim($_POST['keunggulan_2_icon'] ?? '');
-    $keunggulan_2_title = trim($_POST['keunggulan_2_title'] ?? '');
-    $keunggulan_2_desc = trim($_POST['keunggulan_2_desc'] ?? '');
-    
-    $keunggulan_3_icon = trim($_POST['keunggulan_3_icon'] ?? '');
-    $keunggulan_3_title = trim($_POST['keunggulan_3_title'] ?? '');
-    $keunggulan_3_desc = trim($_POST['keunggulan_3_desc'] ?? '');
-    
-    $image_path = '';
+    if ($is_keunggulan_form) {
+        // Handle Keunggulan form submission
+        $keunggulan_1_icon = trim($_POST['keunggulan_1_icon'] ?? '');
+        $keunggulan_1_title = trim($_POST['keunggulan_1_title'] ?? '');
+        $keunggulan_1_desc = trim($_POST['keunggulan_1_desc'] ?? '');
+        
+        $keunggulan_2_icon = trim($_POST['keunggulan_2_icon'] ?? '');
+        $keunggulan_2_title = trim($_POST['keunggulan_2_title'] ?? '');
+        $keunggulan_2_desc = trim($_POST['keunggulan_2_desc'] ?? '');
+        
+        $keunggulan_3_icon = trim($_POST['keunggulan_3_icon'] ?? '');
+        $keunggulan_3_title = trim($_POST['keunggulan_3_title'] ?? '');
+        $keunggulan_3_desc = trim($_POST['keunggulan_3_desc'] ?? '');
+        
+        // Save keunggulan data
+        set_setting('about_keunggulan_1_icon', $keunggulan_1_icon);
+        set_setting('about_keunggulan_1_title', $keunggulan_1_title);
+        set_setting('about_keunggulan_1_desc', $keunggulan_1_desc);
+        
+        set_setting('about_keunggulan_2_icon', $keunggulan_2_icon);
+        set_setting('about_keunggulan_2_title', $keunggulan_2_title);
+        set_setting('about_keunggulan_2_desc', $keunggulan_2_desc);
+        
+        set_setting('about_keunggulan_3_icon', $keunggulan_3_icon);
+        set_setting('about_keunggulan_3_title', $keunggulan_3_title);
+        set_setting('about_keunggulan_3_desc', $keunggulan_3_desc);
+        
+        $message = '<div class="alert alert-success">Fitur Keunggulan berhasil disimpan!</div>';
+    } else {
+        // Handle About form submission
+        $title = trim($_POST['title'] ?? '');
+        $content_p1 = trim($_POST['content_p1'] ?? '');
+        $content_p2 = trim($_POST['content_p2'] ?? '');
+        $content_p3 = trim($_POST['content_p3'] ?? '');
+        $badge_number = trim($_POST['badge_number'] ?? '');
+        $badge_text = trim($_POST['badge_text'] ?? '');
+        $image_path = '';
 
     if ($title && $content_p1) {
         // Handle image upload
@@ -86,19 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         set_setting('about_badge_number', $badge_number);
         set_setting('about_badge_text', $badge_text);
         
-        // Save keunggulan data
-        set_setting('about_keunggulan_1_icon', $keunggulan_1_icon);
-        set_setting('about_keunggulan_1_title', $keunggulan_1_title);
-        set_setting('about_keunggulan_1_desc', $keunggulan_1_desc);
-        
-        set_setting('about_keunggulan_2_icon', $keunggulan_2_icon);
-        set_setting('about_keunggulan_2_title', $keunggulan_2_title);
-        set_setting('about_keunggulan_2_desc', $keunggulan_2_desc);
-        
-        set_setting('about_keunggulan_3_icon', $keunggulan_3_icon);
-        set_setting('about_keunggulan_3_title', $keunggulan_3_title);
-        set_setting('about_keunggulan_3_desc', $keunggulan_3_desc);
-        
         // Only update image if new one was uploaded
         if ($image_path) {
             set_setting('about_image', $image_path);
@@ -107,6 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = '<div class="alert alert-success">Tentang Kami berhasil disimpan!</div>';
     } else {
         $message = '<div class="alert alert-danger">Title dan konten paragraf 1 wajib diisi!</div>';
+    }
     }
 }
 
@@ -297,6 +304,7 @@ include __DIR__ . '/header.php';
                     </p>
                     
                     <form method="post">
+                        <input type="hidden" name="submit_keunggulan" value="1">
                         <!-- Keunggulan 1 -->
                         <div class="border rounded p-3 mb-3">
                             <h6 class="text-primary mb-3">Keunggulan 1</h6>
