@@ -82,10 +82,11 @@ if (!isset($link_whatsapp)) {
         </div>
     </footer>
 
-    <!-- WhatsApp Float Button -->
+    <!-- WhatsApp Float Button 
     <?php if (!empty($link_whatsapp)): ?>
     <a href="<?= e($link_whatsapp) ?>" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
     <?php endif; ?>
+    -->
 
     <!-- Social Media Float Buttons -->
     <?php if (!empty($link_facebook)): ?>
