@@ -29,9 +29,9 @@ if (!isset($link_whatsapp)) {
                 <div class="footer-col">
                     <div class="footer-logo">
                         <img src="<?= $base ?? '' ?>images/logo.png" alt="Raihan Travelindo" style="height: 40px;">
-                        <span>Ar Raihan</span>
+                        <span>Arraihan Travelindo</span>
                     </div>
-                    <p>PT. Raihan Islami Travelindo yang didirikan pada 05 Juli 2023 dan resmi dibuka pada 02 Agustus 2023.</p>
+                    <p>Jl. Laksda Adi Sucipto No.176B, Blimbing, Kec. Blimbing, Kota Malang, Jawa Timur 65124</p>
                     <div class="footer-social">
                         <?php if (!empty($link_whatsapp)): ?><a href="<?= e($link_whatsapp) ?>" target="_blank"><i class="fab fa-whatsapp"></i></a><?php endif; ?>
                         <?php if (!empty($link_facebook)): ?><a href="<?= e($link_facebook) ?>" target="_blank"><i class="fab fa-facebook"></i></a><?php endif; ?>

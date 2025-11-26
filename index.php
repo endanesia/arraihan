@@ -97,8 +97,8 @@ $company_hours = function_exists('get_setting') ? get_setting('hours', '') : '';
 // Hero section settings - using existing get_setting function from db.php
 
 $hero_title = get_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat');
-$hero_subtitle = get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Paket Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.');
-$hero_button_text = get_setting('hero_button_text', 'Lihat Paket Umroh');
+$hero_subtitle = get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Program Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.');
+$hero_button_text = get_setting('hero_button_text', 'Lihat Program Umroh');
 $hero_stat1_text = get_setting('hero_stat1_text', '24 Januri 2026');
 $hero_stat1_desc = get_setting('hero_stat1_desc', 'Jadwal Berangkat');
 $hero_stat2_text = get_setting('hero_stat2_text', 'Program Pembiayaan');
@@ -223,12 +223,12 @@ require_once __DIR__ . '/inc/header.php';
         </div>
     </section>
 
-    <!-- Paket Section -->
+    <!-- Program Section -->
     <section class="paket" id="paket">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Paket Perjalanan Kami</h2>
-                <p class="section-desc">Pilih paket yang sesuai dengan kebutuhan ibadah Anda</p>
+                <h2 class="section-title">Program Perjalanan Kami</h2>
+                <p class="section-desc">Pilih program yang sesuai dengan kebutuhan ibadah Anda</p>
             </div>
             
             <!-- Package Swiper Slider -->
@@ -260,7 +260,7 @@ require_once __DIR__ . '/inc/header.php';
                             <div class="package-poster-info">
                                 <h4><?= e($p['title']) ?></h4>
                                 <a href="paket-detail?id=<?= (int)$p['id'] ?>" class="btn btn-detail">
-                                    <i class="fas fa-info-circle"></i> Detail Paket
+                                    <i class="fas fa-info-circle"></i> Detail Program
                                 </a>
                             </div>
                         </div>
@@ -276,8 +276,8 @@ require_once __DIR__ . '/inc/header.php';
                 <div class="swiper-pagination"></div>
             </div>
             <?php else: ?>
-            <!-- No packages message -->
-            <p class="text-center">Belum ada paket tersedia.</p>
+            <!-- No programs message -->
+            <p class="text-center">Belum ada program tersedia.</p>
             <?php endif; ?>
         </div>
     </section>
@@ -335,7 +335,7 @@ require_once __DIR__ . '/inc/header.php';
                             <i class="fas fa-calendar-check"></i>
                         </div>
                         <h3>Jadwal Pasti</h3>
-                        <p>Semua paket sudah tertera tanggal berangkat, nomor pesawat & itinerary perjalanan yang jelas</p>
+                        <p>Semua program sudah tertera tanggal berangkat, nomor pesawat & itinerary perjalanan yang jelas</p>
                     </div>
                     <div class="keunggulan-card">
                         <div class="keunggulan-icon">
@@ -643,7 +643,7 @@ require_once __DIR__ . '/inc/header.php';
     <section class="cta-section">
         <div class="container">
             <div class="cta-content">
-                <h2>Siap Berangkat ke Tanah Suci?</h2>
+                <h2>Apa yang bisa kami bantu untuk berangkat ke Tanah Suci?</h2>
                 <p>Hubungi kami sekarang untuk konsultasi gratis dan dapatkan penawaran terbaik</p>
                 <div class="cta-buttons">
                     <?php if (!empty($link_whatsapp)): ?>

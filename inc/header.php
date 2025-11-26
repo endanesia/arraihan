@@ -10,8 +10,8 @@
  */
 
 // Default values if not set
-$page_title = $page_title ?? 'Raihan Travelindo - Travel Haji & Umroh Terpercaya';
-$page_description = $page_description ?? 'Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI dengan Akreditasi A';
+$page_title = $page_title ?? 'Ar-Raihan Travelindo - Travel Haji & Umroh Terpercaya';
+$page_description = $page_description ?? 'Travel Umroh & Haji Terpercaya - Berizin Resmi Kemenag RI';
 $current_page = $current_page ?? 'home';
 $curpos = $_SERVER['PHP_SELF'] ?? '';
 // Auto-detect base URL for non-index pages
@@ -45,7 +45,7 @@ if (!isset($link_whatsapp)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<?= e($page_description) ?>">
-    <title><?= e($page_title) ?> <?= e($curpos) ?></title>
+    <title><?= e($page_title) ?> </title>
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX5K83WL9K"></script>
