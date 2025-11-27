@@ -93,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="mb-3">
               <label class="form-label">Username</label>
               <input type="text" name="username" class="form-control" required>
+            </div>
             <div class="mb-3">
               <label class="form-label">Password</label>
               <input type="password" name="password" class="form-control" required>
@@ -102,7 +103,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="d-grid">
               <button type="submit" class="btn btn-success">Masuk</button>
-            </div>ton type="submit" class="btn btn-success">Masuk</button>
             </div>
           </form>
         </div>
