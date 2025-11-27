@@ -1398,7 +1398,7 @@ ul {
 }
 
 .facebook-float {
-    bottom: 110px;
+    bottom: 30px;
     background: #1877F2;
 }
 
@@ -1407,7 +1407,7 @@ ul {
 }
 
 .instagram-float {
-    bottom: 175px;
+    bottom: 95px;
     background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
@@ -1416,7 +1416,7 @@ ul {
 }
 
 .youtube-float {
-    bottom: 240px;
+    bottom: 160px;
     background: #FF0000;
 }
 
@@ -1425,7 +1425,7 @@ ul {
 }
 
 .threads-float {
-    bottom: 305px;
+    bottom: 290px;
     background: #000000;
 }
 
@@ -1434,7 +1434,7 @@ ul {
 }
 
 .tiktok-float {
-    bottom: 370px;
+    bottom: 225px;
     background: #000000;
 }
 
@@ -1444,7 +1444,7 @@ ul {
 
 .scroll-top {
     position: fixed;
-    bottom: 435px;
+    bottom: 355px;
     right: 30px;
     width: 50px;
     height: 50px;
@@ -1633,27 +1633,27 @@ ul {
     }
     
     .facebook-float {
-        bottom: 85px;
+        bottom: 20px;
     }
     
     .instagram-float {
-        bottom: 145px;
+        bottom: 85px;
     }
     
     .youtube-float {
-        bottom: 205px;
+        bottom: 150px;
     }
     
     .threads-float {
-        bottom: 265px;
+        bottom: 280px;
     }
     
     .tiktok-float {
-        bottom: 325px;
+        bottom: 215px;
     }
     
     .scroll-top {
-        bottom: 385px;
+        bottom: 345px;
         right: 20px;
         width: 45px;
         height: 45px;
