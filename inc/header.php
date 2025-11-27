@@ -85,11 +85,11 @@ if (!isset($link_whatsapp)) {
                 <div class="nav-wrapper">
                     <a href="<?= !empty($base2) ? $base2 : ($base ?? '') ?>" class="logo">
                         <img src="<?= $base ?? '' ?>images/logo.png" alt="Raihan Travelindo" style="height: 50px;">
-                        <span>Ar Raihan</span>
+                        <img src="<?= $base ?? '' ?>images/ar-raihan.png" alt="Raihan Travelindo" style="height: 50px;">
                     </a>
                     <ul class="nav-menu" id="navMenu">
                         <li><a href="<?= $base2  ?>#home" class="nav-link <?= $current_page === 'home' ? 'active' : '' ?>">Home</a></li>
-                        <li><a href="<?= $base2 ?>#paket" class="nav-link <?= $current_page === 'paket' ? 'active' : '' ?>">Paket</a></li>
+                        <li><a href="<?= $base2 ?>#paket" class="nav-link <?= $current_page === 'paket' ? 'active' : '' ?>">Program</a></li>
                         <li><a href="<?= $base2 ?>#jadwal" class="nav-link <?= $current_page === 'jadwal' ? 'active' : '' ?>">Jadwal</a></li>
                         <li><a href="<?= $base2 ?>#galeri" class="nav-link <?= $current_page === 'galeri' ? 'active' : '' ?>">Galeri</a></li>
                         <li><a href="<?= $base2 ?>artikel.php" class="nav-link <?= $current_page === 'artikel' ? 'active' : '' ?>">Artikel</a></li>
