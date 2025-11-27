@@ -457,72 +457,92 @@ require_once __DIR__ . '/inc/header.php';
                 <p class="section-subtitle">MUTAWWIF DAN TOUR LEADER</p>
                 <h2 class="section-title">Mutawwif dan Tour Leader Professional</h2>
             </div>
-            <div class="mutawwif-grid">
+            
+            <div class="swiper mutawwifSwiper">
+                <div class="swiper-wrapper">
                 <?php if (!empty($mutawwif)): ?>
                     <?php foreach ($mutawwif as $mw): ?>
-                    <div class="mutawwif-card">
-                        <div class="mutawwif-image">
-                            <?php if (!empty($mw['foto'])): ?>
-                                <img src="<?= $base . 'images/mutawwif/' . e($mw['foto']) ?>" alt="<?= e($mw['nama']) ?>" loading="lazy">
-                            <?php else: ?>
-                                <div class="mutawwif-placeholder">
-                                    <i class="fas fa-user-tie fa-3x"></i>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="mutawwif-info">
-                            <h3><?= e($mw['nama']) ?></h3>
-                            <p class="mutawwif-jabatan"><?= e($mw['jabatan']) ?></p>
+                    <div class="swiper-slide">
+                        <div class="mutawwif-card">
+                            <div class="mutawwif-image">
+                                <?php if (!empty($mw['foto'])): ?>
+                                    <img src="<?= $base . 'images/mutawwif/' . e($mw['foto']) ?>" alt="<?= e($mw['nama']) ?>" loading="lazy">
+                                <?php else: ?>
+                                    <div class="mutawwif-placeholder">
+                                        <i class="fas fa-user-tie fa-3x"></i>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="mutawwif-info">
+                                <h3><?= e($mw['nama']) ?></h3>
+                                <p class="mutawwif-jabatan"><?= e($mw['jabatan']) ?></p>
+                            </div>
                         </div>
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <!-- Fallback jika belum ada data -->
-                    <div class="mutawwif-card">
-                        <div class="mutawwif-image">
-                            <div class="mutawwif-placeholder">
-                                <i class="fas fa-user-tie fa-3x"></i>
+                    <div class="swiper-slide">
+                        <div class="mutawwif-card">
+                            <div class="mutawwif-image">
+                                <div class="mutawwif-placeholder">
+                                    <i class="fas fa-user-tie fa-3x"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mutawwif-info">
-                            <h3>Uztad Mochammad Munir Djamil</h3>
-                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            <div class="mutawwif-info">
+                                <h3>Uztad Mochammad Munir Djamil</h3>
+                                <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="mutawwif-card">
-                        <div class="mutawwif-image">
-                            <div class="mutawwif-placeholder">
-                                <i class="fas fa-user-tie fa-3x"></i>
+                    <div class="swiper-slide">
+                        <div class="mutawwif-card">
+                            <div class="mutawwif-image">
+                                <div class="mutawwif-placeholder">
+                                    <i class="fas fa-user-tie fa-3x"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mutawwif-info">
-                            <h3>Ustad Achmad Suudi Bin Sulaiman</h3>
-                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            <div class="mutawwif-info">
+                                <h3>Ustad Achmad Suudi Bin Sulaiman</h3>
+                                <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="mutawwif-card">
-                        <div class="mutawwif-image">
-                            <div class="mutawwif-placeholder">
-                                <i class="fas fa-user-tie fa-3x"></i>
+                    <div class="swiper-slide">
+                        <div class="mutawwif-card">
+                            <div class="mutawwif-image">
+                                <div class="mutawwif-placeholder">
+                                    <i class="fas fa-user-tie fa-3x"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mutawwif-info">
-                            <h3>Ustad Muhammad Yazid Abdul Malik</h3>
-                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            <div class="mutawwif-info">
+                                <h3>Ustad Muhammad Yazid Abdul Malik</h3>
+                                <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="mutawwif-card">
-                        <div class="mutawwif-image">
-                            <div class="mutawwif-placeholder">
-                                <i class="fas fa-user-tie fa-3x"></i>
+                    <div class="swiper-slide">
+                        <div class="mutawwif-card">
+                            <div class="mutawwif-image">
+                                <div class="mutawwif-placeholder">
+                                    <i class="fas fa-user-tie fa-3x"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="mutawwif-info">
-                            <h3>Ustad Muzakki Munawi</h3>
-                            <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            <div class="mutawwif-info">
+                                <h3>Ustad Muzakki Munawi</h3>
+                                <p class="mutawwif-jabatan">Mutawwif Indonesia</p>
+                            </div>
                         </div>
                     </div>
                 <?php endif; ?>
+                </div>
+                
+                <!-- Swiper Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                
+                <!-- Swiper Pagination -->
+                <div class="swiper-pagination"></div>
             </div>
         </div>
     </section>
@@ -810,33 +830,45 @@ require_once __DIR__ . '/inc/header.php';
                 <h2 class="section-title">Partner & Corporate Client</h2>
                 <p class="section-desc">Dipercaya oleh berbagai lembaga dan instansi</p>
             </div>
-            <div class="partners-grid">
+            
+            <div class="swiper partnersSwiper">
+                <div class="swiper-wrapper">
                 <?php if (!empty($partners)): ?>
                     <?php foreach ($partners as $pr): ?>
-                    <div class="partner-item">
-                        <?php if (!empty($pr['logo_url'])): ?>
-                            <div class="partner-logo-img">
-                                <img src="<?= e($pr['logo_url']) ?>" alt="<?= e($pr['name']) ?>">
-                            </div>
-                            <div class="partner-name">
-                                <?= e($pr['name']) ?>
-                            </div>
-                        <?php else: ?>
-                            <div class="partner-logo">
-                                <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
-                                <span><?= e($pr['name']) ?></span>
-                            </div>
-                        <?php endif; ?>
+                    <div class="swiper-slide">
+                        <div class="partner-item">
+                            <?php if (!empty($pr['logo_url'])): ?>
+                                <div class="partner-logo-img">
+                                    <img src="<?= e($pr['logo_url']) ?>" alt="<?= e($pr['name']) ?>">
+                                </div>
+                                <div class="partner-name">
+                                    <?= e($pr['name']) ?>
+                                </div>
+                            <?php else: ?>
+                                <div class="partner-logo">
+                                    <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
+                                    <span><?= e($pr['name']) ?></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-building"></i><span>PT. Maju Sejahtera</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-industry"></i><span>CV. Berkah Jaya</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-store"></i><span>Toko Amanah</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-hospital"></i><span>RS. Harapan Sehat</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-university"></i><span>Universitas Islam</span></div></div>
-                    <div class="partner-item"><div class="partner-logo"><i class="fas fa-landmark"></i><span>Bank Syariah</span></div></div>
+                    <div class="swiper-slide"><div class="partner-item"><div class="partner-logo"><i class="fas fa-building"></i><span>PT. Maju Sejahtera</span></div></div></div>
+                    <div class="swiper-slide"><div class="partner-item"><div class="partner-logo"><i class="fas fa-industry"></i><span>CV. Berkah Jaya</span></div></div></div>
+                    <div class="swiper-slide"><div class="partner-item"><div class="partner-logo"><i class="fas fa-store"></i><span>Toko Amanah</span></div></div></div>
+                    <div class="swiper-slide"><div class="partner-item"><div class="partner-logo"><i class="fas fa-hospital"></i><span>RS. Harapan Sehat</span></div></div></div>
+                    <div class="swiper-slide"><div class="partner-item"><div class="partner-logo"><i class="fas fa-university"></i><span>Universitas Islam</span></div></div></div>
+                    <div class="swiper-slide"><div class="partner-item"><div class="partner-logo"><i class="fas fa-landmark"></i><span>Bank Syariah</span></div></div></div>
                 <?php endif; ?>
+                </div>
+                
+                <!-- Swiper Navigation -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                
+                <!-- Swiper Pagination -->
+                <div class="swiper-pagination"></div>
             </div>
         </div>
     </section>

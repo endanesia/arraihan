@@ -371,6 +371,76 @@ window.addEventListener('load', () => {
 // ===== PACKAGE SLIDER MOVED TO SWIPER.JS =====
 // Swiper initialization now in index.php inline script
 
+// ===== MUTAWWIF SLIDER INITIALIZATION =====
+if (document.querySelector('.mutawwifSwiper')) {
+    new Swiper('.mutawwifSwiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        navigation: {
+            nextEl: '.mutawwif .swiper-button-next',
+            prevEl: '.mutawwif .swiper-button-prev',
+        },
+        pagination: {
+            el: '.mutawwif .swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+            },
+            768: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+            },
+            1024: {
+                slidesPerView: 4,
+                spaceBetween: 30,
+            },
+        },
+    });
+}
+
+// ===== PARTNERS SLIDER INITIALIZATION =====
+if (document.querySelector('.partnersSwiper')) {
+    new Swiper('.partnersSwiper', {
+        slidesPerView: 2,
+        spaceBetween: 20,
+        loop: true,
+        autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        navigation: {
+            nextEl: '.partners .swiper-button-next',
+            prevEl: '.partners .swiper-button-prev',
+        },
+        pagination: {
+            el: '.partners .swiper-pagination',
+            clickable: true,
+        },
+        breakpoints: {
+            480: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+            },
+            768: {
+                slidesPerView: 4,
+                spaceBetween: 25,
+            },
+            1024: {
+                slidesPerView: 6,
+                spaceBetween: 30,
+            },
+        },
+    });
+}
+
 // ===== PACKAGE DETAIL PAGE FUNCTIONALITY =====
 document.addEventListener('DOMContentLoaded', function() {
     // WhatsApp consultation button
