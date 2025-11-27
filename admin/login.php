@@ -11,40 +11,8 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
-    $turnstile_response = $_POST['cf-turnstile-response'] ?? '';
 
-    // Verify Cloudflare Turnstile
-    $turnstile_verified = false;
-    if ($turnstile_response) {
-        $secret_key = '0x4AAAAAACAlxhMD2j8cBtPKCEaKNn-mXfz'; // Replace with your secret key
-        $verify_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-        
-        $data = [
-            'secret' => $secret_key,
-            'response' => $turnstile_response,
-            'remoteip' => $_SERVER['REMOTE_ADDR'] ?? ''
-        ];
-        
-        $options = [
-            'http' => [
-                'method' => 'POST',
-                'header' => 'Content-Type: application/x-www-form-urlencoded',
-                'content' => http_build_query($data)
-            ]
-        ];
-        
-        $context = stream_context_create($options);
-        $result = @file_get_contents($verify_url, false, $context);
-        
-        if ($result) {
-            $result_data = json_decode($result, true);
-            $turnstile_verified = $result_data['success'] ?? false;
-        }
-    }
-
-    if (!$turnstile_verified) {
-        $error = 'Verifikasi keamanan gagal. Silakan coba lagi.';
-    } elseif ($username === '' || $password === '') {
+    if ($username === '' || $password === '') {
         $error = 'Username dan password wajib diisi.';
     } else {
         $stmt = db()->prepare('SELECT id, username, password, name FROM users WHERE username = ? LIMIT 1');
@@ -70,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login Admin | Umroh CMS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>
     body { background:#f5f7fa; }
     .card { border:0; box-shadow:0 10px 30px rgba(0,0,0,.08); }
@@ -95,16 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <input type="text" name="username" class="form-control" required>
             </div>
             <div class="mb-3">
+            <div class="mb-3">
               <label class="form-label">Password</label>
               <input type="password" name="password" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <div class="cf-turnstile" data-sitekey="0x4AAAAAACAl8S6dya4dFd3k"></div>
             </div>
             <div class="d-grid">
               <button type="submit" class="btn btn-success">Masuk</button>
             </div>
-          </form>
         </div>
       </div>
     </div>
