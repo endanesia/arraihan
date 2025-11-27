@@ -95,22 +95,20 @@ if (!isset($link_whatsapp)) {
     </a>
     <?php endif; ?>
     
-    <?php if (!empty($link_youtube)): ?>
-    <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank" 
-       style="position: fixed; bottom: 175px; right: 30px; width: 50px; height: 50px; background: #FF0000 !important; z-index: 1000 !important; display: flex !important;">
-        <i class="fab fa-youtube"></i>
-    </a>
-    <?php endif; ?>
-    
     <?php if (!empty($link_instagram)): ?>
     <a href="<?= e($link_instagram) ?>" class="social-float instagram-float" target="_blank">
         <i class="fab fa-instagram"></i>
     </a>
     <?php endif; ?>
     
+    <?php if (!empty($link_youtube)): ?>
+    <a href="<?= e($link_youtube) ?>" class="social-float youtube-float" target="_blank">
+        <i class="fab fa-youtube"></i>
+    </a>
+    <?php endif; ?>
+    
     <?php if (!empty($link_threads)): ?>
-    <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank"
-       style="position: fixed; bottom: 240px; right: 30px; width: 50px; height: 50px; background: #000000 !important; z-index: 1000 !important; display: flex !important;">
+    <a href="<?= e($link_threads) ?>" class="social-float threads-float" target="_blank">
         <i class="fas fa-at"></i>
     </a>
     <?php endif; ?>
