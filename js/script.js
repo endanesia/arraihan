@@ -514,14 +514,15 @@ function closeCertificateModal() {
     }
 }
 
-// Partner certificate click handler
+// Partner certificate click handler with event delegation
 document.addEventListener('DOMContentLoaded', function() {
-    const partnerItems = document.querySelectorAll('.partner-clickable');
-    
-    partnerItems.forEach(item => {
-        item.addEventListener('click', function() {
-            const certificateUrl = this.getAttribute('data-certificate');
-            const partnerName = this.getAttribute('data-partner-name');
+    // Use event delegation to handle clicks on dynamically loaded Swiper slides
+    document.addEventListener('click', function(e) {
+        const partnerItem = e.target.closest('.partner-clickable');
+        
+        if (partnerItem) {
+            const certificateUrl = partnerItem.getAttribute('data-certificate');
+            const partnerName = partnerItem.getAttribute('data-partner-name');
             
             if (certificateUrl) {
                 const modal = document.getElementById('partner-certificate-modal');
@@ -535,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.body.style.overflow = 'hidden';
                 }
             }
-        });
+        }
     });
     
     // Close on overlay click
