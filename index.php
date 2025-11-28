@@ -836,8 +836,8 @@ require_once __DIR__ . '/inc/header.php';
                 <?php if (!empty($partners)): ?>
                     <?php foreach ($partners as $pr): ?>
                     <div class="swiper-slide">
-                        <div class="partner-item partner-clickable" 
-                             <?= 'data-certificate="' . e($base . '/' . $pr['img_url']) . '" data-partner-name="' . e($pr['name']) . '"' ?>>
+                        <div class="partner-item <?= !empty($pr['img_url']) ? 'partner-clickable' : '' ?>" 
+                             <?= !empty($pr['img_url']) ? 'data-certificate="' . e($base . '/' . $pr['img_url']) . '" data-partner-name="' . e($pr['name']) . '"' : '' ?>>
                             <?php if (!empty($pr['logo_url'])): ?>
                                 <div class="partner-logo-img">
                                     <img src="<?= e($base . '/' . $pr['logo_url']) ?>" alt="<?= e($pr['name']) ?>">
