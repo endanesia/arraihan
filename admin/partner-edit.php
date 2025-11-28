@@ -72,6 +72,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $stmt = db()->prepare("UPDATE partners SET name=?, icon_class=?, logo_url=?, img_url=? WHERE id=?");
             $stmt->bind_param('ssssi', $name, $icon_class, $new_logo_url, $new_img_url, $id);
             $stmt->execute();
+            $logo_url = $new_logo_url; // Update display
+            $img_url = $new_img_url; // Update display
+            $ok = 'Partner diperbarui';
+        } else {
+            $stmt = db()->prepare("INSERT INTO partners(name, icon_class, logo_url, img_url) VALUES(?, ?, ?, ?)");
+            $stmt->bind_param('ssss', $name, $icon_class, $new_logo_url, $new_img_url);
+            $stmt->execute();
+            header('Location: ' . $base . '/admin/partners'); exit;
+        }
+    }
+}
+
+include __DIR__ . '/header.php';
+?>
+<div class="container-fluid">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0"><?= $editing ? 'Edit' : 'Tambah' ?> Partner</h3>
+    <a href="<?= e($base) ?>/admin/partners" class="btn btn-secondary">Kembali</a>
+  </div>
+  <?php if ($err): ?><div class="alert alert-danger"><?= e($err) ?></div><?php endif; ?>
+  <?php if ($ok): ?><div class="alert alert-success"><?= e($ok) ?></div><?php endif; ?>
+
   <div class="card"><div class="card-body">
     <form method="post" enctype="multipart/form-data" class="row g-3">
       <input type="hidden" name="existing_logo" value="<?= e($logo_url) ?>">
@@ -99,28 +121,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         <div class="mt-2">
           <img src="<?= e($base . '/' . $img_url) ?>" alt="Current certificate" class="img-thumbnail" style="max-height: 150px;">
           <p class="text-muted small mb-0">Sertifikat saat ini</p>
-        </div>
-        <?php endif; ?>
-      </div>
-      <div class="col-12">
-        <label class="form-label">Font Awesome Icon (Opsional)</label>
-        <input name="icon_class" class="form-control" placeholder="fas fa-building" value="<?= e($icon_class) ?>">
-        <div class="form-text">Icon akan digunakan jika logo tidak diupload. Contoh: fas fa-building, fas fa-industry</div>
-      </div>
-      <div class="col-12">
-        <button class="btn btn-primary" type="submit">Simpan</button>
-      </div>
-    </form>
-  </div></div> name="name" class="form-control" value="<?= e($name) ?>" required>
-      </div>
-      <div class="col-12 col-md-6">
-        <label class="form-label">Logo Partner</label>
-        <input type="file" name="logo" class="form-control" accept="image/*">
-        <div class="form-text">Upload logo partner (PNG/JPG, max 2MB). Ukuran disarankan: 200x100px</div>
-        <?php if (!empty($logo_url)): ?>
-        <div class="mt-2">
-          <img src="<?= e($base . '/' . $logo_url) ?>" alt="Current logo" class="img-thumbnail" style="max-height: 80px;">
-          <p class="text-muted small mb-0">Logo saat ini</p>
         </div>
         <?php endif; ?>
       </div>
