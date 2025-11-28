@@ -1761,6 +1761,22 @@ ul {
     box-shadow: 0 2px 10px rgba(243, 156, 18, 0.3);
 }
 
+.package-category-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 2;
+    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 .package-poster-image {
     position: relative;
     height: 450px;
@@ -1963,6 +1979,13 @@ ul {
         top: 10px;
         right: 10px;
         padding: 4px 10px;
+        font-size: 11px;
+    }
+    
+    .package-category-badge {
+        top: 10px;
+        left: 10px;
+        padding: 5px 12px;
         font-size: 11px;
     }
 }

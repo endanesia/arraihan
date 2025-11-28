@@ -244,6 +244,12 @@ require_once __DIR__ . '/inc/header.php';
                             </div>
                             <?php endif; ?>
                             
+                            <?php if (!empty($p['category'])): ?>
+                            <div class="package-category-badge">
+                                <?= e($p['category']) ?>
+                            </div>
+                            <?php endif; ?>
+                            
                             <div class="package-poster-image">
                                 <?php if (!empty($p['poster'])): ?>
                                     <img src="<?= $base ?>/images/packages/<?= e($p['poster']) ?>" 

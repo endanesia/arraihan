@@ -78,6 +78,7 @@ function resizeImage($source, $destination, $maxWidth = 1920, $maxHeight = 1080,
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $editing = $id > 0;
 $title = '';
+$category = '';
 $poster = '';
 $price_label = 'Mulai dari';
 $price_value = '';
@@ -106,18 +107,18 @@ if ($editing) {
     }
 
     if ($has_poster) {
-        $stmt = db()->prepare("SELECT title, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
+        $stmt = db()->prepare("SELECT title, category, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();
-        $stmt->bind_result($title, $poster, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+        $stmt->bind_result($title, $category, $poster, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
         if (!$stmt->fetch()) { $editing = false; }
         $stmt->close();
     } else {
         // Fallback when poster column doesn't exist
-        $stmt = db()->prepare("SELECT title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
+        $stmt = db()->prepare("SELECT title, category, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double FROM packages WHERE id=? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();
-        $stmt->bind_result($title, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
+        $stmt->bind_result($title, $category, $price_label, $price_value, $price_unit, $icon_class, $features, $featured, $button_text, $button_link, $hotel, $pesawat, $price_quad, $price_triple, $price_double);
         if (!$stmt->fetch()) { $editing = false; }
         $stmt->close();
         $poster = ''; // Default empty poster
@@ -126,6 +127,7 @@ if ($editing) {
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $title = trim($_POST['title'] ?? '');
+    $category = trim($_POST['category'] ?? '');
     $price_label = trim($_POST['price_label'] ?? 'Mulai dari');
     $price_value = trim($_POST['price_value'] ?? '');
     $price_unit = trim($_POST['price_unit'] ?? '/orang');
@@ -248,16 +250,16 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             if ($editing) {
                 if ($uploaded_poster) {
                     // Update with new poster
-                    $stmt = db()->prepare("UPDATE packages SET title='$title', poster='$uploaded_poster', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                    $stmt = db()->prepare("UPDATE packages SET title='$title', category='$category', poster='$uploaded_poster', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 } else {
                     // Update without changing poster
-                    $stmt = db()->prepare("UPDATE packages SET title='$title', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                    $stmt = db()->prepare("UPDATE packages SET title='$title', category='$category', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 }
                 $stmt->execute();
                 $ok = 'Paket diperbarui' . (isset($upload_success_msg) ? '. ' . $upload_success_msg : '');
             } else {
                 // INSERT with poster
-                $stmt = db()->prepare("INSERT INTO packages(title, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$uploaded_poster', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
+                $stmt = db()->prepare("INSERT INTO packages(title, category, poster, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$category', '$uploaded_poster', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
             }
@@ -265,12 +267,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             // Fallback when poster column doesn't exist
             if ($editing) {
                 // UPDATE without poster
-                $stmt = db()->prepare("UPDATE packages SET title='$title', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
+                $stmt = db()->prepare("UPDATE packages SET title='$title', category='$category', price_label='$price_label', price_value='$price_value', price_unit='$price_unit', icon_class='$icon_class', features='$features', featured='$featured', button_text='$button_text', button_link='$button_link', hotel='$hotel', pesawat='$pesawat', price_quad='$price_quad', price_triple='$price_triple', price_double='$price_double' WHERE id=$id");
                 $stmt->execute();
                 $ok = 'Paket diperbarui';
             } else {
                 // INSERT without poster
-                $stmt = db()->prepare("INSERT INTO packages(title, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
+                $stmt = db()->prepare("INSERT INTO packages(title, category, price_label, price_value, price_unit, icon_class, features, featured, button_text, button_link, hotel, pesawat, price_quad, price_triple, price_double) VALUES('$title', '$category', '$price_label', '$price_value', '$price_unit', '$icon_class', '$features', $featured, '$button_text', '$button_link', '$hotel', '$pesawat', '$price_quad', '$price_triple', '$price_double')");
                 $stmt->execute();
                 header('Location: ' . $base . '/admin/packages'); exit;
             }
@@ -403,6 +405,20 @@ include __DIR__ . '/header.php';
       <div class="col-md-6">
         <label class="form-label">Judul Paket *</label>
         <input name="title" class="form-control" value="<?= e($title) ?>" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Kategori Paket</label>
+        <select name="category" class="form-control">
+          <option value="" <?= $category === '' ? 'selected' : '' ?>>-- Pilih Kategori --</option>
+          <option value="Umroh" <?= $category === 'Umroh' ? 'selected' : '' ?>>Umroh</option>
+          <option value="Badal Umroh" <?= $category === 'Badal Umroh' ? 'selected' : '' ?>>Badal Umroh</option>
+          <option value="Badal Haji" <?= $category === 'Badal Haji' ? 'selected' : '' ?>>Badal Haji</option>
+          <option value="Halal Tour" <?= $category === 'Halal Tour' ? 'selected' : '' ?>>Halal Tour</option>
+          <option value="Ziarah" <?= $category === 'Ziarah' ? 'selected' : '' ?>>Ziarah</option>
+          <option value="Dana Talangan" <?= $category === 'Dana Talangan' ? 'selected' : '' ?>>Dana Talangan</option>
+          <option value="Tabungan Umroh" <?= $category === 'Tabungan Umroh' ? 'selected' : '' ?>>Tabungan Umroh</option>
+        </select>
+        <div class="form-text">Pilih kategori paket perjalanan</div>
       </div>
       <div class="col-md-3">
         <label class="form-label">Icon (Font Awesome)</label>
