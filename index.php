@@ -844,6 +844,7 @@ require_once __DIR__ . '/inc/header.php';
                                 </div>
                                 <div class="partner-name">
                                     <?= e($pr['name']) ?>
+                                    <?= e($base . '/' . $pr['img_url']) ?>
                                 </div>
                             <?php else: ?>
                                 <div class="partner-logo">
