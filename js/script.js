@@ -505,6 +505,56 @@ console.log(`
 'color: #6c757d; font-size: 12px;'
 );
 
+// ===== PARTNER CERTIFICATE MODAL =====
+function closeCertificateModal() {
+    const modal = document.getElementById('partner-certificate-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Partner certificate click handler
+document.addEventListener('DOMContentLoaded', function() {
+    const partnerItems = document.querySelectorAll('.partner-clickable');
+    
+    partnerItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const certificateUrl = this.getAttribute('data-certificate');
+            const partnerName = this.getAttribute('data-partner-name');
+            
+            if (certificateUrl) {
+                const modal = document.getElementById('partner-certificate-modal');
+                const image = document.getElementById('certificate-image');
+                const nameEl = document.getElementById('certificate-partner-name');
+                
+                if (modal && image && nameEl) {
+                    image.src = certificateUrl;
+                    nameEl.textContent = partnerName;
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+        });
+    });
+    
+    // Close on overlay click
+    const modal = document.getElementById('partner-certificate-modal');
+    if (modal) {
+        const overlay = modal.querySelector('.certificate-modal-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', closeCertificateModal);
+        }
+        
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeCertificateModal();
+            }
+        });
+    }
+});
+
 // ===== POPUP BANNER FUNCTIONALITY =====
 function closePopup() {
     const popup = document.getElementById('popup-banner-modal');

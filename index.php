@@ -836,7 +836,8 @@ require_once __DIR__ . '/inc/header.php';
                 <?php if (!empty($partners)): ?>
                     <?php foreach ($partners as $pr): ?>
                     <div class="swiper-slide">
-                        <div class="partner-item">
+                        <div class="partner-item <?= !empty($pr['img_url']) ? 'partner-clickable' : '' ?>" 
+                             <?= !empty($pr['img_url']) ? 'data-certificate="' . e($base . $pr['img_url']) . '" data-partner-name="' . e($pr['name']) . '"' : '' ?>>
                             <?php if (!empty($pr['logo_url'])): ?>
                                 <div class="partner-logo-img">
                                     <img src="<?= e($pr['logo_url']) ?>" alt="<?= e($pr['name']) ?>">
@@ -848,6 +849,11 @@ require_once __DIR__ . '/inc/header.php';
                                 <div class="partner-logo">
                                     <i class="<?= e($pr['icon_class'] ?: 'fas fa-building') ?>"></i>
                                     <span><?= e($pr['name']) ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!empty($pr['img_url'])): ?>
+                                <div class="partner-certificate-badge">
+                                    <i class="fas fa-certificate"></i>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -872,6 +878,16 @@ require_once __DIR__ . '/inc/header.php';
             </div>
         </div>
     </section>
+
+<!-- Partner Certificate Modal -->
+<div id="partner-certificate-modal" class="certificate-modal" style="display: none;">
+    <div class="certificate-modal-overlay"></div>
+    <div class="certificate-modal-content">
+        <button class="certificate-modal-close" onclick="closeCertificateModal()">&times;</button>
+        <h4 id="certificate-partner-name"></h4>
+        <img id="certificate-image" src="" alt="Sertifikat">
+    </div>
+</div>
 
 <!-- Popup Banner Modal -->
 <?php if ($popup_banner): ?>
