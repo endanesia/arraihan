@@ -53,8 +53,30 @@ if (function_exists('db') && db()) {
 }
 $videos = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3")) {
-        while ($row = $res->fetch_assoc()) { $videos[] = $row; }
+    // Check if new columns exist for multi-platform support
+    $video_table_columns = [];
+    try {
+        $columns_result = db()->query("DESCRIBE gallery_videos");
+        while ($col = $columns_result->fetch_assoc()) {
+            $video_table_columns[] = $col['Field'];
+        }
+    } catch (Exception $e) {
+        // Handle error gracefully
+    }
+    
+    $has_platform_column = in_array('platform', $video_table_columns);
+    $has_video_url_column = in_array('video_url', $video_table_columns);
+    
+    if ($has_platform_column && $has_video_url_column) {
+        // Multi-platform query
+        if ($res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos ORDER BY id DESC LIMIT 3")) {
+            while ($row = $res->fetch_assoc()) { $videos[] = $row; }
+        }
+    } else {
+        // Legacy YouTube-only query
+        if ($res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3")) {
+            while ($row = $res->fetch_assoc()) { $videos[] = $row; }
+        }
     }
 }
 // Mutawwif dan Tour Leader
@@ -266,9 +288,18 @@ document.addEventListener("click", function(e) {
         e.preventDefault();
         const videoItem = e.target.closest(".video-item");
         const videoIndex = parseInt(videoItem.dataset.videoIndex);
+        const platform = videoItem.dataset.platform || 'youtube';
+        const videoUrl = videoItem.dataset.videoUrl;
         
-        console.log(`Manual click on video ${videoIndex}`);
+        console.log(`Manual click on video ${videoIndex}, platform: ${platform}`);
         
+        // For non-YouTube platforms, open in new window/tab
+        if (platform === 'instagram' || platform === 'tiktok') {
+            window.open(videoUrl, '_blank');
+            return;
+        }
+        
+        // For YouTube videos, continue with current functionality
         // Stop currently playing video
         if (currentPlayingVideo !== null && currentPlayingVideo !== videoIndex) {
             const currentVideoItem = document.querySelector(`[data-video-index="${currentPlayingVideo}"]`);
@@ -807,24 +838,49 @@ require_once __DIR__ . '/inc/header.php';
             </div>
             <div class="video-grid">
                 <?php if (!empty($videos)): ?>
-                    <?php foreach ($videos as $index => $v): $thumb = 'https://img.youtube.com/vi/'.e($v['youtube_id']).'/hqdefault.jpg'; ?>
-                    <div class="video-item" data-youtube-id="<?= e($v['youtube_id']) ?>" data-video-index="<?= $index ?>">
+                    <?php foreach ($videos as $index => $v): 
+                        // Determine platform and thumbnail
+                        $platform = !empty($v['platform']) ? $v['platform'] : 'youtube';
+                        $video_url = !empty($v['video_url']) ? $v['video_url'] : "https://www.youtube.com/embed/{$v['youtube_id']}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0";
+                        
+                        if ($platform === 'youtube') {
+                            $thumb = 'https://img.youtube.com/vi/'.e($v['youtube_id']).'/hqdefault.jpg';
+                            $platform_icon = '<i class="fab fa-youtube text-danger"></i>';
+                        } elseif ($platform === 'instagram') {
+                            $thumb = 'https://via.placeholder.com/480x360/E4405F/white?text=Instagram+Video';
+                            $platform_icon = '<i class="fab fa-instagram text-primary"></i>';
+                        } elseif ($platform === 'tiktok') {
+                            $thumb = 'https://via.placeholder.com/480x360/000000/white?text=TikTok+Video';
+                            $platform_icon = '<i class="fab fa-tiktok text-dark"></i>';
+                        } else {
+                            $thumb = 'https://via.placeholder.com/480x360/6c757d/white?text=Video';
+                            $platform_icon = '<i class="fas fa-video text-secondary"></i>';
+                        }
+                    ?>
+                    <div class="video-item" data-video-url="<?= e($video_url) ?>" data-platform="<?= e($platform) ?>" data-video-index="<?= $index ?>">
                         <div class="video-thumbnail">
-                            <img src="<?= $thumb ?>" alt="<?= e($v['title'] ?: 'Video') ?>">
+                            <div class="position-relative">
+                                <img src="<?= $thumb ?>" alt="<?= e($v['title'] ?: 'Video') ?>">
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-light text-dark"><?= $platform_icon ?></span>
+                                </div>
+                            </div>
                             <div class="video-play">
                                 <i class="fas fa-play"></i>
                             </div>
+                            <?php if ($platform === 'youtube'): ?>
                             <div class="video-iframe-container" style="display: none;">
                                 <iframe 
                                     id="youtube-player-<?= $index ?>"
                                     width="100%" 
                                     height="200" 
-                                    src="https://www.youtube.com/embed/<?= e($v['youtube_id']) ?>?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0" 
+                                    src="<?= e($video_url) ?>" 
                                     frameborder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                     allowfullscreen>
                                 </iframe>
                             </div>
+                            <?php endif; ?>
                         </div>
                         <h4><?= e($v['title'] ?: 'Video') ?></h4>
                     </div>

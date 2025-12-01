@@ -40,11 +40,25 @@ if (function_exists('db') && db()) {
     }
 }
 
-// Fetch all gallery videos  
+// Fetch all gallery videos with platform support
 $videos = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT youtube_id, title, created_at FROM gallery_videos ORDER BY id DESC")) {
-        while ($row = $res->fetch_assoc()) { $videos[] = $row; }
+    // Check if new columns exist
+    $checkColumns = db()->query("SHOW COLUMNS FROM gallery_videos LIKE 'platform'");
+    if ($checkColumns && $checkColumns->num_rows > 0) {
+        // New structure with platform support
+        if ($res = db()->query("SELECT youtube_id, video_url, platform, title, created_at FROM gallery_videos ORDER BY id DESC")) {
+            while ($row = $res->fetch_assoc()) { $videos[] = $row; }
+        }
+    } else {
+        // Fallback for old structure
+        if ($res = db()->query("SELECT youtube_id, title, created_at FROM gallery_videos ORDER BY id DESC")) {
+            while ($row = $res->fetch_assoc()) { 
+                $row['platform'] = 'youtube';
+                $row['video_url'] = null;
+                $videos[] = $row; 
+            }
+        }
     }
 }
 
@@ -161,11 +175,40 @@ require_once __DIR__ . '/inc/header.php';
                 <?php if (!empty($videos)): ?>
                 <div class="gallery-grid">
                     <?php foreach ($videos as $video): ?>
-                    <div class="gallery-item video-item" onclick="openVideo('<?= e($video['youtube_id']) ?>')">
+                    <?php
+                    $platform = $video['platform'] ?? 'youtube';
+                    $videoId = '';
+                    $thumbnailUrl = '';
+                    $videoUrl = '';
+                    
+                    if ($platform === 'youtube') {
+                        $videoId = $video['youtube_id'];
+                        $thumbnailUrl = "https://img.youtube.com/vi/{$videoId}/hqdefault.jpg";
+                        $videoUrl = "https://www.youtube.com/embed/{$videoId}?autoplay=1";
+                    } elseif ($platform === 'instagram') {
+                        $videoUrl = $video['video_url'] ?? '';
+                        $thumbnailUrl = "https://images.unsplash.com/photo-1611262588024-d12430b98920?w=400&h=300&fit=crop"; // Instagram placeholder
+                    } elseif ($platform === 'tiktok') {
+                        $videoUrl = $video['video_url'] ?? '';
+                        $thumbnailUrl = "https://images.unsplash.com/photo-1611605698335-8b1569810432?w=400&h=300&fit=crop"; // TikTok placeholder
+                    }
+                    ?>
+                    <div class="gallery-item video-item" data-platform="<?= e($platform) ?>" onclick="openVideoMultiPlatform('<?= e($videoUrl) ?>', '<?= e($platform) ?>')">
                         <div class="gallery-image">
-                            <img src="https://img.youtube.com/vi/<?= e($video['youtube_id']) ?>/hqdefault.jpg" alt="<?= e($video['title'] ?: 'Video') ?>">
+                            <img src="<?= e($thumbnailUrl) ?>" alt="<?= e($video['title'] ?: 'Video') ?>">
                             <div class="video-play">
-                                <i class="fas fa-play"></i>
+                                <?php if ($platform === 'youtube'): ?>
+                                    <i class="fab fa-youtube"></i>
+                                <?php elseif ($platform === 'instagram'): ?>
+                                    <i class="fab fa-instagram"></i>
+                                <?php elseif ($platform === 'tiktok'): ?>
+                                    <i class="fab fa-tiktok"></i>
+                                <?php else: ?>
+                                    <i class="fas fa-play"></i>
+                                <?php endif; ?>
+                            </div>
+                            <div class="platform-badge platform-<?= e($platform) ?>">
+                                <?= ucfirst($platform) ?>
                             </div>
                         </div>
                         <div class="gallery-info">
@@ -237,13 +280,26 @@ $extra_footer_scripts = '
         window.location.href = newUrl;
     }
 
-    // Video modal functionality
-    function openVideo(videoId) {
+    // Multi-platform video modal functionality
+    function openVideoMultiPlatform(videoUrl, platform) {
         const modal = document.getElementById("videoModal");
         const frame = document.getElementById("videoFrame");
-        frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        
+        if (platform === "youtube") {
+            frame.src = videoUrl;
+        } else if (platform === "instagram" || platform === "tiktok") {
+            // For Instagram and TikTok, open in new window/tab
+            window.open(videoUrl, "_blank");
+            return;
+        }
+        
         modal.style.display = "block";
         document.body.style.overflow = "hidden";
+    }
+
+    // Legacy function for backward compatibility
+    function openVideo(videoId) {
+        openVideoMultiPlatform(`https://www.youtube.com/embed/${videoId}?autoplay=1`, "youtube");
     }
 
     function closeVideo() {
