@@ -94,16 +94,15 @@ $company_address = function_exists('get_setting') ? get_setting('address', '') :
 $company_email = function_exists('get_setting') ? get_setting('email', '') : '';
 $company_hours = function_exists('get_setting') ? get_setting('hours', '') : '';
 
-// Hero section settings - using existing get_setting function from db.php
-
-$hero_title = get_setting('hero_title', 'Perjalanan Suci Berkualitas, Biaya Bersahabat');
-$hero_subtitle = get_setting('hero_subtitle', 'Jangan biarkan biaya menunda niat suci Anda. Program Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional. Wujudkan ibadah khusyuk dan nyaman Anda, karena Umroh berkualitas kini bisa diakses oleh semua.');
-$hero_button_text = get_setting('hero_button_text', 'Lihat Program Umroh');
-$hero_stat1_text = get_setting('hero_stat1_text', '24 Januri 2026');
-$hero_stat1_desc = get_setting('hero_stat1_desc', 'Jadwal Berangkat');
-$hero_stat2_text = get_setting('hero_stat2_text', 'Program Pembiayaan');
-$hero_stat2_desc = get_setting('hero_stat2_desc', 'Pembiayaan dana talangan Umrah');
-$hero_background = get_setting('hero_background', '');
+// Hero slides data from database
+$hero_slides = [];
+if (function_exists('db') && db()) {
+    if ($res = db()->query("SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY sort_order ASC, id ASC")) {
+        while ($row = $res->fetch_assoc()) { 
+            $hero_slides[] = $row; 
+        }
+    }
+}
 
 // Greeting section settings - using existing get_setting function from db.php
 $greeting_title = get_setting('greeting_title', 'Assalamu\'alaikum Warahmatullahi Wabarakatuh');
@@ -161,38 +160,92 @@ $extra_head_content = '<script src="https://challenges.cloudflare.com/turnstile/
 require_once __DIR__ . '/inc/header.php';
 ?>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home"<?php if ($hero_background): ?> style="background-image: url('<?= e($hero_background) ?>');"<?php endif; ?>>
-        <div class="hero-overlay"></div>
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <i class="fas fa-certificate"></i>
-                    <span>PT. Raihan Islami Travelindo</span>
-                </div>
-                <h1 class="hero-title"><?= e($hero_title) ?></h1>
-                <p class="hero-subtitle"><?= e($hero_subtitle) ?></p>
-                <div class="hero-buttons">
-                    <a href="#paket" class="btn btn-primary">
-                        <i class="fas fa-calendar-check"></i> <?= e($hero_button_text) ?>
-                    </a>
-                    <?php if (!empty($link_whatsapp)): ?>
-                    <a href="<?= e($link_whatsapp) ?>" class="btn btn-secondary" target="_blank"><i class="fab fa-whatsapp"></i> Konsultasi Gratis</a>
-                    <?php endif; ?>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <h3><i class="fas fa-users"></i> <?= e($hero_stat1_text) ?></h3>
-                        <p><?= e($hero_stat1_desc) ?></p>
+    <!-- Hero Section with Slideshow -->
+    <section class="hero" id="home">
+        <?php if (!empty($hero_slides)): ?>
+        <div class="swiper heroSwiper">
+            <div class="swiper-wrapper">
+                <?php foreach ($hero_slides as $slide): ?>
+                <div class="swiper-slide">
+                    <div class="hero-slide"<?php if (!empty($slide['background_image'])): ?> style="background-image: url('<?= e($base . $slide['background_image']) ?>');"<?php endif; ?>>
+                        <div class="hero-overlay"></div>
+                        <div class="container">
+                            <div class="hero-content">
+                                <div class="hero-badge">
+                                    <i class="fas fa-certificate"></i>
+                                    <span>PT. Raihan Islami Travelindo</span>
+                                </div>
+                                <h1 class="hero-title"><?= e($slide['title']) ?></h1>
+                                <p class="hero-subtitle"><?= e($slide['subtitle']) ?></p>
+                                <div class="hero-buttons">
+                                    <?php if (!empty($slide['button_text'])): ?>
+                                    <a href="<?= e($slide['button_link']) ?>" class="btn btn-primary">
+                                        <i class="fas fa-calendar-check"></i> <?= e($slide['button_text']) ?>
+                                    </a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($link_whatsapp)): ?>
+                                    <a href="<?= e($link_whatsapp) ?>" class="btn btn-secondary" target="_blank">
+                                        <i class="fab fa-whatsapp"></i> Konsultasi Gratis
+                                    </a>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if (!empty($slide['stat1_text']) || !empty($slide['stat2_text'])): ?>
+                                <div class="hero-stats">
+                                    <?php if (!empty($slide['stat1_text'])): ?>
+                                    <div class="stat-item">
+                                        <h3><i class="fas fa-users"></i> <?= e($slide['stat1_text']) ?></h3>
+                                        <p><?= e($slide['stat1_desc']) ?></p>
+                                    </div>
+                                    <?php endif; ?>
+                                    <?php if (!empty($slide['stat2_text'])): ?>
+                                    <div class="stat-item">
+                                        <h3><i class="fas fa-award"></i> <?= e($slide['stat2_text']) ?></h3>
+                                        <p><?= e($slide['stat2_desc']) ?></p>
+                                    </div>
+                                    <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="stat-item">
-                        <h3><i class="fas fa-award"></i> <?= e($hero_stat2_text) ?></h3>
-                        <p><?= e($hero_stat2_desc) ?></p>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="swiper-button-next hero-button-next"></div>
+            <div class="swiper-button-prev hero-button-prev"></div>
+            
+            <!-- Pagination -->
+            <div class="swiper-pagination hero-pagination"></div>
+        </div>
+        <?php else: ?>
+        <!-- Fallback single hero -->
+        <div class="hero-slide" style="background-image: url('<?= $base ?>/images/hero-bg.jpg');">
+            <div class="hero-overlay"></div>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fas fa-certificate"></i>
+                        <span>PT. Raihan Islami Travelindo</span>
+                    </div>
+                    <h1 class="hero-title">Perjalanan Suci Berkualitas, Biaya Bersahabat</h1>
+                    <p class="hero-subtitle">Jangan biarkan biaya menunda niat suci Anda. Program Umroh terjangkau dengan tetap berkualitas layanan terbaik, mencakup akomodasi dan bimbingan yang profesional.</p>
+                    <div class="hero-buttons">
+                        <a href="#paket" class="btn btn-primary">
+                            <i class="fas fa-calendar-check"></i> Lihat Program Umroh
+                        </a>
+                        <?php if (!empty($link_whatsapp)): ?>
+                        <a href="<?= e($link_whatsapp) ?>" class="btn btn-secondary" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Konsultasi Gratis
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
+        <?php endif; ?>
+        
         <div class="hero-scroll">
             <a href="#paket">
                 <i class="fas fa-chevron-down"></i>
@@ -751,11 +804,7 @@ require_once __DIR__ . '/inc/header.php';
                             </p>
                             <div class="map-wrapper">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4172.767350248647!2d112.64759151083824!3d-7.9447585791088065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd629cc01e9cfc9%3A0x1b33c41ad59b5f4d!2sPT%20Raihan%20Islami%20Travelindo%20(HEAD%20OFFICE)!5e1!3m2!1sid!2sid!4v1764310119321!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                            <div class="map-overlay">
-                                <a href="https://www.google.com/maps/search/arraihan+travelindo" target="_blank" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-directions me-1"></i>Buka di Google Maps
-                                </a>
-                            </div>
+
                         </div>
                         </div>
                     </div>

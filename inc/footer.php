@@ -130,6 +130,30 @@ if (!isset($link_whatsapp)) {
     
     <!-- Swiper Initialization -->
     <script>
+        // Hero Slideshow
+        const heroSwiper = new Swiper('.heroSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 0,
+            loop: true,
+            autoplay: {
+                delay: 6000,
+                disableOnInteraction: false,
+            },
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            pagination: {
+                el: '.hero-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.hero-button-next',
+                prevEl: '.hero-button-prev',
+            },
+        });
+
+        // Package Slideshow
         const packageSwiper = new Swiper('.packageSwiper', {
             slidesPerView: 1,
             spaceBetween: 20,

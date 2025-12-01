@@ -241,6 +241,15 @@ ul {
 .hero {
     position: relative;
     min-height: 100vh;
+}
+
+.heroSwiper {
+    height: 100vh;
+}
+
+.hero-slide {
+    position: relative;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -339,12 +348,55 @@ ul {
     opacity: 0.9;
 }
 
+/* Hero Slideshow Navigation */
+.hero-button-next,
+.hero-button-prev {
+    color: rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    width: 50px !important;
+    height: 50px !important;
+    margin-top: -25px !important;
+    backdrop-filter: blur(10px);
+    border-radius: 50% !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.hero-button-next:hover,
+.hero-button-prev:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+}
+
+.hero-button-next::after,
+.hero-button-prev::after {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}
+
+.hero-pagination {
+    bottom: 80px !important;
+}
+
+.hero-pagination .swiper-pagination-bullet {
+    width: 12px !important;
+    height: 12px !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    opacity: 1 !important;
+}
+
+.hero-pagination .swiper-pagination-bullet-active {
+    background: white !important;
+    transform: scale(1.2);
+}
+
 .hero-scroll {
     position: absolute;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     animation: bounce 2s infinite;
+    z-index: 10;
 }
 
 .hero-scroll a {
@@ -1685,6 +1737,22 @@ ul {
     
     .hero-stats {
         gap: 30px;
+    }
+    
+    .hero-button-next,
+    .hero-button-prev {
+        width: 40px !important;
+        height: 40px !important;
+        margin-top: -20px !important;
+    }
+    
+    .hero-button-next::after,
+    .hero-button-prev::after {
+        font-size: 14px !important;
+    }
+    
+    .hero-pagination {
+        bottom: 60px !important;
     }
     
     .stat-item h3 {
