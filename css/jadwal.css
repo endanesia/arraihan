@@ -1,4 +1,16 @@
-/* Jadwal Page Styles */
+/* Jadwal Calendar Page Styles */
+:root {
+    --primary-color: #1a6b4a;
+    --secondary-color: #0d4a33;
+    --success-color: #25D366;
+    --dark-color: #2c3e50;
+    --light-gray: #f8f9fa;
+    --light-color: #ffffff;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+    --shadow-lg: 0 8px 16px rgba(0,0,0,0.2);
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: #f8f9fa;
@@ -300,6 +312,271 @@ body {
     color: white;
 }
 
+/* Calendar Container */
+.calendar-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: var(--shadow-md);
+    padding: 30px;
+    margin: 30px 0;
+}
+
+/* FullCalendar Custom Styles */
+.fc {
+    font-family: "Poppins", sans-serif;
+}
+
+.fc-toolbar {
+    margin-bottom: 30px !important;
+}
+
+.fc-toolbar-title {
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    color: var(--dark-color);
+}
+
+.fc-button-primary {
+    background: var(--primary-color) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.fc-button-primary:hover {
+    background: var(--secondary-color) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--shadow-md) !important;
+}
+
+.fc-button-primary:disabled {
+    background: #ccc !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.fc .fc-event {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    margin: 2px 0 !important;
+}
+
+.fc .fc-event:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+}
+
+.fc .fc-event-title {
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    text-overflow: ellipsis !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}
+
+.fc-daygrid-day {
+    min-height: 120px !important;
+}
+
+.fc-daygrid-day-number {
+    font-weight: 600 !important;
+    color: var(--dark-color) !important;
+}
+
+.fc-day-today {
+    background: rgba(26, 107, 74, 0.1) !important;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: var(--light-color);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    animation: slideIn 0.3s ease;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: var(--dark-color);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--light-color);
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.modal-header .package-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.modal-header .package-info h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.modal-header .duration {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.modal-body .info-row {
+    margin-bottom: 25px;
+    padding: 0;
+    border: none;
+}
+
+.modal-body .info-row:last-child {
+    margin-bottom: 0;
+}
+
+.modal-body .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.modal-body .info-item i {
+    color: var(--primary-color);
+    font-size: 18px;
+    margin-top: 2px;
+    min-width: 20px;
+}
+
+.modal-body .info-item .label {
+    display: block;
+    font-weight: 500;
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.modal-body .info-item .value {
+    display: block;
+    color: var(--dark-color);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.modal-body .price-row .value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.modal-footer {
+    padding: 20px 30px 30px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.modal-footer .btn-book,
+.modal-footer .btn-detail {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    border: none;
+}
+
+.modal-footer .btn-book {
+    background: var(--success-color);
+    color: var(--light-color);
+}
+
+.modal-footer .btn-book:hover {
+    background: #1fa851;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: var(--light-color);
+}
+
+.modal-footer .btn-detail {
+    background: var(--light-gray);
+    color: var(--dark-color);
+    border: 2px solid var(--primary-color) !important;
+}
+
+.modal-footer .btn-detail:hover {
+    background: var(--primary-color);
+    color: var(--light-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .page-title {
@@ -308,6 +585,61 @@ body {
     
     .schedule-section {
         padding: 60px 0 40px;
+    }
+    
+    .calendar-container {
+        padding: 20px;
+        margin: 20px 0;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .modal-header {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .modal-header .package-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .modal-header .package-info h3 {
+        font-size: 1.2rem;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px 20px;
+        flex-direction: column;
+    }
+    
+    .modal-footer .btn-book,
+    .modal-footer .btn-detail {
+        min-width: 100%;
+    }
+    
+    .fc-toolbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .fc-toolbar-title {
+        font-size: 1.4rem !important;
+    }
+    
+    .fc-button-group {
+        display: flex;
+        justify-content: center;
     }
     
     .schedule-grid {
@@ -332,5 +664,19 @@ body {
     
     .package-info h3 {
         font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .schedule-section {
+        padding: 40px 0;
+    }
+    
+    .fc-daygrid-day {
+        min-height: 80px !important;
+    }
+    
+    .fc .fc-event-title {
+        font-size: 11px !important;
     }
 }
