@@ -54,13 +54,15 @@ if (function_exists('db') && db()) {
 $videos = [];
 try {
     if (function_exists('db') && db()) {
-        // Simple safe query first
-        $res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3");
+        // Multi-platform query with validation for empty youtube_id
+        $res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos WHERE (youtube_id IS NOT NULL AND youtube_id != '') OR (platform != 'youtube' AND video_url IS NOT NULL) ORDER BY id DESC LIMIT 3");
         if ($res) {
             while ($row = $res->fetch_assoc()) { 
-                // Ensure backward compatibility
-                $row['platform'] = 'youtube';
-                $row['video_url'] = "https://www.youtube.com/embed/{$row['youtube_id']}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0";
+                // Ensure all fields have defaults
+                if (empty($row['platform'])) $row['platform'] = 'youtube';
+                if (empty($row['video_url']) && !empty($row['youtube_id'])) {
+                    $row['video_url'] = "https://www.youtube.com/embed/{$row['youtube_id']}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0";
+                }
                 $videos[] = $row; 
             }
         }
@@ -852,12 +854,7 @@ require_once __DIR__ . '/inc/header.php';
                     ?>
                     <div class="video-item" data-video-url="<?= e($video_url) ?>" data-platform="<?= e($platform) ?>" data-video-index="<?= $index ?>">
                         <div class="video-thumbnail">
-                            <div class="position-relative">
-                                <img src="<?= $thumb ?>" alt="<?= e($v['title'] ?: 'Video') ?>">
-                                <div class="position-absolute top-0 end-0 m-2">
-                                    <span class="badge bg-light text-dark"><?= $platform_icon ?></span>
-                                </div>
-                            </div>
+                            <img src="<?= $thumb ?>" alt="<?= e($v['title'] ?: 'Video') ?>">
                             <div class="video-play">
                                 <i class="fas fa-play"></i>
                             </div>
