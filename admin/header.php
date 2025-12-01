@@ -185,6 +185,11 @@ function nav_active($needle){
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link <?= nav_active('/admin/about-images') ?>" href="<?= e($base) ?>/admin/about-images">
+          <i class="fas fa-image"></i>Gambar Tentang Kami
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link <?= nav_active('/admin/schedules') ?>" href="<?= e($base) ?>/admin/schedules">
           <i class="fas fa-calendar-alt"></i>Jadwal Keberangkatan
         </a>

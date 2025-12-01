@@ -188,6 +188,24 @@ $about_badge_number = get_setting('about_badge_number', '15.000+');
 $about_badge_text = get_setting('about_badge_text', 'Jamaah Terlayani');
 $about_image = get_setting('about_image', '');
 
+// About Images for slideshow
+$about_images = [];
+if (function_exists('db') && db()) {
+    try {
+        $table_check = db()->query("SHOW TABLES LIKE 'about_images'");
+        if ($table_check && $table_check->num_rows > 0) {
+            if ($res = db()->query("SELECT * FROM about_images WHERE is_active = 1 ORDER BY sort_order ASC, id ASC")) {
+                while ($row = $res->fetch_assoc()) {
+                    $about_images[] = $row;
+                }
+            }
+        }
+    } catch (Exception $e) {
+        error_log("About images query error: " . $e->getMessage());
+        $about_images = [];
+    }
+}
+
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
@@ -348,6 +366,33 @@ document.addEventListener("DOMContentLoaded", function() {
         videoObserver.observe(videoSection);
     } else {
         console.log("Video section not found");
+    }
+    
+    // Initialize About Images Slideshow
+    const aboutSwiper = document.querySelector(".aboutSwiper");
+    if (aboutSwiper) {
+        new Swiper(".aboutSwiper", {
+            loop: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".about-pagination",
+                clickable: true,
+                dynamicBullets: true,
+            },
+            navigation: {
+                nextEl: ".about-button-next",
+                prevEl: ".about-button-prev",
+            },
+            effect: "fade",
+            fadeEffect: {
+                crossFade: true,
+            },
+            speed: 800,
+        });
+        console.log("About slideshow initialized");
     }
 });
 </script>';
@@ -839,7 +884,29 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                 </div>
                 <div class="tentang-image">
+                    <?php if (!empty($about_images)): ?>
+                    <!-- About Images Slideshow -->
+                    <div class="swiper aboutSwiper">
+                        <div class="swiper-wrapper">
+                            <?php foreach ($about_images as $img): ?>
+                            <div class="swiper-slide">
+                                <img src="<?= $base ?>images/<?= e($img['image_path']) ?>" 
+                                     alt="<?= e($img['alt_text'] ?: $img['title'] ?: $about_title) ?>"
+                                     title="<?= e($img['title']) ?>">
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <!-- Pagination dots -->
+                        <div class="swiper-pagination about-pagination"></div>
+                        <!-- Navigation arrows -->
+                        <div class="swiper-button-next about-button-next"></div>
+                        <div class="swiper-button-prev about-button-prev"></div>
+                    </div>
+                    <?php else: ?>
+                    <!-- Fallback single image -->
                     <img src="<?= !empty($about_image) ? $base . e($about_image) : $base . 'images/bg.jpeg' ?>" alt="<?= e($about_title) ?>">
+                    <?php endif; ?>
+                    
                     <?php if ($about_badge_number || $about_badge_text): ?>
                     <div class="tentang-badge">
                         <i class="fas fa-users"></i>
