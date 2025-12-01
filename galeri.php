@@ -4,10 +4,22 @@ require_once __DIR__ . '/inc/db.php';
 // Get active tab from URL parameter
 $activeTab = isset($_GET['tab']) && $_GET['tab'] === 'videos' ? 'videos' : 'images';
 
-// Fetch all gallery images
+// Get selected album from URL parameter
+$selectedAlbum = isset($_GET['album']) ? $_GET['album'] : 'all';
+
+// Fetch all albums
+$albums = [];
+if (function_exists('db') && db()) {
+    if ($res = db()->query("SELECT album_name, COUNT(*) as count FROM gallery_images GROUP BY album_name ORDER BY album_name ASC")) {
+        while ($row = $res->fetch_assoc()) { $albums[] = $row; }
+    }
+}
+
+// Fetch gallery images based on selected album
 $images = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT file_path, title, created_at FROM gallery_images ORDER BY id DESC")) {
+    $albumCondition = $selectedAlbum !== 'all' ? "WHERE album_name = '" . db()->real_escape_string($selectedAlbum) . "'" : '';
+    if ($res = db()->query("SELECT file_path, title, album_name, created_at FROM gallery_images $albumCondition ORDER BY id DESC")) {
         while ($row = $res->fetch_assoc()) { $images[] = $row; }
     }
 }
@@ -64,6 +76,27 @@ require_once __DIR__ . '/inc/header.php';
                 </button>
             </div>
 
+            <!-- Album Filter (only show for images tab) -->
+            <div id="album-filter" style="display: <?= $activeTab === 'images' ? 'block' : 'none' ?>;">
+                <div class="album-filter-section">
+                    <h3><i class="fas fa-folder"></i> Pilih Album</h3>
+                    <div class="album-buttons">
+                        <button class="album-btn <?= $selectedAlbum === 'all' ? 'active' : '' ?>" onclick="filterByAlbum('all')">
+                            <i class="fas fa-th-large"></i>
+                            <span>Semua Album</span>
+                            <span class="count"><?= array_sum(array_column($albums, 'count')) ?></span>
+                        </button>
+                        <?php foreach ($albums as $album): ?>
+                        <button class="album-btn <?= $selectedAlbum === $album['album_name'] ? 'active' : '' ?>" onclick="filterByAlbum('<?= e($album['album_name']) ?>')">
+                            <i class="fas fa-folder"></i>
+                            <span><?= e($album['album_name']) ?></span>
+                            <span class="count"><?= $album['count'] ?></span>
+                        </button>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+
             <!-- Images Gallery -->
             <div id="images-content" class="tab-content" style="display: <?= $activeTab === 'images' ? 'block' : 'none' ?>;">
                 <?php if (!empty($images)): ?>
@@ -80,12 +113,18 @@ require_once __DIR__ . '/inc/header.php';
                         </div>
                         <div class="gallery-info">
                             <h4><?= e($img['title'] ?: 'Dokumentasi Jamaah') ?></h4>
-                            <?php if (!empty($img['created_at'])): ?>
-                            <div class="date">
-                                <i class="fas fa-calendar"></i>
-                                <?= date('d F Y', strtotime($img['created_at'])) ?>
+                            <div class="gallery-meta">
+                                <div class="album-tag">
+                                    <i class="fas fa-folder"></i>
+                                    <?= e($img['album_name'] ?: 'Umum') ?>
+                                </div>
+                                <?php if (!empty($img['created_at'])): ?>
+                                <div class="date">
+                                    <i class="fas fa-calendar"></i>
+                                    <?= date('d F Y', strtotime($img['created_at'])) ?>
+                                </div>
+                                <?php endif; ?>
                             </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -157,6 +196,27 @@ $extra_footer_scripts = '
         });
         document.getElementById(tabName + "-content").style.display = "block";
         document.getElementById(tabName + "-tab").classList.add("active");
+        
+        // Show/hide album filter based on tab
+        const albumFilter = document.getElementById("album-filter");
+        if (tabName === "images") {
+            albumFilter.style.display = "block";
+        } else {
+            albumFilter.style.display = "none";
+        }
+    }
+
+    // Album filter functionality
+    function filterByAlbum(albumName) {
+        const currentTab = "<?= $activeTab ?>";
+        const baseUrl = window.location.pathname;
+        let newUrl = baseUrl + "?tab=" + currentTab;
+        
+        if (albumName !== "all") {
+            newUrl += "&album=" + encodeURIComponent(albumName);
+        }
+        
+        window.location.href = newUrl;
     }
 
     // Video modal functionality

@@ -77,18 +77,20 @@ function resizeImage($source, $destination, $maxWidth = 1920, $maxHeight = 1080,
     return $result;
 }
 if ($_SERVER['REQUEST_METHOD']==='POST'){
-  $action = $_POST['action'] ?? 'upload';
+      $action = $_POST['action'] ?? 'upload';
   if ($action === 'update') {
     $id = (int)($_POST['id'] ?? 0);
     $title = trim($_POST['title'] ?? '');
+    $album_name = trim($_POST['album_name'] ?? 'Umum');
     if ($id>0) {
-      $stmt = db()->prepare('UPDATE gallery_images SET title=? WHERE id=?');
-      $stmt->bind_param('si', $title, $id);
+      $stmt = db()->prepare('UPDATE gallery_images SET title=?, album_name=? WHERE id=?');
+      $stmt->bind_param('ssi', $title, $album_name, $id);
       $stmt->execute();
-      $msg = 'Judul gambar diperbarui.';
+      $msg = 'Gambar diperbarui.';
     }
   } else {
     $title = trim($_POST['title'] ?? '');
+    $album_name = trim($_POST['album_name'] ?? 'Umum');
     
     // Debug upload
     if (!isset($_FILES['image'])) {
@@ -180,8 +182,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
           // Save to database if upload successful
           if (!$err) {
             $url = rtrim($config['app']['uploads_url'],'/').'/'.$filename;
-            $stmt = db()->prepare('INSERT INTO gallery_images(title,file_path) VALUES(?,?)');
-            $stmt->bind_param('ss', $title, $url);
+            $stmt = db()->prepare('INSERT INTO gallery_images(title,file_path,album_name) VALUES(?,?,?)');
+            $stmt->bind_param('sss', $title, $url, $album_name);
             if ($stmt->execute()) {
               if ($resized) {
                 $msg = "Gambar berhasil diupload dan otomatis $resizeReason: $filename";
@@ -199,7 +201,15 @@ if ($_SERVER['REQUEST_METHOD']==='POST'){
   }
 }
 
-$res = db()->query('SELECT * FROM gallery_images ORDER BY id DESC');
+// Get existing albums for dropdown
+$albums = [];
+if ($albumRes = db()->query("SELECT DISTINCT album_name FROM gallery_images WHERE album_name IS NOT NULL ORDER BY album_name ASC")) {
+    while ($albumRow = $albumRes->fetch_assoc()) {
+        $albums[] = $albumRow['album_name'];
+    }
+}
+
+$res = db()->query('SELECT * FROM gallery_images ORDER BY album_name ASC, id DESC');
 include __DIR__ . '/header.php';
 ?>
 
@@ -213,11 +223,24 @@ include __DIR__ . '/header.php';
 <div class="card mb-4">
   <div class="card-body">
     <form method="post" enctype="multipart/form-data" class="row g-3">
-      <div class="col-md-4">
+      <div class="col-md-3">
         <label class="form-label">Judul (opsional)</label>
         <input type="text" name="title" class="form-control">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-3">
+        <label class="form-label">Album</label>
+        <div class="input-group">
+          <input type="text" name="album_name" class="form-control" list="album-list" value="Umum" required>
+          <datalist id="album-list">
+            <option value="Umum">
+            <?php foreach ($albums as $album): ?>
+            <option value="<?= e($album) ?>">
+            <?php endforeach; ?>
+          </datalist>
+        </div>
+        <div class="form-text">Ketik nama album baru atau pilih yang sudah ada</div>
+      </div>
+      <div class="col-md-4">
         <label class="form-label">Pilih Gambar</label>
         <input type="file" name="image" accept="image/*" class="form-control" required>
         <div class="form-text">
@@ -238,13 +261,33 @@ include __DIR__ . '/header.php';
     <div class="card h-100">
       <img src="<?= e($row['file_path']) ?>" class="card-img-top" alt="<?= e($row['title']) ?>">
       <div class="card-body">
-        <form method="post" class="d-flex gap-2 align-items-center">
+        <form method="post">
           <input type="hidden" name="action" value="update">
           <input type="hidden" name="id" value="<?= (int)$row['id'] ?>">
-          <input type="text" name="title" class="form-control form-control-sm" value="<?= e($row['title']) ?>" placeholder="Judul gambar">
-          <button class="btn btn-sm btn-outline-primary" type="submit">Simpan</button>
+          
+          <div class="mb-2">
+            <label class="form-label small">Judul:</label>
+            <input type="text" name="title" class="form-control form-control-sm" value="<?= e($row['title']) ?>" placeholder="Judul gambar">
+          </div>
+          
+          <div class="mb-2">
+            <label class="form-label small">Album:</label>
+            <div class="input-group input-group-sm">
+              <input type="text" name="album_name" class="form-control" list="album-list-<?= $row['id'] ?>" value="<?= e($row['album_name'] ?? 'Umum') ?>" required>
+              <datalist id="album-list-<?= $row['id'] ?>">
+                <option value="Umum">
+                <?php foreach ($albums as $album): ?>
+                <option value="<?= e($album) ?>">
+                <?php endforeach; ?>
+              </datalist>
+            </div>
+          </div>
+          
+          <div class="d-flex gap-1">
+            <button class="btn btn-sm btn-outline-primary flex-fill" type="submit">Simpan</button>
+            <a class="btn btn-sm btn-outline-danger" href="<?= e($base) ?>/admin/gallery-images/<?= (int)$row['id'] ?>/delete" onclick="return confirm('Hapus gambar ini?');">Hapus</a>
+          </div>
         </form>
-  <a class="btn btn-sm btn-outline-danger" href="<?= e($base) ?>/admin/gallery-images/<?= (int)$row['id'] ?>/delete" onclick="return confirm('Hapus gambar ini?');">Hapus</a>
       </div>
     </div>
   </div>
