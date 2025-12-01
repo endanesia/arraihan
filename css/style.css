@@ -851,7 +851,7 @@ ul {
 
 .tentang-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.2fr 0.8fr;
     gap: 60px;
     align-items: center;
 }
@@ -938,7 +938,9 @@ ul {
 /* ===== ABOUT IMAGES SLIDESHOW ===== */
 .aboutSwiper {
     width: 100%;
-    height: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 320px;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
@@ -946,7 +948,7 @@ ul {
 
 .aboutSwiper .swiper-slide img {
     width: 100%;
-    height: 400px;
+    height: 280px;
     object-fit: cover;
     border-radius: 0; /* Remove individual image border-radius as container handles it */
 }
@@ -1005,7 +1007,7 @@ ul {
 /* Responsive adjustments for about slideshow */
 @media (max-width: 768px) {
     .aboutSwiper .swiper-slide img {
-        height: 250px;
+        height: 200px;
     }
     
     .aboutSwiper .swiper-button-next,
@@ -1018,6 +1020,12 @@ ul {
     .aboutSwiper .swiper-button-next::after,
     .aboutSwiper .swiper-button-prev::after {
         font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .aboutSwiper .swiper-slide img {
+        height: 180px;
     }
 }
 
@@ -1765,6 +1773,11 @@ ul {
     .tentang-wrapper,
     .kontak-wrapper {
         grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .tentang-wrapper {
+        grid-template-rows: auto auto;
     }
     
     .map-wrapper iframe {

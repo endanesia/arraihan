@@ -892,7 +892,7 @@ require_once __DIR__ . '/inc/header.php';
                             <div class="swiper-slide">
                                 <img src="<?= $base ?>images/<?= e($img['image_path']) ?>" 
                                      alt="<?= e($img['alt_text'] ?: $img['title'] ?: $about_title) ?>"
-                                     title="<?= e($img['title']) ?>">
+                                     title="<?= e($img['title']) ?>" width="400" loading="lazy">
                             </div>
                             <?php endforeach; ?>
                         </div>
