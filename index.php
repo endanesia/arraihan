@@ -53,30 +53,40 @@ if (function_exists('db') && db()) {
 }
 $videos = [];
 if (function_exists('db') && db()) {
-    // Check if new columns exist for multi-platform support
-    $video_table_columns = [];
     try {
+        // Check if new columns exist for multi-platform support
+        $video_table_columns = [];
         $columns_result = db()->query("DESCRIBE gallery_videos");
-        while ($col = $columns_result->fetch_assoc()) {
-            $video_table_columns[] = $col['Field'];
+        if ($columns_result) {
+            while ($col = $columns_result->fetch_assoc()) {
+                $video_table_columns[] = $col['Field'];
+            }
+        }
+        
+        $has_platform_column = in_array('platform', $video_table_columns);
+        $has_video_url_column = in_array('video_url', $video_table_columns);
+        
+        if ($has_platform_column && $has_video_url_column) {
+            // Multi-platform query
+            $res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos ORDER BY id DESC LIMIT 3");
+            if ($res) {
+                while ($row = $res->fetch_assoc()) { 
+                    $videos[] = $row; 
+                }
+            }
+        } else {
+            // Legacy YouTube-only query
+            $res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3");
+            if ($res) {
+                while ($row = $res->fetch_assoc()) { 
+                    $videos[] = $row; 
+                }
+            }
         }
     } catch (Exception $e) {
-        // Handle error gracefully
-    }
-    
-    $has_platform_column = in_array('platform', $video_table_columns);
-    $has_video_url_column = in_array('video_url', $video_table_columns);
-    
-    if ($has_platform_column && $has_video_url_column) {
-        // Multi-platform query
-        if ($res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos ORDER BY id DESC LIMIT 3")) {
-            while ($row = $res->fetch_assoc()) { $videos[] = $row; }
-        }
-    } else {
-        // Legacy YouTube-only query
-        if ($res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3")) {
-            while ($row = $res->fetch_assoc()) { $videos[] = $row; }
-        }
+        // Fallback to empty videos array if any error occurs
+        $videos = [];
+        error_log("Video fetching error: " . $e->getMessage());
     }
 }
 // Mutawwif dan Tour Leader
@@ -839,12 +849,14 @@ require_once __DIR__ . '/inc/header.php';
             <div class="video-grid">
                 <?php if (!empty($videos)): ?>
                     <?php foreach ($videos as $index => $v): 
-                        // Determine platform and thumbnail
-                        $platform = !empty($v['platform']) ? $v['platform'] : 'youtube';
-                        $video_url = !empty($v['video_url']) ? $v['video_url'] : "https://www.youtube.com/embed/{$v['youtube_id']}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0";
+                        // Safely determine platform and thumbnail
+                        $platform = isset($v['platform']) && !empty($v['platform']) ? $v['platform'] : 'youtube';
+                        $youtube_id = isset($v['youtube_id']) ? $v['youtube_id'] : '';
+                        $video_url = isset($v['video_url']) && !empty($v['video_url']) ? $v['video_url'] : 
+                                    (!empty($youtube_id) ? "https://www.youtube.com/embed/{$youtube_id}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0" : '');
                         
-                        if ($platform === 'youtube') {
-                            $thumb = 'https://img.youtube.com/vi/'.e($v['youtube_id']).'/hqdefault.jpg';
+                        if ($platform === 'youtube' && !empty($youtube_id)) {
+                            $thumb = 'https://img.youtube.com/vi/'.e($youtube_id).'/hqdefault.jpg';
                             $platform_icon = '<i class="fab fa-youtube text-danger"></i>';
                         } elseif ($platform === 'instagram') {
                             $thumb = 'https://via.placeholder.com/480x360/E4405F/white?text=Instagram+Video';
