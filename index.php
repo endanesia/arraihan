@@ -156,6 +156,169 @@ $include_swiper = true;
 // Extra head content for Cloudflare Turnstile
 $extra_head_content = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
 
+// Extra footer scripts for video autoplay functionality
+$extra_footer_scripts = '
+<script>
+// Video Autoplay Functionality
+let videoPlayers = [];
+let currentPlayingVideo = null;
+let autoplayTimeout = null;
+
+// Initialize YouTube Player API
+function onYouTubeIframeAPIReady() {
+    const videoItems = document.querySelectorAll(".video-item");
+    
+    videoItems.forEach((item, index) => {
+        const playerId = `youtube-player-${index}`;
+        const iframe = document.getElementById(playerId);
+        
+        if (iframe) {
+            const player = new YT.Player(playerId, {
+                events: {
+                    "onReady": onPlayerReady,
+                    "onStateChange": onPlayerStateChange
+                }
+            });
+            videoPlayers[index] = player;
+        }
+    });
+}
+
+function onPlayerReady(event) {
+    // Player is ready
+}
+
+function onPlayerStateChange(event) {
+    // Handle player state changes if needed
+}
+
+// Intersection Observer for video autoplay
+const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // Video section is in view
+            const videoSection = entry.target;
+            const videoItems = videoSection.querySelectorAll(".video-item");
+            
+            if (videoItems.length > 0 && currentPlayingVideo === null) {
+                // Start autoplay for the first video after a short delay
+                autoplayTimeout = setTimeout(() => {
+                    playVideo(videoItems[0], 0);
+                }, 1000);
+            }
+        } else {
+            // Video section is out of view
+            if (currentPlayingVideo !== null) {
+                stopAllVideos();
+            }
+            if (autoplayTimeout) {
+                clearTimeout(autoplayTimeout);
+                autoplayTimeout = null;
+            }
+        }
+    });
+}, {
+    threshold: 0.3 // Trigger when 30% of the section is visible
+});
+
+function playVideo(videoItem, index) {
+    if (videoPlayers[index] && typeof videoPlayers[index].playVideo === "function") {
+        // Hide thumbnail and show iframe
+        const thumbnail = videoItem.querySelector(".video-thumbnail img");
+        const playButton = videoItem.querySelector(".video-play");
+        const iframeContainer = videoItem.querySelector(".video-iframe-container");
+        
+        if (thumbnail && playButton && iframeContainer) {
+            thumbnail.style.display = "none";
+            playButton.style.display = "none";
+            iframeContainer.style.display = "block";
+            
+            // Play the video
+            videoPlayers[index].playVideo();
+            currentPlayingVideo = index;
+            
+            // Stop video after 5 seconds
+            setTimeout(() => {
+                if (currentPlayingVideo === index) {
+                    stopVideo(videoItem, index);
+                }
+            }, 5000);
+        }
+    }
+}
+
+function stopVideo(videoItem, index) {
+    if (videoPlayers[index] && typeof videoPlayers[index].pauseVideo === "function") {
+        videoPlayers[index].pauseVideo();
+        
+        // Show thumbnail and hide iframe
+        const thumbnail = videoItem.querySelector(".video-thumbnail img");
+        const playButton = videoItem.querySelector(".video-play");
+        const iframeContainer = videoItem.querySelector(".video-iframe-container");
+        
+        if (thumbnail && playButton && iframeContainer) {
+            thumbnail.style.display = "block";
+            playButton.style.display = "block";
+            iframeContainer.style.display = "none";
+        }
+        
+        if (currentPlayingVideo === index) {
+            currentPlayingVideo = null;
+        }
+    }
+}
+
+function stopAllVideos() {
+    videoPlayers.forEach((player, index) => {
+        if (player && typeof player.pauseVideo === "function") {
+            const videoItem = document.querySelector(`[data-video-index="${index}"]`);
+            if (videoItem) {
+                stopVideo(videoItem, index);
+            }
+        }
+    });
+}
+
+// Manual play button click handler
+document.addEventListener("click", function(e) {
+    if (e.target.closest(".video-play")) {
+        e.preventDefault();
+        const videoItem = e.target.closest(".video-item");
+        const videoIndex = parseInt(videoItem.dataset.videoIndex);
+        
+        if (currentPlayingVideo !== null) {
+            const currentVideoItem = document.querySelector(`[data-video-index="${currentPlayingVideo}"]`);
+            if (currentVideoItem) {
+                stopVideo(currentVideoItem, currentPlayingVideo);
+            }
+        }
+        
+        playVideo(videoItem, videoIndex);
+    }
+});
+
+// Initialize when page loads
+document.addEventListener("DOMContentLoaded", function() {
+    // Observe the video gallery section
+    const videoSection = document.querySelector(".video-gallery");
+    if (videoSection) {
+        videoObserver.observe(videoSection);
+    }
+    
+    // Load YouTube API
+    if (!window.YT) {
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        document.head.appendChild(script);
+    } else {
+        onYouTubeIframeAPIReady();
+    }
+});
+
+// Make onYouTubeIframeAPIReady available globally
+window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+</script>';
+
 // Include header template
 require_once __DIR__ . '/inc/header.php';
 ?>
@@ -667,41 +830,85 @@ require_once __DIR__ . '/inc/header.php';
             </div>
             <div class="video-grid">
                 <?php if (!empty($videos)): ?>
-                    <?php foreach ($videos as $v): $thumb = 'https://img.youtube.com/vi/'.e($v['youtube_id']).'/hqdefault.jpg'; ?>
-                    <div class="video-item">
+                    <?php foreach ($videos as $index => $v): $thumb = 'https://img.youtube.com/vi/'.e($v['youtube_id']).'/hqdefault.jpg'; ?>
+                    <div class="video-item" data-youtube-id="<?= e($v['youtube_id']) ?>" data-video-index="<?= $index ?>">
                         <div class="video-thumbnail">
                             <img src="<?= $thumb ?>" alt="<?= e($v['title'] ?: 'Video') ?>">
                             <div class="video-play">
                                 <i class="fas fa-play"></i>
+                            </div>
+                            <div class="video-iframe-container" style="display: none;">
+                                <iframe 
+                                    id="youtube-player-<?= $index ?>"
+                                    width="100%" 
+                                    height="200" 
+                                    src="https://www.youtube.com/embed/<?= e($v['youtube_id']) ?>?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
                             </div>
                         </div>
                         <h4><?= e($v['title'] ?: 'Video') ?></h4>
                     </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <div class="video-item">
+                    <div class="video-item" data-youtube-id="dQw4w9WgXcQ" data-video-index="0">
                         <div class="video-thumbnail">
                             <img src="https://muslimpergi.com/wp-content/uploads/2023/02/dokumentasi-saat-umroh-bisa-dijadikan-bukti-untuk-keluarga-tercinta-1024x574.jpg" alt="Video Testimoni">
                             <div class="video-play">
                                 <i class="fas fa-play"></i>
                             </div>
+                            <div class="video-iframe-container" style="display: none;">
+                                <iframe 
+                                    id="youtube-player-0"
+                                    width="100%" 
+                                    height="200" 
+                                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
                         </div>
                         <h4>Testimoni Jamaah Umroh 2024</h4>
                     </div>
-                    <div class="video-item">
+                    <div class="video-item" data-youtube-id="ScMzIvxBSi4" data-video-index="1">
                         <div class="video-thumbnail">
                             <img src="https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=400&h=300&fit=crop" alt="Video Perjalanan">
                             <div class="video-play">
                                 <i class="fas fa-play"></i>
                             </div>
+                            <div class="video-iframe-container" style="display: none;">
+                                <iframe 
+                                    id="youtube-player-1"
+                                    width="100%" 
+                                    height="200" 
+                                    src="https://www.youtube.com/embed/ScMzIvxBSi4?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
                         </div>
                         <h4>Perjalanan Ibadah ke Tanah Suci</h4>
                     </div>
-                    <div class="video-item">
+                    <div class="video-item" data-youtube-id="M7lc1UVf-VE" data-video-index="2">
                         <div class="video-thumbnail">
                             <img src="https://haqiqitour.com/wp-content/uploads/2024/02/DOKUMENTASI-JAMAAH-UMROH-HAQIQI-TOUR-TRAVEL-21.jpeg" alt="Video Fasilitas">
                             <div class="video-play">
                                 <i class="fas fa-play"></i>
+                            </div>
+                            <div class="video-iframe-container" style="display: none;">
+                                <iframe 
+                                    id="youtube-player-2"
+                                    width="100%" 
+                                    height="200" 
+                                    src="https://www.youtube.com/embed/M7lc1UVf-VE?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
                             </div>
                         </div>
                         <h4>Fasilitas Hotel & Layanan</h4>
