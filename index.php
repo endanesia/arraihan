@@ -52,42 +52,23 @@ if (function_exists('db') && db()) {
     }
 }
 $videos = [];
-if (function_exists('db') && db()) {
-    try {
-        // Check if new columns exist for multi-platform support
-        $video_table_columns = [];
-        $columns_result = db()->query("DESCRIBE gallery_videos");
-        if ($columns_result) {
-            while ($col = $columns_result->fetch_assoc()) {
-                $video_table_columns[] = $col['Field'];
+try {
+    if (function_exists('db') && db()) {
+        // Simple safe query first
+        $res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3");
+        if ($res) {
+            while ($row = $res->fetch_assoc()) { 
+                // Ensure backward compatibility
+                $row['platform'] = 'youtube';
+                $row['video_url'] = "https://www.youtube.com/embed/{$row['youtube_id']}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0";
+                $videos[] = $row; 
             }
         }
-        
-        $has_platform_column = in_array('platform', $video_table_columns);
-        $has_video_url_column = in_array('video_url', $video_table_columns);
-        
-        if ($has_platform_column && $has_video_url_column) {
-            // Multi-platform query
-            $res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos ORDER BY id DESC LIMIT 3");
-            if ($res) {
-                while ($row = $res->fetch_assoc()) { 
-                    $videos[] = $row; 
-                }
-            }
-        } else {
-            // Legacy YouTube-only query
-            $res = db()->query("SELECT youtube_id, title FROM gallery_videos ORDER BY id DESC LIMIT 3");
-            if ($res) {
-                while ($row = $res->fetch_assoc()) { 
-                    $videos[] = $row; 
-                }
-            }
-        }
-    } catch (Exception $e) {
-        // Fallback to empty videos array if any error occurs
-        $videos = [];
-        error_log("Video fetching error: " . $e->getMessage());
     }
+} catch (Exception $e) {
+    // Complete fallback with default videos
+    $videos = [];
+    error_log("Video fetching error: " . $e->getMessage());
 }
 // Mutawwif dan Tour Leader
 $mutawwif = [];
