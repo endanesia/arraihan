@@ -54,13 +54,18 @@ if (function_exists('db') && db()) {
 $videos = [];
 try {
     if (function_exists('db') && db()) {
-        // Multi-platform query with validation for empty youtube_id
-        $res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos WHERE (youtube_id IS NOT NULL AND youtube_id != '') OR (platform != 'youtube' AND video_url IS NOT NULL) ORDER BY id DESC LIMIT 3");
+        // Multi-platform query with better validation
+        $res = db()->query("SELECT youtube_id, title, platform, video_url FROM gallery_videos WHERE 
+                            (platform = 'youtube' AND youtube_id IS NOT NULL AND youtube_id != '') OR 
+                            (platform = 'instagram' AND video_url IS NOT NULL) OR 
+                            (platform = 'tiktok' AND video_url IS NOT NULL) OR
+                            (platform IS NULL AND youtube_id IS NOT NULL AND youtube_id != '' AND youtube_id NOT LIKE '%instagram.com%' AND youtube_id NOT LIKE '%tiktok.com%')
+                            ORDER BY id DESC LIMIT 3");
         if ($res) {
             while ($row = $res->fetch_assoc()) { 
-                // Ensure all fields have defaults
+                // Ensure all fields have proper values
                 if (empty($row['platform'])) $row['platform'] = 'youtube';
-                if (empty($row['video_url']) && !empty($row['youtube_id'])) {
+                if ($row['platform'] === 'youtube' && empty($row['video_url']) && !empty($row['youtube_id'])) {
                     $row['video_url'] = "https://www.youtube.com/embed/{$row['youtube_id']}?enablejsapi=1&autoplay=0&mute=1&controls=1&rel=0";
                 }
                 $videos[] = $row; 
