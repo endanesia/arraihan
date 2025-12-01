@@ -32,10 +32,10 @@ try {
     
     echo "<h3>Step 4: Test each data query individually</h3>";
     
-    // Packages
+    // Packages (using the actual query from index.php)
     echo "<p><strong>Testing packages:</strong></p>";
     $packages = [];
-    if ($res = db()->query("SELECT * FROM packages WHERE is_active = 1 ORDER BY created_at DESC")) {
+    if ($res = db()->query("SELECT * FROM packages ORDER BY featured DESC, id DESC")) {
         $count = $res->num_rows;
         echo "✅ Packages query: {$count} rows<br>";
         while ($row = $res->fetch_assoc()) { $packages[] = $row; }
@@ -43,10 +43,11 @@ try {
         echo "❌ Packages query failed: " . db()->error . "<br>";
     }
     
-    // Schedules
+    // Schedules (using the actual query from index.php)
     echo "<p><strong>Testing schedules:</strong></p>";
     $schedules = [];
-    if ($res = db()->query("SELECT * FROM schedules WHERE departure_date >= CURDATE() ORDER BY departure_date ASC LIMIT 6")) {
+    $q = "SELECT * FROM schedules WHERE departure_date IS NOT NULL AND departure_date >= CURDATE() ORDER BY departure_date ASC LIMIT 6";
+    if ($res = db()->query($q)) {
         $count = $res->num_rows;
         echo "✅ Schedules query: {$count} rows<br>";
         while ($row = $res->fetch_assoc()) { $schedules[] = $row; }
