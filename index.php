@@ -907,15 +907,7 @@ require_once __DIR__ . '/inc/header.php';
                     <img src="<?= !empty($about_image) ? $base . e($about_image) : $base . 'images/bg.jpeg' ?>" alt="<?= e($about_title) ?>">
                     <?php endif; ?>
                     
-                    <?php if ($about_badge_number || $about_badge_text): ?>
-                    <div class="tentang-badge">
-                        <i class="fas fa-users"></i>
-                        <div>
-                            <h4><?= e($about_badge_number) ?></h4>
-                            <p><?= e($about_badge_text) ?></p>
-                        </div>
-                    </div>
-                    <?php endif; ?>
+                    
                 </div>
             </div>
         </div>
