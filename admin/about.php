@@ -117,6 +117,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// Get about images for slideshow
+$about_images = [];
+if (function_exists('db') && db()) {
+    try {
+        $table_check = db()->query("SHOW TABLES LIKE 'about_images'");
+        if ($table_check && $table_check->num_rows > 0) {
+            if ($res = db()->query("SELECT * FROM about_images WHERE is_active = 1 ORDER BY sort_order ASC, id ASC")) {
+                while ($row = $res->fetch_assoc()) {
+                    $about_images[] = $row;
+                }
+            }
+        }
+    } catch (Exception $e) {
+        $about_images = [];
+    }
+}
+
 // Get current about data from database
 $about_data = [
     'title' => get_setting('about_title', 'Tentang Kami'),
@@ -168,22 +185,47 @@ include __DIR__ . '/header.php';
                         </div>
 
                         <div class="mb-3">
-                            <label for="about_image" class="form-label">Gambar Tentang Kami</label>
-                            <input type="file" class="form-control" id="about_image" name="about_image" accept="image/*">
-                            <div class="form-text">
-                                Format: JPEG, PNG, WebP. Gambar akan otomatis diperkecil jika lebih dari 800x600px.
-                            </div>
-                            <?php if (!empty($about_data['image'])): ?>
-                            <div class="mt-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <img src="<?= e($about_data['image']) ?>" alt="Current image" class="img-thumbnail" style="max-width: 150px; max-height: 100px;">
-                                    <div>
-                                        <small class="text-muted">Gambar saat ini</small><br>
-                                        <small class="text-info">Upload gambar baru untuk mengganti</small>
-                                    </div>
+                            <label class="form-label">Gambar Tentang Kami</label>
+                            
+                            <!-- Multi-Image Slideshow Management -->
+                            <div class="alert alert-info d-flex align-items-center">
+                                <i class="fas fa-images me-2"></i>
+                                <div class="flex-grow-1">
+                                    <strong>Slideshow Multiple Gambar</strong>
+                                    <div class="small">Kelola multiple gambar untuk slideshow di section Tentang Kami</div>
+                                </div>
+                                <div>
+                                    <a href="<?= e($base) ?>/admin/about-images" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-cog"></i> Kelola Slideshow
+                                    </a>
                                 </div>
                             </div>
-                            <?php endif; ?>
+                            
+                            <!-- Legacy Single Image (Fallback) -->
+                            <div class="border rounded p-3 bg-light">
+                                <label for="about_image" class="form-label">
+                                    <small>Gambar Tunggal (Fallback)</small>
+                                </label>
+                                <input type="file" class="form-control" id="about_image" name="about_image" accept="image/*">
+                                <div class="form-text">
+                                    <small>
+                                        <i class="fas fa-info-circle"></i>
+                                        Gambar ini hanya digunakan jika tidak ada gambar slideshow. 
+                                        Format: JPEG, PNG, WebP.
+                                    </small>
+                                </div>
+                                <?php if (!empty($about_data['image'])): ?>
+                                <div class="mt-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img src="<?= e($about_data['image']) ?>" alt="Current fallback image" class="img-thumbnail" style="max-width: 100px; max-height: 70px;">
+                                        <div>
+                                            <small class="text-muted">Gambar fallback saat ini</small><br>
+                                            <small class="text-info">Upload gambar baru untuk mengganti</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -274,17 +316,62 @@ include __DIR__ . '/header.php';
                                 <?php endif; ?>
                             </div>
                             
-                            <?php if (!empty($about_data['image'])): ?>
                             <div class="col-md-4">
+                                <?php if (!empty($about_images)): ?>
+                                <!-- Slideshow Preview -->
                                 <div class="text-center">
-                                    <img src="<?= e($about_data['image']) ?>" alt="<?= e($about_data['title']) ?>" 
-                                         class="img-fluid rounded shadow" style="max-height: 300px;">
-                                    <div class="mt-2">
-                                        <small class="text-muted">Gambar Tentang Kami</small>
+                                    <div class="bg-primary text-white p-2 rounded-top">
+                                        <i class="fas fa-images"></i> Slideshow (<?= count($about_images) ?> gambar)
+                                    </div>
+                                    <div class="border border-top-0 p-3 rounded-bottom">
+                                        <div class="row g-2">
+                                            <?php foreach (array_slice($about_images, 0, 4) as $img): ?>
+                                            <div class="col-6">
+                                                <img src="<?= $base ?>images/<?= e($img['image_path']) ?>" 
+                                                     alt="<?= e($img['title']) ?>" 
+                                                     class="img-thumbnail w-100" 
+                                                     style="height: 60px; object-fit: cover;">
+                                            </div>
+                                            <?php endforeach; ?>
+                                            <?php if (count($about_images) > 4): ?>
+                                            <div class="col-12">
+                                                <small class="text-muted">+<?= count($about_images) - 4 ?> gambar lainnya</small>
+                                            </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="mt-2">
+                                            <a href="<?= e($base) ?>/admin/about-images" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-cog"></i> Kelola
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
+                                <?php elseif (!empty($about_data['image'])): ?>
+                                <!-- Single Image Fallback -->
+                                <div class="text-center">
+                                    <div class="bg-warning text-dark p-2 rounded-top">
+                                        <i class="fas fa-image"></i> Gambar Tunggal (Fallback)
+                                    </div>
+                                    <img src="<?= e($about_data['image']) ?>" alt="<?= e($about_data['title']) ?>" 
+                                         class="img-fluid rounded-bottom shadow" style="max-height: 300px;">
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-info-circle"></i>
+                                            Tambah gambar slideshow untuk tampilan yang lebih menarik
+                                        </small>
+                                    </div>
+                                </div>
+                                <?php else: ?>
+                                <!-- No Images -->
+                                <div class="text-center">
+                                    <div class="bg-secondary text-white p-3 rounded">
+                                        <i class="fas fa-image fa-2x mb-2"></i>
+                                        <div>Belum ada gambar</div>
+                                        <small>Upload gambar slideshow atau gambar fallback</small>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
                             </div>
-                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
