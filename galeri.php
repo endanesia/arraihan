@@ -10,17 +10,33 @@ $selectedAlbum = isset($_GET['album']) ? $_GET['album'] : 'all';
 // Fetch all albums
 $albums = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT album_name, COUNT(*) as count FROM gallery_images GROUP BY album_name ORDER BY album_name ASC")) {
-        while ($row = $res->fetch_assoc()) { $albums[] = $row; }
+    // Check if album_name column exists first
+    $checkColumn = db()->query("SHOW COLUMNS FROM gallery_images LIKE 'album_name'");
+    if ($checkColumn && $checkColumn->num_rows > 0) {
+        if ($res = db()->query("SELECT album_name, COUNT(*) as count FROM gallery_images WHERE album_name IS NOT NULL GROUP BY album_name ORDER BY album_name ASC")) {
+            while ($row = $res->fetch_assoc()) { $albums[] = $row; }
+        }
     }
 }
 
 // Fetch gallery images based on selected album
 $images = [];
 if (function_exists('db') && db()) {
-    $albumCondition = $selectedAlbum !== 'all' ? "WHERE album_name = '" . db()->real_escape_string($selectedAlbum) . "'" : '';
-    if ($res = db()->query("SELECT file_path, title, album_name, created_at FROM gallery_images $albumCondition ORDER BY id DESC")) {
-        while ($row = $res->fetch_assoc()) { $images[] = $row; }
+    // Check if album_name column exists first
+    $checkColumn = db()->query("SHOW COLUMNS FROM gallery_images LIKE 'album_name'");
+    if ($checkColumn && $checkColumn->num_rows > 0) {
+        $albumCondition = $selectedAlbum !== 'all' ? "WHERE album_name = '" . db()->real_escape_string($selectedAlbum) . "'" : '';
+        if ($res = db()->query("SELECT file_path, title, album_name, created_at FROM gallery_images $albumCondition ORDER BY id DESC")) {
+            while ($row = $res->fetch_assoc()) { $images[] = $row; }
+        }
+    } else {
+        // Fallback if album_name column doesn't exist yet
+        if ($res = db()->query("SELECT file_path, title, created_at FROM gallery_images ORDER BY id DESC")) {
+            while ($row = $res->fetch_assoc()) { 
+                $row['album_name'] = 'Umum'; // Default album
+                $images[] = $row; 
+            }
+        }
     }
 }
 
@@ -77,6 +93,7 @@ require_once __DIR__ . '/inc/header.php';
             </div>
 
             <!-- Album Filter (only show for images tab) -->
+            <?php if (!empty($albums)): ?>
             <div id="album-filter" style="display: <?= $activeTab === 'images' ? 'block' : 'none' ?>;">
                 <div class="album-filter-section">
                     <h3><i class="fas fa-folder"></i> Pilih Album</h3>
@@ -96,6 +113,7 @@ require_once __DIR__ . '/inc/header.php';
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <!-- Images Gallery -->
             <div id="images-content" class="tab-content" style="display: <?= $activeTab === 'images' ? 'block' : 'none' ?>;">
