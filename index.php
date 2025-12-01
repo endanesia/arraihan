@@ -77,11 +77,20 @@ try {
     $videos = [];
     error_log("Video fetching error: " . $e->getMessage());
 }
-// Mutawwif dan Tour Leader
+// Mutawwif dan Tour Leader (with error handling)
 $mutawwif = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM mutawwif WHERE is_active = 1 ORDER BY urutan ASC, id ASC")) {
-        while ($row = $res->fetch_assoc()) { $mutawwif[] = $row; }
+    try {
+        // Check if table exists first
+        $table_check = db()->query("SHOW TABLES LIKE 'mutawwif'");
+        if ($table_check && $table_check->num_rows > 0) {
+            if ($res = db()->query("SELECT * FROM mutawwif WHERE is_active = 1 ORDER BY urutan ASC, id ASC")) {
+                while ($row = $res->fetch_assoc()) { $mutawwif[] = $row; }
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Mutawwif query error: " . $e->getMessage());
+        $mutawwif = [];
     }
 }
 // Testimonials - latest 4 approved for homepage
@@ -92,11 +101,20 @@ if (function_exists('db') && db()) {
     }
 }
 
-// Popup Banner - get active popup
+// Popup Banner - get active popup (with error handling)
 $popup_banner = null;
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM popup_banner WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1")) {
-        $popup_banner = $res->fetch_assoc();
+    try {
+        // Check if table exists first
+        $table_check = db()->query("SHOW TABLES LIKE 'popup_banner'");
+        if ($table_check && $table_check->num_rows > 0) {
+            if ($res = db()->query("SELECT * FROM popup_banner WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1")) {
+                $popup_banner = $res->fetch_assoc();
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Popup banner query error: " . $e->getMessage());
+        $popup_banner = null;
     }
 }
 
@@ -114,13 +132,22 @@ $company_address = function_exists('get_setting') ? get_setting('address', '') :
 $company_email = function_exists('get_setting') ? get_setting('email', '') : '';
 $company_hours = function_exists('get_setting') ? get_setting('hours', '') : '';
 
-// Hero slides data from database
+// Hero slides data from database (with error handling)
 $hero_slides = [];
 if (function_exists('db') && db()) {
-    if ($res = db()->query("SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY sort_order ASC, id ASC")) {
-        while ($row = $res->fetch_assoc()) { 
-            $hero_slides[] = $row; 
+    try {
+        // Check if table exists first
+        $table_check = db()->query("SHOW TABLES LIKE 'hero_slides'");
+        if ($table_check && $table_check->num_rows > 0) {
+            if ($res = db()->query("SELECT * FROM hero_slides WHERE is_active = 1 ORDER BY sort_order ASC, id ASC")) {
+                while ($row = $res->fetch_assoc()) { 
+                    $hero_slides[] = $row; 
+                }
+            }
         }
+    } catch (Exception $e) {
+        error_log("Hero slides query error: " . $e->getMessage());
+        $hero_slides = [];
     }
 }
 
@@ -286,14 +313,14 @@ document.addEventListener("click", function(e) {
         e.preventDefault();
         const videoItem = e.target.closest(".video-item");
         const videoIndex = parseInt(videoItem.dataset.videoIndex);
-        const platform = videoItem.dataset.platform || 'youtube';
+        const platform = videoItem.dataset.platform || "youtube";
         const videoUrl = videoItem.dataset.videoUrl;
         
         console.log(`Manual click on video ${videoIndex}, platform: ${platform}`);
         
         // For non-YouTube platforms, open in new window/tab
-        if (platform === 'instagram' || platform === 'tiktok') {
-            window.open(videoUrl, '_blank');
+        if (platform === "instagram" || platform === "tiktok") {
+            window.open(videoUrl, "_blank");
             return;
         }
         
