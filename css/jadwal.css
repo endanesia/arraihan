@@ -413,7 +413,7 @@ body {
 
 .modal-content {
     background-color: var(--light-color);
-    margin: 5% auto;
+    margin: 2% auto;
     padding: 0;
     border-radius: 15px;
     width: 90%;
@@ -422,6 +422,7 @@ body {
     animation: slideIn 0.3s ease;
     box-shadow: var(--shadow-lg);
     overflow: hidden;
+    max-height: 90vh;
 }
 
 @keyframes slideIn {
@@ -482,6 +483,8 @@ body {
 
 .modal-body {
     padding: 30px;
+    overflow-y: auto;
+    max-height: 40vh;
 }
 
 .modal-body .info-row {
@@ -594,7 +597,8 @@ body {
     
     .modal-content {
         width: 95%;
-        margin: 10% auto;
+        margin: 5% auto;
+        max-height: 85vh;
     }
     
     .modal-header {
