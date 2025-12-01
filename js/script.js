@@ -295,15 +295,9 @@ galeriItems.forEach(item => {
     });
 });
 
-// ===== VIDEO PLAY SIMULATION =====
-const videoItems = document.querySelectorAll('.video-item');
-
-videoItems.forEach(item => {
-    item.addEventListener('click', () => {
-        alert('Video akan diputar. Dalam implementasi nyata, video akan diputar di modal atau redirect ke YouTube.');
-        // Dalam implementasi nyata, Anda bisa membuka video di modal atau redirect ke YouTube
-    });
-});
+// ===== VIDEO FUNCTIONALITY =====
+// Video functionality is now handled in individual pages (index.php, galeri.php)
+// Multi-platform video support with proper autoplay handling
 
 // ===== SMOOTH SCROLL FOR ALL INTERNAL LINKS =====
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
