@@ -159,44 +159,15 @@ $extra_head_content = '<script src="https://challenges.cloudflare.com/turnstile/
 // Extra footer scripts for video autoplay functionality
 $extra_footer_scripts = '
 <script>
-// Video Autoplay Functionality
-let videoPlayers = [];
+// Simplified Video Functionality
 let currentPlayingVideo = null;
 let autoplayTimeout = null;
-
-// Initialize YouTube Player API
-function onYouTubeIframeAPIReady() {
-    const videoItems = document.querySelectorAll(".video-item");
-    
-    videoItems.forEach((item, index) => {
-        const playerId = `youtube-player-${index}`;
-        const iframe = document.getElementById(playerId);
-        
-        if (iframe) {
-            const player = new YT.Player(playerId, {
-                events: {
-                    "onReady": onPlayerReady,
-                    "onStateChange": onPlayerStateChange
-                }
-            });
-            videoPlayers[index] = player;
-        }
-    });
-}
-
-function onPlayerReady(event) {
-    // Player is ready
-}
-
-function onPlayerStateChange(event) {
-    // Handle player state changes if needed
-}
 
 // Intersection Observer for video autoplay
 const videoObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            // Video section is in view
+            console.log("Video section is visible");
             const videoSection = entry.target;
             const videoItems = videoSection.querySelectorAll(".video-item");
             
@@ -207,7 +178,7 @@ const videoObserver = new IntersectionObserver((entries) => {
                 }, 1000);
             }
         } else {
-            // Video section is out of view
+            console.log("Video section is not visible");
             if (currentPlayingVideo !== null) {
                 stopAllVideos();
             }
@@ -218,26 +189,33 @@ const videoObserver = new IntersectionObserver((entries) => {
         }
     });
 }, {
-    threshold: 0.3 // Trigger when 30% of the section is visible
+    threshold: 0.3
 });
 
 function playVideo(videoItem, index) {
-    if (videoPlayers[index] && typeof videoPlayers[index].playVideo === "function") {
-        // Hide thumbnail and show iframe
-        const thumbnail = videoItem.querySelector(".video-thumbnail img");
-        const playButton = videoItem.querySelector(".video-play");
-        const iframeContainer = videoItem.querySelector(".video-iframe-container");
+    console.log(`Playing video ${index}`);
+    
+    const thumbnail = videoItem.querySelector(".video-thumbnail img");
+    const playButton = videoItem.querySelector(".video-play");
+    const iframeContainer = videoItem.querySelector(".video-iframe-container");
+    const iframe = videoItem.querySelector("iframe");
+    
+    if (thumbnail && playButton && iframeContainer && iframe) {
+        // Hide thumbnail, show iframe
+        thumbnail.style.display = "none";
+        playButton.style.display = "none";
+        iframeContainer.style.display = "block";
         
-        if (thumbnail && playButton && iframeContainer) {
-            thumbnail.style.display = "none";
-            playButton.style.display = "none";
-            iframeContainer.style.display = "block";
-            
-            // Play the video
-            videoPlayers[index].playVideo();
-            currentPlayingVideo = index;
-            
-            // Stop video after 5 seconds
+        // Change iframe src to autoplay
+        const currentSrc = iframe.src;
+        const newSrc = currentSrc.replace("autoplay=0", "autoplay=1");
+        iframe.src = newSrc;
+        
+        currentPlayingVideo = index;
+        console.log(`Video ${index} is now playing`);
+        
+        // Stop video after 5 seconds for autoplay
+        if (autoplayTimeout) {
             setTimeout(() => {
                 if (currentPlayingVideo === index) {
                     stopVideo(videoItem, index);
@@ -248,19 +226,23 @@ function playVideo(videoItem, index) {
 }
 
 function stopVideo(videoItem, index) {
-    if (videoPlayers[index] && typeof videoPlayers[index].pauseVideo === "function") {
-        videoPlayers[index].pauseVideo();
+    console.log(`Stopping video ${index}`);
+    
+    const thumbnail = videoItem.querySelector(".video-thumbnail img");
+    const playButton = videoItem.querySelector(".video-play");
+    const iframeContainer = videoItem.querySelector(".video-iframe-container");
+    const iframe = videoItem.querySelector("iframe");
+    
+    if (thumbnail && playButton && iframeContainer && iframe) {
+        // Show thumbnail, hide iframe
+        thumbnail.style.display = "block";
+        playButton.style.display = "block";
+        iframeContainer.style.display = "none";
         
-        // Show thumbnail and hide iframe
-        const thumbnail = videoItem.querySelector(".video-thumbnail img");
-        const playButton = videoItem.querySelector(".video-play");
-        const iframeContainer = videoItem.querySelector(".video-iframe-container");
-        
-        if (thumbnail && playButton && iframeContainer) {
-            thumbnail.style.display = "block";
-            playButton.style.display = "block";
-            iframeContainer.style.display = "none";
-        }
+        // Reset iframe src to stop video
+        const currentSrc = iframe.src;
+        const newSrc = currentSrc.replace("autoplay=1", "autoplay=0");
+        iframe.src = newSrc;
         
         if (currentPlayingVideo === index) {
             currentPlayingVideo = null;
@@ -269,12 +251,11 @@ function stopVideo(videoItem, index) {
 }
 
 function stopAllVideos() {
-    videoPlayers.forEach((player, index) => {
-        if (player && typeof player.pauseVideo === "function") {
-            const videoItem = document.querySelector(`[data-video-index="${index}"]`);
-            if (videoItem) {
-                stopVideo(videoItem, index);
-            }
+    console.log("Stopping all videos");
+    const videoItems = document.querySelectorAll(".video-item");
+    videoItems.forEach((item, index) => {
+        if (currentPlayingVideo === index) {
+            stopVideo(item, index);
         }
     });
 }
@@ -286,37 +267,33 @@ document.addEventListener("click", function(e) {
         const videoItem = e.target.closest(".video-item");
         const videoIndex = parseInt(videoItem.dataset.videoIndex);
         
-        if (currentPlayingVideo !== null) {
+        console.log(`Manual click on video ${videoIndex}`);
+        
+        // Stop currently playing video
+        if (currentPlayingVideo !== null && currentPlayingVideo !== videoIndex) {
             const currentVideoItem = document.querySelector(`[data-video-index="${currentPlayingVideo}"]`);
             if (currentVideoItem) {
                 stopVideo(currentVideoItem, currentPlayingVideo);
             }
         }
         
+        // Play clicked video
         playVideo(videoItem, videoIndex);
     }
 });
 
 // Initialize when page loads
 document.addEventListener("DOMContentLoaded", function() {
-    // Observe the video gallery section
-    const videoSection = document.querySelector(".video-gallery");
-    if (videoSection) {
-        videoObserver.observe(videoSection);
-    }
+    console.log("Initializing video functionality");
     
-    // Load YouTube API
-    if (!window.YT) {
-        const script = document.createElement("script");
-        script.src = "https://www.youtube.com/iframe_api";
-        document.head.appendChild(script);
+    const videoSection = document.querySelector(".video-section");
+    if (videoSection) {
+        console.log("Video section found, setting up observer");
+        videoObserver.observe(videoSection);
     } else {
-        onYouTubeIframeAPIReady();
+        console.log("Video section not found");
     }
 });
-
-// Make onYouTubeIframeAPIReady available globally
-window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 </script>';
 
 // Include header template
