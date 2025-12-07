@@ -206,6 +206,22 @@ if (function_exists('db') && db()) {
     }
 }
 
+// Hero Video data from database
+$hero_video = null;
+if (function_exists('db') && db()) {
+    try {
+        $table_check = db()->query("SHOW TABLES LIKE 'hero_video'");
+        if ($table_check && $table_check->num_rows > 0) {
+            if ($res = db()->query("SELECT * FROM hero_video WHERE id = 1 AND is_active = 1 AND video_path != ''")) {
+                $hero_video = $res->fetch_assoc();
+            }
+        }
+    } catch (Exception $e) {
+        error_log("Hero video query error: " . $e->getMessage());
+        $hero_video = null;
+    }
+}
+
 // Prepare arrays for display (phones/emails may be comma separated)
 $phones = array_filter(array_map('trim', explode(',', $phone_number)));
 $emails = array_filter(array_map('trim', explode(',', $company_email)));
@@ -368,6 +384,83 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("Video section not found");
     }
     
+    // Hero Video Autoplay Functionality
+    const heroVideo = document.getElementById("heroVideo");
+    const videoOverlay = document.getElementById("videoOverlay");
+    const videoPlayBtn = document.getElementById("videoPlayBtn");
+    
+    if (heroVideo && videoOverlay && videoPlayBtn) {
+        let isPlaying = false;
+        let autoplayTimer = null;
+        let hasAutoPlayed = false;
+        
+        // Intersection Observer for hero video autoplay
+        const heroVideoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !hasAutoPlayed) {
+                    // Auto play when video is in view
+                    setTimeout(() => {
+                        heroVideo.play();
+                        isPlaying = true;
+                        videoOverlay.style.opacity = "0";
+                        videoOverlay.style.pointerEvents = "none";
+                        hasAutoPlayed = true;
+                        
+                        // Stop after 5 seconds
+                        autoplayTimer = setTimeout(() => {
+                            heroVideo.pause();
+                            heroVideo.currentTime = 0;
+                            isPlaying = false;
+                            videoOverlay.style.opacity = "1";
+                            videoOverlay.style.pointerEvents = "all";
+                        }, 5000);
+                    }, 500);
+                }
+            });
+        }, {
+            threshold: 0.5
+        });
+        
+        heroVideoObserver.observe(heroVideo);
+        
+        // Play button click handler
+        videoPlayBtn.addEventListener("click", function() {
+            if (autoplayTimer) {
+                clearTimeout(autoplayTimer);
+                autoplayTimer = null;
+            }
+            
+            if (!isPlaying) {
+                heroVideo.play();
+                isPlaying = true;
+                videoOverlay.style.opacity = "0";
+                videoOverlay.style.pointerEvents = "none";
+            } else {
+                heroVideo.pause();
+                isPlaying = false;
+                videoOverlay.style.opacity = "1";
+                videoOverlay.style.pointerEvents = "all";
+            }
+        });
+        
+        // Update play button icon
+        heroVideo.addEventListener("play", function() {
+            videoPlayBtn.querySelector("i").className = "fas fa-pause";
+        });
+        
+        heroVideo.addEventListener("pause", function() {
+            videoPlayBtn.querySelector("i").className = "fas fa-play";
+        });
+        
+        // Show overlay when video ends
+        heroVideo.addEventListener("ended", function() {
+            isPlaying = false;
+            videoOverlay.style.opacity = "1";
+            videoOverlay.style.pointerEvents = "all";
+            heroVideo.currentTime = 0;
+        });
+    }
+    
     // Initialize About Images Slideshow
     const aboutSwiper = document.querySelector(".aboutSwiper");
     if (aboutSwiper) {
@@ -493,6 +586,31 @@ require_once __DIR__ . '/inc/header.php';
             </a>
         </div>
     </section>
+
+    <!-- Hero Video Section -->
+    <?php if ($hero_video && !empty($hero_video['video_path'])): ?>
+    <section class="hero-video-section" id="hero-video">
+        <div class="container">
+            <div class="hero-video-wrapper">
+                <video id="heroVideo" class="hero-video-player" muted playsinline>
+                    <source src="<?= e($base . $hero_video['video_path']) ?>" type="video/<?= pathinfo($hero_video['video_path'], PATHINFO_EXTENSION) ?>">
+                    Browser Anda tidak mendukung video HTML5.
+                </video>
+                <div class="hero-video-overlay" id="videoOverlay">
+                    <div class="hero-video-play" id="videoPlayBtn">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                <div class="hero-video-info">
+                    <h3><?= e($hero_video['title']) ?></h3>
+                    <?php if (!empty($hero_video['description'])): ?>
+                    <p><?= e($hero_video['description']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- Greeting Section -->
     <section class="greeting"<?php if ($greeting_background): ?> style="background-image: url('<?= e($greeting_background) ?>');"<?php endif; ?>>
