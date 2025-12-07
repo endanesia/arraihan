@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $phpMaxUploadBytes = (int)$phpMaxUpload * 1024 * 1024; // Convert to bytes
             
             // Use the smaller of our limit or server limit
-            $ourMaxSize = 2 * 1024 * 1024; // 2MB in bytes
+            $ourMaxSize = 5 * 1024 * 1024; // 5MB in bytes
             $maxSize = min($ourMaxSize, $phpMaxUploadBytes);
             $maxSizeMB = round($maxSize / (1024 * 1024), 1);
             
@@ -194,10 +194,10 @@ require_once __DIR__ . '/header.php';
         <?php
         $serverMaxUpload = ini_get('upload_max_filesize');
         $serverMaxMB = (int)$serverMaxUpload;
-        $displayMaxMB = min(2, $serverMaxMB);
+        $displayMaxMB = min(5, $serverMaxMB);
         ?>
         <p>Upload dan kelola video yang ditampilkan setelah hero slideshow (Maksimal <?= $displayMaxMB ?>MB)</p>
-        <?php if ($serverMaxMB < 2): ?>
+        <?php if ($serverMaxMB < 5): ?>
         <div class="alert alert-info" style="margin-top: 10px;">
             <i class="fas fa-info-circle"></i> 
             <strong>Info:</strong> Server limit upload: <?= $serverMaxUpload ?>. 
@@ -296,7 +296,7 @@ require_once __DIR__ . '/header.php';
                     <small class="form-text text-muted">
                         <?php
                         $serverMax = ini_get('upload_max_filesize');
-                        $maxDisplay = min(2, (int)$serverMax);
+                        $maxDisplay = min(5, (int)$serverMax);
                         ?>
                         Format: MP4, WebM, atau OGG. Maksimal ukuran: <?= $maxDisplay ?>MB (Server limit: <?= $serverMax ?>)
                     </small>
