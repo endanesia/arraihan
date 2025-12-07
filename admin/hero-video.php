@@ -73,42 +73,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $newFileName = 'hero-video-' . time() . '.' . $extension;
                     $uploadDir = __DIR__ . '/../images/videos/';
                     
-                    // Buat direktori jika belum ada
+                    // Buat direktori jika belum ada dengan permission yang benar
                     if (!is_dir($uploadDir)) {
-                        mkdir($uploadDir, 0755, true);
+                        if (!mkdir($uploadDir, 0755, true)) {
+                            $error = 'Gagal membuat direktori upload! Periksa permission folder images/';
+                            error_log("Failed to create directory: $uploadDir");
+                        }
                     }
                     
-                    $uploadPath = $uploadDir . $newFileName;
+                    // Check if directory is writable
+                    if (!is_writable($uploadDir)) {
+                        $error = 'Direktori upload tidak dapat ditulis! Jalankan: chmod 755 images/videos/';
+                        error_log("Directory not writable: $uploadDir");
+                    }
                     
-                    // Upload file
-                    if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                        $videoPath = 'images/videos/' . $newFileName;
+                    if (empty($error)) {
+                        $uploadPath = $uploadDir . $newFileName;
                         
-                        // Delete old video if exists
-                        $oldVideo = db()->query("SELECT video_path FROM hero_video WHERE id = 1");
-                        if ($oldVideo && $row = $oldVideo->fetch_assoc()) {
-                            if (!empty($row['video_path']) && file_exists(__DIR__ . '/../' . $row['video_path'])) {
-                                unlink(__DIR__ . '/../' . $row['video_path']);
+                        // Upload file
+                        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                            // Verify file was actually uploaded
+                            if (!file_exists($uploadPath)) {
+                                $error = 'File gagal tersimpan di server! Path: ' . $uploadPath;
+                                error_log("File not found after upload: $uploadPath");
+                            } else {
+                                $videoPath = 'images/videos/' . $newFileName;
+                                
+                                // Delete old video if exists
+                                $oldVideo = db()->query("SELECT video_path FROM hero_video WHERE id = 1");
+                                if ($oldVideo && $row = $oldVideo->fetch_assoc()) {
+                                    if (!empty($row['video_path']) && file_exists(__DIR__ . '/../' . $row['video_path'])) {
+                                        @unlink(__DIR__ . '/../' . $row['video_path']);
+                                    }
+                                }
+                                
+                                // Update database
+                                $stmt = db()->prepare("UPDATE hero_video SET video_path = ?, title = ?, description = ?, is_active = ? WHERE id = 1");
+                                $stmt->bind_param('sssi', $videoPath, $title, $description, $is_active);
+                                
+                                if ($stmt->execute()) {
+                                    $success = 'Video hero berhasil diupload dan disimpan!';
+                                } else {
+                                    $error = 'Gagal menyimpan ke database! Error: ' . db()->error;
+                                    error_log("Database error: " . db()->error);
+                                    // Delete uploaded file if database update fails
+                                    if (file_exists($uploadPath)) {
+                                        @unlink($uploadPath);
+                                    }
+                                }
                             }
-                        }
-                        
-                        // Update database
-                        $stmt = db()->prepare("UPDATE hero_video SET video_path = ?, title = ?, description = ?, is_active = ? WHERE id = 1");
-                        $stmt->bind_param('sssi', $videoPath, $title, $description, $is_active);
-                        
-                        if ($stmt->execute()) {
-                            $success = 'Video hero berhasil diupdate!';
                         } else {
-                            $error = 'Gagal menyimpan ke database!';
-                            // Delete uploaded file if database update fails
-                            if (file_exists($uploadPath)) {
-                                unlink($uploadPath);
-                            }
+                            $error = 'Gagal mengupload file! Error code: ' . $_FILES['video_file']['error'];
+                            error_log("Upload failed. Error: " . $_FILES['video_file']['error'] . ", Tmp: " . $file['tmp_name'] . ", Dest: " . $uploadPath);
                         }
-                    } else {
-                        $error = 'Gagal mengupload file!';
                     }
                 }
+            }
+        } else if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+            // Handle upload errors
+            switch ($_FILES['video_file']['error']) {
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    $error = 'File terlalu besar! Maksimal 5MB.';
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $error = 'File hanya terupload sebagian. Coba lagi!';
+                    break;
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $error = 'Temporary folder tidak ditemukan di server!';
+                    break;
+                case UPLOAD_ERR_CANT_WRITE:
+                    $error = 'Gagal menulis file ke disk!';
+                    break;
+                default:
+                    $error = 'Error upload: ' . $_FILES['video_file']['error'];
             }
         } else {
             // Update without changing video
@@ -131,6 +169,11 @@ if ($result && $result->num_rows > 0) {
     $video = $result->fetch_assoc();
 }
 
+// Check directory permissions
+$uploadDir = __DIR__ . '/../images/videos/';
+$dirExists = is_dir($uploadDir);
+$dirWritable = $dirExists && is_writable($uploadDir);
+
 $page_title = 'Hero Video';
 $current_page = 'hero-video';
 require_once __DIR__ . '/header.php';
@@ -141,6 +184,20 @@ require_once __DIR__ . '/header.php';
         <h1><i class="fas fa-video"></i> Hero Video</h1>
         <p>Upload dan kelola video yang ditampilkan setelah hero slideshow (Maksimal 5MB)</p>
     </div>
+
+    <?php if (!$dirExists): ?>
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> 
+        <strong>Perhatian:</strong> Direktori <code>images/videos/</code> belum ada. 
+        Akan dibuat otomatis saat upload pertama.
+    </div>
+    <?php elseif (!$dirWritable): ?>
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-circle"></i> 
+        <strong>Error:</strong> Direktori <code>images/videos/</code> tidak dapat ditulis!<br>
+        Jalankan command: <code>chmod 755 <?= $uploadDir ?></code>
+    </div>
+    <?php endif; ?>
 
     <?php if ($success): ?>
     <div class="alert alert-success">
