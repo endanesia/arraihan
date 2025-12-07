@@ -54,10 +54,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] === UPLOAD_ERR_OK) {
             $file = $_FILES['video_file'];
             
-            // Validasi ukuran file (maksimal 5MB)
-            $maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            // Get server upload limit
+            $phpMaxUpload = ini_get('upload_max_filesize');
+            $phpMaxUploadBytes = (int)$phpMaxUpload * 1024 * 1024; // Convert to bytes
+            
+            // Use the smaller of our limit or server limit
+            $ourMaxSize = 2 * 1024 * 1024; // 2MB in bytes
+            $maxSize = min($ourMaxSize, $phpMaxUploadBytes);
+            $maxSizeMB = round($maxSize / (1024 * 1024), 1);
+            
             if ($file['size'] > $maxSize) {
-                $error = 'Ukuran file video maksimal 5MB!';
+                $error = "Ukuran file video maksimal {$maxSizeMB}MB! File Anda: " . round($file['size'] / (1024 * 1024), 2) . "MB";
             } else {
                 // Validasi tipe file
                 $allowedTypes = ['video/mp4', 'video/webm', 'video/ogg'];
@@ -131,10 +138,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } else if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] !== UPLOAD_ERR_NO_FILE) {
             // Handle upload errors
+            $serverMax = ini_get('upload_max_filesize');
+            $maxDisplay = min(2, (int)$serverMax);
             switch ($_FILES['video_file']['error']) {
                 case UPLOAD_ERR_INI_SIZE:
                 case UPLOAD_ERR_FORM_SIZE:
-                    $error = 'File terlalu besar! Maksimal 5MB.';
+                    $error = "File terlalu besar! Maksimal {$maxDisplay}MB (Server limit: {$serverMax})";
                     break;
                 case UPLOAD_ERR_PARTIAL:
                     $error = 'File hanya terupload sebagian. Coba lagi!';
@@ -182,7 +191,19 @@ require_once __DIR__ . '/header.php';
 <div class="admin-container">
     <div class="admin-header">
         <h1><i class="fas fa-video"></i> Hero Video</h1>
-        <p>Upload dan kelola video yang ditampilkan setelah hero slideshow (Maksimal 5MB)</p>
+        <?php
+        $serverMaxUpload = ini_get('upload_max_filesize');
+        $serverMaxMB = (int)$serverMaxUpload;
+        $displayMaxMB = min(2, $serverMaxMB);
+        ?>
+        <p>Upload dan kelola video yang ditampilkan setelah hero slideshow (Maksimal <?= $displayMaxMB ?>MB)</p>
+        <?php if ($serverMaxMB < 2): ?>
+        <div class="alert alert-info" style="margin-top: 10px;">
+            <i class="fas fa-info-circle"></i> 
+            <strong>Info:</strong> Server limit upload: <?= $serverMaxUpload ?>. 
+            Hubungi hosting untuk menaikkan jika perlu file lebih besar.
+        </div>
+        <?php endif; ?>
     </div>
 
     <?php if (!$dirExists): ?>
@@ -273,7 +294,11 @@ require_once __DIR__ . '/header.php';
                            accept="video/mp4,video/webm,video/ogg"
                            <?= (!$video || empty($video['video_path'])) ? 'required' : '' ?>>
                     <small class="form-text text-muted">
-                        Format: MP4, WebM, atau OGG. Maksimal ukuran: 5MB
+                        <?php
+                        $serverMax = ini_get('upload_max_filesize');
+                        $maxDisplay = min(2, (int)$serverMax);
+                        ?>
+                        Format: MP4, WebM, atau OGG. Maksimal ukuran: <?= $maxDisplay ?>MB (Server limit: <?= $serverMax ?>)
                     </small>
                 </div>
 
